@@ -13,8 +13,8 @@ This repository is configured so that **all team members can collaborate seamles
 
 1. **Clone the Repository**:
    ```bash
-   git clone <YOUR-GITHUB-REPO-URL>
-   cd GRAMSARTHI
+   git clone https://github.com/jiya25bai10733-gif/GramSetu.git
+   cd GramSetu
    ```
 
 2. **Install Dependencies**:
