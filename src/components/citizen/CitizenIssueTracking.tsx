@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { 
   ArrowLeft, 
@@ -23,16 +23,53 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
   const [hasConfirmedResolution, setHasConfirmedResolution] = useState(false);
 
   const issue = issues.find(i => i.id === issueId || i.token === issueId) || issues[0];
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [issue]);
 
   const toggleAudio = () => {
-    setIsPlayingAudio(!isPlayingAudio);
-    if (!isPlayingAudio && 'speechSynthesis' in window && issue.voiceReport?.transcriptHindi) {
+    if (isPlayingAudio) {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    if (issue.voiceReport?.audioUrl) {
+      if (!audioPlayerRef.current) {
+        audioPlayerRef.current = new Audio(issue.voiceReport.audioUrl);
+        audioPlayerRef.current.onended = () => setIsPlayingAudio(false);
+        audioPlayerRef.current.onerror = () => setIsPlayingAudio(false);
+      } else {
+        audioPlayerRef.current.src = issue.voiceReport.audioUrl;
+      }
+      audioPlayerRef.current.currentTime = 0;
+      audioPlayerRef.current.play()
+        .then(() => setIsPlayingAudio(true))
+        .catch(err => {
+          console.warn('Audio play error:', err);
+          setIsPlayingAudio(false);
+        });
+    } else if ('speechSynthesis' in window && issue.voiceReport?.transcriptHindi) {
       const utterance = new SpeechSynthesisUtterance(issue.voiceReport.transcriptHindi);
       utterance.lang = 'hi-IN';
       utterance.onend = () => setIsPlayingAudio(false);
       window.speechSynthesis.speak(utterance);
-    } else if (isPlayingAudio && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      setIsPlayingAudio(true);
     }
   };
 
@@ -117,18 +154,35 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
       {issue.voiceReport && (
         <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-900 flex items-center">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
-              Citizen Voice Transcript ({issue.voiceReport.dialect})
+            <span className="text-xs font-bold text-slate-900 flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>
+              <span>Voice Report ({issue.voiceReport.dialect})</span>
+              {issue.voiceReport.audioUrl && (
+                <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold border border-emerald-200">
+                  🎙️ Saved Audio
+                </span>
+              )}
             </span>
-            <button
-              type="button"
-              onClick={toggleAudio}
-              className="p-1.5 bg-blue-50 text-[#0F2A4A] rounded-lg text-xs font-bold flex items-center space-x-1 hover:bg-blue-100 cursor-pointer"
-            >
-              {isPlayingAudio ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-              <span>{isPlayingAudio ? 'Pause' : 'Listen Audio'}</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              {isPlayingAudio && (
+                <div className="flex items-center space-x-1 text-red-600 font-bold text-[10px]">
+                  <span className="w-1 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                  <span className="w-1 h-4 bg-red-500 rounded-full animate-pulse"></span>
+                  <span className="w-1 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={toggleAudio}
+                className={`p-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 cursor-pointer transition-all ${
+                  isPlayingAudio ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-blue-50 text-[#0F2A4A] hover:bg-blue-100'
+                }`}
+                title="Play recorded voice audio"
+              >
+                {isPlayingAudio ? <Pause className="w-3.5 h-3.5 text-red-600" /> : <Play className="w-3.5 h-3.5 text-[#0F2A4A]" />}
+                <span>{isPlayingAudio ? 'Pause' : 'Play Audio'}</span>
+              </button>
+            </div>
           </div>
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs">
             <p className="font-semibold text-slate-900">"{issue.voiceReport.transcriptHindi}"</p>

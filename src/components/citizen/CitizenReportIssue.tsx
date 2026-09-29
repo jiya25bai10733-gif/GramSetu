@@ -128,6 +128,7 @@ export const CitizenReportIssue: React.FC = () => {
     stopAllMedia();
 
     setMicError(null);
+    audioChunksRef.current = [];
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -156,6 +157,28 @@ export const CitizenReportIssue: React.FC = () => {
         animationFrameRef.current = requestAnimationFrame(updateVisualizer);
       };
       updateVisualizer();
+
+      // Record audio buffer for persistence
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      mediaRecorder.onstop = () => {
+        if (audioChunksRef.current.length > 0) {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (typeof reader.result === 'string') {
+              setAudioBlobUrl(reader.result);
+            }
+          };
+          reader.readAsDataURL(audioBlob);
+        }
+      };
+      mediaRecorder.start(200);
 
       // Web Speech API
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -239,8 +262,16 @@ export const CitizenReportIssue: React.FC = () => {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        setAudioBlobUrl(URL.createObjectURL(audioBlob));
+        if (audioChunksRef.current.length > 0) {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (typeof reader.result === 'string') {
+              setAudioBlobUrl(reader.result);
+            }
+          };
+          reader.readAsDataURL(audioBlob);
+        }
       };
 
       mediaRecorder.start(200);

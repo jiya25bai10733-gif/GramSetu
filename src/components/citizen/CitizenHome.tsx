@@ -178,10 +178,17 @@ export const CitizenHome: React.FC = () => {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioBlobUrl(url);
-        setHasRecordedAudio(true);
+        if (audioChunksRef.current.length > 0) {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (typeof reader.result === 'string') {
+              setAudioBlobUrl(reader.result);
+              setHasRecordedAudio(true);
+            }
+          };
+          reader.readAsDataURL(audioBlob);
+        }
       };
 
       mediaRecorder.start(200);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { 
   ArrowLeft, 
@@ -92,16 +92,54 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
   const [selectedStatus, setSelectedStatus] = useState(issue.status);
   const [escalateReason, setEscalateReason] = useState('SLA 48h limit breached without field technician sign-off.');
 
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [issue]);
+
   const toggleVoicePlayback = () => {
-    setIsPlayingVoice(!isPlayingVoice);
-    if (!isPlayingVoice && 'speechSynthesis' in window) {
-      const textToSpeak = issue.voiceReport?.transcriptHindi || 'रास्ते पे बहुत बड़ा गड्ढा हो गया है, कल रात को दो स्कूटर गिर गए थे।';
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    if (isPlayingVoice) {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsPlayingVoice(false);
+      return;
+    }
+
+    // Play the authentic audio recorded when the complaint was filled
+    if (issue.voiceReport?.audioUrl) {
+      if (!audioPlayerRef.current) {
+        audioPlayerRef.current = new Audio(issue.voiceReport.audioUrl);
+        audioPlayerRef.current.onended = () => setIsPlayingVoice(false);
+        audioPlayerRef.current.onerror = () => setIsPlayingVoice(false);
+      } else {
+        audioPlayerRef.current.src = issue.voiceReport.audioUrl;
+      }
+      audioPlayerRef.current.currentTime = 0;
+      audioPlayerRef.current.play()
+        .then(() => setIsPlayingVoice(true))
+        .catch(err => {
+          console.warn('Playback error:', err);
+          setIsPlayingVoice(false);
+        });
+    } else if ('speechSynthesis' in window && issue.voiceReport?.transcriptHindi) {
+      const utterance = new SpeechSynthesisUtterance(issue.voiceReport.transcriptHindi);
       utterance.lang = 'hi-IN';
       utterance.onend = () => setIsPlayingVoice(false);
       window.speechSynthesis.speak(utterance);
-    } else if (isPlayingVoice && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      setIsPlayingVoice(true);
     }
   };
 
@@ -462,25 +500,48 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
                 </div>
 
                 <div className="md:col-span-7 bg-white p-3 rounded-lg border border-slate-200 text-xs space-y-1.5">
-                  <div className="flex items-center space-x-1.5 text-slate-800 font-bold">
-                    <Radio className="w-3.5 h-3.5 text-[#0F2A4A]" />
-                    <span>Voice Report Transcript (Hindi)</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5 text-slate-800 font-bold">
+                      <Radio className="w-3.5 h-3.5 text-[#0F2A4A]" />
+                      <span>Voice Report Transcript ({issue.voiceReport?.dialect || 'Hindi'})</span>
+                    </div>
+                    {issue.voiceReport?.audioUrl ? (
+                      <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200 flex items-center space-x-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Saved Audio Available</span>
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-slate-400">Written Report</span>
+                    )}
                   </div>
                   <p className="italic text-slate-600 leading-snug">
-                    "{issue.voiceReport?.transcriptHindi || 'Raaste pe bohot bada gaddha ho gaya hai, kal raat ko do scooter gir gaye th...'}"
+                    "{issue.voiceReport?.transcriptHindi || issue.summary}"
                   </p>
                   <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[10px]">
                     <span className="text-slate-500">
-                      Reported by: Sunil Kumar (Citizen ID #8841)
+                      Reported by: {issue.reportedBy} ({issue.reporterToken})
                     </span>
-                    <button
-                      type="button"
-                      onClick={toggleVoicePlayback}
-                      className="text-[#0F2A4A] font-bold hover:underline flex items-center space-x-1 cursor-pointer"
-                    >
-                      {isPlayingVoice ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                      <span>{isPlayingVoice ? 'Pause' : 'Play Audio'}</span>
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      {isPlayingVoice && (
+                        <div className="flex items-center space-x-1 text-red-600 font-bold text-[10px]">
+                          <span className="w-1 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                          <span className="w-1 h-4 bg-red-500 rounded-full animate-pulse"></span>
+                          <span className="w-1 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                          <span>Playing</span>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={toggleVoicePlayback}
+                        className={`font-bold hover:underline flex items-center space-x-1 cursor-pointer ${
+                          isPlayingVoice ? 'text-red-600' : 'text-[#0F2A4A]'
+                        }`}
+                        title="Play audio recorded by citizen"
+                      >
+                        {isPlayingVoice ? <Pause className="w-3 h-3 text-red-600" /> : <Play className="w-3 h-3 text-[#0F2A4A]" />}
+                        <span>{isPlayingVoice ? 'Pause' : 'Play Audio'}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
