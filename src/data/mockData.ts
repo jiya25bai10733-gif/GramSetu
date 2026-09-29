@@ -1,4 +1,5 @@
 import { Issue, CommunityCluster, ActivityItem, PanchayatMetric } from '../types';
+import { HUMAN_VOICE_BASE64 } from './humanVoiceClips';
 
 export const INITIAL_ISSUES: Issue[] = [
   {
@@ -38,7 +39,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'Our village handpump has been broken for 3 days, causing serious drinking water scarcity. Muddy water is coming out.',
       dialect: 'Bundeli / Malwi Voice Engine',
       duration: '00:08',
-      audioUrl: ''
+      audioUrl: HUMAN_VOICE_BASE64.handpump_water
     },
     clusterId: 'cluster-handpump-1',
     clusterMembersCount: 17
@@ -79,7 +80,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'A huge pothole has developed on the road, two scooters slipped last night. Please get it repaired urgently.',
       dialect: 'Hindi Regional Engine',
       duration: '00:12',
-      audioUrl: ''
+      audioUrl: HUMAN_VOICE_BASE64.road_pothole
     },
     clusterMembersCount: 6
   },
@@ -118,7 +119,8 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptHindi: 'ट्रांसफार्मर से तेल टपक रहा है और बहुत चिंगारी निकल रही है। मोटरें नहीं चल पा रही हैं।',
       transcriptEnglish: 'Oil is leaking from the transformer and heavy sparks are flying. Farm motors cannot run.',
       dialect: 'Malwi Dialect Engine',
-      duration: '00:09'
+      duration: '00:09',
+      audioUrl: HUMAN_VOICE_BASE64.transformer_sparks
     }
   },
   {
@@ -234,7 +236,8 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptHindi: 'सबस्टेशन का ट्रांसफार्मर पूरी तरह बैठ गया है। पिछले 36 घंटे से बिजली गुल है।',
       transcriptEnglish: 'The substation transformer has completely collapsed. No electricity for the last 36 hours.',
       dialect: 'Bundeli Dialect Engine',
-      duration: '00:15'
+      duration: '00:15',
+      audioUrl: HUMAN_VOICE_BASE64.substation_outage
     }
   },
   {
@@ -257,7 +260,14 @@ export const INITIAL_ISSUES: Issue[] = [
     slaRemainingHours: 32,
     slaBreached: false,
     upvotes: 8,
-    photos: []
+    photos: [],
+    voiceReport: {
+      transcriptHindi: 'वार्ड 3 में नाली का गंदा पानी सड़क पर बह रहा है, बहुत बदबू आ रही है और आने-जाने में परेशानी हो रही है।',
+      transcriptEnglish: 'Dirty canal sewage water is overflowing onto the street in Ward 3, causing foul smell and severe inconvenience.',
+      dialect: 'Hindi Regional Engine',
+      duration: '00:10',
+      audioUrl: HUMAN_VOICE_BASE64.sanitation_drainage
+    }
   }
 ];
 

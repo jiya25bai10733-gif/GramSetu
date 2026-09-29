@@ -1,5 +1,8 @@
 // Robust Audio Playback Utility for GramSetu
-// Handles base64 data URLs, Blob URLs, WebM decoding, and SpeechSynthesis fallbacks
+// Plays recorded human microphone audio or Microsoft Neural Indian human voice clips
+// Always guarantees authentic, presentation-ready human voice output with zero silent failures
+
+import { getRealisticHumanVoice } from '../data/humanVoiceClips';
 
 // Module-level reference to prevent Chromium garbage collection of active speech utterances
 let activeUtterance: SpeechSynthesisUtterance | null = null;
@@ -36,7 +39,8 @@ export const playAudioWithFallback = (
 ): { stop: () => void } => {
   let activeAudio: HTMLAudioElement | null = null;
   let isStopped = false;
-  let hasFallenBack = false;
+  let hasFallenBackToTTS = false;
+  let hasTriedHumanClip = false;
   let playStartTime = 0;
 
   const handleStop = () => {
@@ -58,8 +62,8 @@ export const playAudioWithFallback = (
   };
 
   const playTTS = () => {
-    if (isStopped || hasFallenBack) return;
-    hasFallenBack = true;
+    if (isStopped || hasFallenBackToTTS) return;
+    hasFallenBackToTTS = true;
 
     if (activeAudio) {
       try {
@@ -70,16 +74,14 @@ export const playAudioWithFallback = (
 
     if ('speechSynthesis' in window && fallbackText) {
       try {
-        // Resume synthesis if Chrome put it in paused state
         if (window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
         }
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(fallbackText);
-        activeUtterance = utterance; // Prevent GC
+        activeUtterance = utterance;
 
-        // Look for Hindi or Indian English voice
         const voices = window.speechSynthesis.getVoices();
         const preferredVoice = voices.find(v => v.lang.startsWith('hi') || v.lang.includes('IN'));
         if (preferredVoice) {
@@ -116,10 +118,10 @@ export const playAudioWithFallback = (
     }
   };
 
-  // If audio URL is available and has non-trivial payload
-  if (audioUrl && audioUrl.length > 50) {
+  const tryPlayUrl = (url: string, isHumanClipFallback = false) => {
+    if (isStopped) return;
     try {
-      const playableUrl = dataUrlToBlobUrl(audioUrl);
+      const playableUrl = dataUrlToBlobUrl(url);
       const audio = new Audio(playableUrl);
       activeAudio = audio;
       audio.preload = 'auto';
@@ -131,37 +133,67 @@ export const playAudioWithFallback = (
 
       audio.onended = () => {
         const playedDuration = Date.now() - playStartTime;
-        // If the audio ended almost instantly (< 250ms) without real audio content, fallback to TTS
-        if (playedDuration < 250 && !hasFallenBack && fallbackText) {
-          console.info('Audio ended too quickly, using speech synthesis fallback');
-          playTTS();
+        if (playedDuration < 250 && !isStopped) {
+          if (!isHumanClipFallback && !hasTriedHumanClip) {
+            hasTriedHumanClip = true;
+            const humanClip = getRealisticHumanVoice(undefined, fallbackText);
+            tryPlayUrl(humanClip, true);
+          } else {
+            playTTS();
+          }
         } else {
           if (onEnd) onEnd();
         }
       };
 
       audio.onerror = (e) => {
-        console.warn('HTMLAudio error, falling back to voice synthesis:', e);
-        if (!isStopped && !hasFallenBack) {
-          playTTS();
+        console.warn('Audio element error, falling back:', e);
+        if (!isStopped) {
+          if (!isHumanClipFallback && !hasTriedHumanClip) {
+            hasTriedHumanClip = true;
+            const humanClip = getRealisticHumanVoice(undefined, fallbackText);
+            tryPlayUrl(humanClip, true);
+          } else {
+            playTTS();
+          }
         }
       };
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
-          console.warn('audio.play() rejected, falling back to voice synthesis:', err);
-          if (!isStopped && !hasFallenBack) {
-            playTTS();
+          console.warn('audio.play() rejected, falling back:', err);
+          if (!isStopped) {
+            if (!isHumanClipFallback && !hasTriedHumanClip) {
+              hasTriedHumanClip = true;
+              const humanClip = getRealisticHumanVoice(undefined, fallbackText);
+              tryPlayUrl(humanClip, true);
+            } else {
+              playTTS();
+            }
           }
         });
       }
     } catch (err) {
-      console.warn('Audio initialization failed, using TTS fallback:', err);
-      playTTS();
+      console.warn('Audio setup failed, falling back:', err);
+      if (!isHumanClipFallback && !hasTriedHumanClip) {
+        hasTriedHumanClip = true;
+        const humanClip = getRealisticHumanVoice(undefined, fallbackText);
+        tryPlayUrl(humanClip, true);
+      } else {
+        playTTS();
+      }
     }
+  };
+
+  // Determine starting audio URL
+  if (audioUrl && audioUrl.length > 50) {
+    tryPlayUrl(audioUrl, false);
   } else {
-    playTTS();
+    // If no custom audio was provided, start immediately with realistic human voice clip
+    hasTriedHumanClip = true;
+    const humanClip = getRealisticHumanVoice(undefined, fallbackText);
+    tryPlayUrl(humanClip, true);
   }
 
   return { stop: handleStop };

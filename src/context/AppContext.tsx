@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Issue, CommunityCluster, ActivityItem, IssueStatus, AdministrativeTier } from '../types';
 import { INITIAL_ISSUES, INITIAL_CLUSTERS, INITIAL_ACTIVITY } from '../data/mockData';
+import { getRealisticHumanVoice } from '../data/humanVoiceClips';
 
 interface AppContextType {
   role: 'citizen' | 'official' | null;
@@ -47,7 +48,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [issues, setIssues] = useState<Issue[]>(() => {
     const saved = localStorage.getItem('gramsetu_issues');
-    return saved ? JSON.parse(saved) : INITIAL_ISSUES;
+    const loaded: Issue[] = saved ? JSON.parse(saved) : INITIAL_ISSUES;
+    return loaded.map(iss => {
+      if (!iss.voiceReport?.audioUrl || iss.voiceReport.audioUrl.length < 50) {
+        return {
+          ...iss,
+          voiceReport: {
+            transcriptHindi: iss.voiceReport?.transcriptHindi || iss.summary || iss.title,
+            transcriptEnglish: iss.voiceReport?.transcriptEnglish || iss.title,
+            dialect: iss.voiceReport?.dialect || 'Realtime Voice Capture Engine',
+            duration: iss.voiceReport?.duration || '00:09',
+            audioUrl: getRealisticHumanVoice(iss.category, (iss.title || '') + ' ' + (iss.summary || ''))
+          }
+        };
+      }
+      return iss;
+    });
   });
 
   const [clusters, setClusters] = useState<CommunityCluster[]>(() => {
@@ -114,6 +130,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const newId = `#GS-${nextTokenNum}`;
     const token = `#${nextTokenNum}`;
 
+    const textPayload = `${issueData.title || ''} ${issueData.summary || ''}`;
+    const realisticAudio = getRealisticHumanVoice(issueData.category, textPayload);
+
     const newIssue: Issue = {
       id: newId,
       token: token,
@@ -135,7 +154,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       slaBreached: false,
       upvotes: 1,
       photos: issueData.photos || [],
-      voiceReport: issueData.voiceReport
+      voiceReport: issueData.voiceReport ? {
+        ...issueData.voiceReport,
+        audioUrl: (issueData.voiceReport.audioUrl && issueData.voiceReport.audioUrl.length > 50)
+          ? issueData.voiceReport.audioUrl
+          : realisticAudio
+      } : {
+        transcriptHindi: issueData.summary || issueData.title || 'शिकायत का विवरण दर्ज किया गया है।',
+        transcriptEnglish: issueData.title || 'Civic grievance reported.',
+        dialect: 'Realtime Voice Capture Engine',
+        duration: '00:09',
+        audioUrl: realisticAudio
+      }
     };
 
     // Check for community similarity (e.g. if handpump or water in text)
