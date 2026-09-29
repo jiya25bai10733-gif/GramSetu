@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
+import { playAudioWithFallback } from '../../utils/audioPlayback';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -92,55 +93,38 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
   const [selectedStatus, setSelectedStatus] = useState(issue.status);
   const [escalateReason, setEscalateReason] = useState('SLA 48h limit breached without field technician sign-off.');
 
-  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
 
   useEffect(() => {
     return () => {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.pause();
-        audioPlayerRef.current = null;
-      }
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+      if (playbackControllerRef.current) {
+        playbackControllerRef.current.stop();
+        playbackControllerRef.current = null;
       }
     };
   }, [issue]);
 
   const toggleVoicePlayback = () => {
     if (isPlayingVoice) {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.pause();
-      }
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+      if (playbackControllerRef.current) {
+        playbackControllerRef.current.stop();
+        playbackControllerRef.current = null;
       }
       setIsPlayingVoice(false);
       return;
     }
 
-    // Play the authentic audio recorded when the complaint was filled
-    if (issue.voiceReport?.audioUrl) {
-      if (!audioPlayerRef.current) {
-        audioPlayerRef.current = new Audio(issue.voiceReport.audioUrl);
-        audioPlayerRef.current.onended = () => setIsPlayingVoice(false);
-        audioPlayerRef.current.onerror = () => setIsPlayingVoice(false);
-      } else {
-        audioPlayerRef.current.src = issue.voiceReport.audioUrl;
+    const fallbackText = issue.voiceReport?.transcriptHindi || issue.title || 'शिकायत का विवरण दर्ज किया गया है।';
+
+    playbackControllerRef.current = playAudioWithFallback(
+      issue.voiceReport?.audioUrl,
+      fallbackText,
+      () => setIsPlayingVoice(true),
+      () => {
+        setIsPlayingVoice(false);
+        playbackControllerRef.current = null;
       }
-      audioPlayerRef.current.currentTime = 0;
-      audioPlayerRef.current.play()
-        .then(() => setIsPlayingVoice(true))
-        .catch(err => {
-          console.warn('Playback error:', err);
-          setIsPlayingVoice(false);
-        });
-    } else if ('speechSynthesis' in window && issue.voiceReport?.transcriptHindi) {
-      const utterance = new SpeechSynthesisUtterance(issue.voiceReport.transcriptHindi);
-      utterance.lang = 'hi-IN';
-      utterance.onend = () => setIsPlayingVoice(false);
-      window.speechSynthesis.speak(utterance);
-      setIsPlayingVoice(true);
-    }
+    );
   };
 
   const handleUpdateStatusSubmit = () => {

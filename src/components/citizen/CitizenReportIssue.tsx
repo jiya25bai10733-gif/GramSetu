@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { playAudioWithFallback } from '../../utils/audioPlayback';
 import { 
   ArrowLeft, 
   User, 
@@ -89,11 +90,15 @@ export const CitizenReportIssue: React.FC = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const timerIntervalRef = useRef<any>(null);
-  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const previewPlaybackRef = useRef<{ stop: () => void } | null>(null);
 
   useEffect(() => {
     return () => {
       stopAllMedia();
+      if (previewPlaybackRef.current) {
+        previewPlaybackRef.current.stop();
+        previewPlaybackRef.current = null;
+      }
     };
   }, []);
 
@@ -326,19 +331,22 @@ export const CitizenReportIssue: React.FC = () => {
     if (!audioBlobUrl) return;
 
     if (isPlayingAudio) {
-      if (audioElementRef.current) {
-        audioElementRef.current.pause();
-        audioElementRef.current.currentTime = 0;
+      if (previewPlaybackRef.current) {
+        previewPlaybackRef.current.stop();
+        previewPlaybackRef.current = null;
       }
       setIsPlayingAudio(false);
     } else {
-      if (!audioElementRef.current) {
-        audioElementRef.current = new Audio(audioBlobUrl);
-        audioElementRef.current.onended = () => setIsPlayingAudio(false);
-      } else {
-        audioElementRef.current.src = audioBlobUrl;
-      }
-      audioElementRef.current.play().then(() => setIsPlayingAudio(true)).catch(() => setIsPlayingAudio(false));
+      const fallbackText = description || subject || 'शिकायत का विवरण';
+      previewPlaybackRef.current = playAudioWithFallback(
+        audioBlobUrl,
+        fallbackText,
+        () => setIsPlayingAudio(true),
+        () => {
+          setIsPlayingAudio(false);
+          previewPlaybackRef.current = null;
+        }
+      );
     }
   };
 

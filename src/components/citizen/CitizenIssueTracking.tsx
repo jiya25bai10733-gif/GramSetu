@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
+import { playAudioWithFallback } from '../../utils/audioPlayback';
 import { 
   ArrowLeft, 
   CheckCircle2, 
@@ -12,9 +13,9 @@ import {
   ThumbsUp, 
   Share2, 
   ShieldCheck, 
-  ChevronRight,
-  UserCheck,
-  Check
+  ChevronRight, 
+  UserCheck, 
+  Check 
 } from 'lucide-react';
 
 export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => void }> = ({ issueId, onBack }) => {
@@ -23,54 +24,38 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
   const [hasConfirmedResolution, setHasConfirmedResolution] = useState(false);
 
   const issue = issues.find(i => i.id === issueId || i.token === issueId) || issues[0];
-  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
 
   useEffect(() => {
     return () => {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.pause();
-        audioPlayerRef.current = null;
-      }
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+      if (playbackControllerRef.current) {
+        playbackControllerRef.current.stop();
+        playbackControllerRef.current = null;
       }
     };
   }, [issue]);
 
   const toggleAudio = () => {
     if (isPlayingAudio) {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.pause();
-      }
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+      if (playbackControllerRef.current) {
+        playbackControllerRef.current.stop();
+        playbackControllerRef.current = null;
       }
       setIsPlayingAudio(false);
       return;
     }
 
-    if (issue.voiceReport?.audioUrl) {
-      if (!audioPlayerRef.current) {
-        audioPlayerRef.current = new Audio(issue.voiceReport.audioUrl);
-        audioPlayerRef.current.onended = () => setIsPlayingAudio(false);
-        audioPlayerRef.current.onerror = () => setIsPlayingAudio(false);
-      } else {
-        audioPlayerRef.current.src = issue.voiceReport.audioUrl;
+    const fallbackText = issue.voiceReport?.transcriptHindi || issue.title || 'शिकायत का विवरण दर्ज किया गया है।';
+
+    playbackControllerRef.current = playAudioWithFallback(
+      issue.voiceReport?.audioUrl,
+      fallbackText,
+      () => setIsPlayingAudio(true),
+      () => {
+        setIsPlayingAudio(false);
+        playbackControllerRef.current = null;
       }
-      audioPlayerRef.current.currentTime = 0;
-      audioPlayerRef.current.play()
-        .then(() => setIsPlayingAudio(true))
-        .catch(err => {
-          console.warn('Audio play error:', err);
-          setIsPlayingAudio(false);
-        });
-    } else if ('speechSynthesis' in window && issue.voiceReport?.transcriptHindi) {
-      const utterance = new SpeechSynthesisUtterance(issue.voiceReport.transcriptHindi);
-      utterance.lang = 'hi-IN';
-      utterance.onend = () => setIsPlayingAudio(false);
-      window.speechSynthesis.speak(utterance);
-      setIsPlayingAudio(true);
-    }
+    );
   };
 
   const steps = [

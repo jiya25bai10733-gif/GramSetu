@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { playAudioWithFallback } from '../../utils/audioPlayback';
 import { 
   Mic, 
   MicOff, 
@@ -95,12 +96,16 @@ export const CitizenHome: React.FC = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const timerIntervalRef = useRef<any>(null);
-  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const previewPlaybackRef = useRef<{ stop: () => void } | null>(null);
 
   // Clean up on unmount
   useEffect(() => {
     return () => {
       stopAllMedia();
+      if (previewPlaybackRef.current) {
+        previewPlaybackRef.current.stop();
+        previewPlaybackRef.current = null;
+      }
     };
   }, []);
 
@@ -286,23 +291,22 @@ export const CitizenHome: React.FC = () => {
     if (!audioBlobUrl) return;
 
     if (isPlayingAudio) {
-      if (audioElementRef.current) {
-        audioElementRef.current.pause();
-        audioElementRef.current.currentTime = 0;
+      if (previewPlaybackRef.current) {
+        previewPlaybackRef.current.stop();
+        previewPlaybackRef.current = null;
       }
       setIsPlayingAudio(false);
     } else {
-      if (!audioElementRef.current) {
-        audioElementRef.current = new Audio(audioBlobUrl);
-        audioElementRef.current.onended = () => setIsPlayingAudio(false);
-      } else {
-        audioElementRef.current.src = audioBlobUrl;
-      }
-      audioElementRef.current.play().then(() => {
-        setIsPlayingAudio(true);
-      }).catch(() => {
-        setIsPlayingAudio(false);
-      });
+      const fallbackText = liveTranscript || finalTranscript || 'आवाज़ रिकॉर्डिंग';
+      previewPlaybackRef.current = playAudioWithFallback(
+        audioBlobUrl,
+        fallbackText,
+        () => setIsPlayingAudio(true),
+        () => {
+          setIsPlayingAudio(false);
+          previewPlaybackRef.current = null;
+        }
+      );
     }
   };
 
