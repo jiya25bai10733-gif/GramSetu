@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Issue, CommunityCluster, ActivityItem, IssueStatus, AdministrativeTier } from '../types';
 import { INITIAL_ISSUES, INITIAL_CLUSTERS, INITIAL_ACTIVITY } from '../data/mockData';
 import { getRealisticHumanVoice } from '../data/humanVoiceClips';
+import { broadcastSyncEvent, subscribeToLiveSync, fetchRemoteSyncHistory } from '../utils/syncService';
 
 interface AppContextType {
   role: 'citizen' | 'official' | null;
@@ -122,6 +123,128 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('gramsetu_activity', JSON.stringify(activities));
   }, [activities]);
 
+  // Real-time Multi-Device Synchronization across Clones and Localhosts
+  useEffect(() => {
+    // 1. Initial poll for grievances and updates posted on other machines
+    fetchRemoteSyncHistory().then((events) => {
+      if (!events || events.length === 0) return;
+
+      setIssues((prev) => {
+        let updated = [...prev];
+        for (const ev of events) {
+          if (ev.type === 'NEW_ISSUE' && ev.issue) {
+            if (!updated.some(i => i.id === ev.issue!.id || i.token === ev.issue!.token)) {
+              updated = [ev.issue, ...updated];
+            }
+          } else if (ev.type === 'UPDATE_STATUS' && ev.issueId && ev.status) {
+            updated = updated.map(iss => {
+              if (iss.id === ev.issueId || iss.token === ev.issueId) {
+                return { ...iss, status: ev.status! };
+              }
+              return iss;
+            });
+          }
+        }
+        return updated;
+      });
+
+      setActivities((prev) => {
+        let updated = [...prev];
+        for (const ev of events) {
+          if (ev.activity && !updated.some(a => a.id === ev.activity!.id)) {
+            updated = [ev.activity, ...updated];
+          }
+        }
+        return updated;
+      });
+    });
+
+    // 2. Real-time Live SSE Subscription (instant 0.1s updates when any user posts)
+    const unsubscribe = subscribeToLiveSync((payload) => {
+      if (payload.type === 'NEW_ISSUE' && payload.issue) {
+        const incomingIssue = payload.issue;
+        setIssues((prev) => {
+          if (prev.some(i => i.id === incomingIssue.id || i.token === incomingIssue.token)) {
+            return prev;
+          }
+          return [incomingIssue, ...prev];
+        });
+
+        if (payload.activity) {
+          setActivities((prev) => [payload.activity!, ...prev]);
+        }
+
+        // Add real-time notification badge on official & citizen screens
+        setNotifications((prev) => [
+          {
+            id: `n-sync-${Date.now()}`,
+            title: `New Grievance ${incomingIssue.token}: ${incomingIssue.title} (${incomingIssue.panchayat})`,
+            time: 'Just now',
+            read: false,
+            type: 'alert'
+          },
+          ...prev
+        ]);
+      } else if (payload.type === 'UPDATE_STATUS' && payload.issueId && payload.status) {
+        setIssues((prev) => prev.map(iss => {
+          if (iss.id === payload.issueId || iss.token === payload.issueId) {
+            const isResolved = payload.status === 'RESOLVED' || payload.status === 'CLOSED';
+            return {
+              ...iss,
+              status: payload.status!,
+              resolutionDetails: isResolved ? {
+                resolvedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                resolvedBy: 'Official Authority Redressal Cell',
+                notes: payload.notes || 'Work completed on site, verified with photographic evidence.',
+                verifiedByWardOverseer: true
+              } : iss.resolutionDetails
+            };
+          }
+          return iss;
+        }));
+      } else if (payload.type === 'ESCALATE_ISSUE' && payload.issueId) {
+        const tierOrder: AdministrativeTier[] = ['Gram Panchayat', 'Block', 'District', 'State'];
+        setIssues((prev) => prev.map(iss => {
+          if (iss.id === payload.issueId || iss.token === payload.issueId) {
+            const currentIdx = tierOrder.indexOf(iss.administrativeLevel);
+            const nextTier = currentIdx < tierOrder.length - 1 ? tierOrder[currentIdx + 1] : 'State';
+            return {
+              ...iss,
+              administrativeLevel: nextTier,
+              currentAuthority: `${nextTier} Authority Oversight Cell`,
+              priority: 'URGENT',
+              slaBreached: true,
+              slaBreachedTime: 'Escalated by Admin Directive'
+            };
+          }
+          return iss;
+        }));
+      } else if (payload.type === 'REASSIGN_ISSUE' && payload.issueId && payload.officer) {
+        setIssues((prev) => prev.map(iss => {
+          if (iss.id === payload.issueId || iss.token === payload.issueId) {
+            return {
+              ...iss,
+              assignedOfficer: payload.officer,
+              status: 'ASSIGNED'
+            };
+          }
+          return iss;
+        }));
+      } else if (payload.type === 'UPVOTE_ISSUE' && payload.issueId) {
+        setIssues((prev) => prev.map(iss => {
+          if (iss.id === payload.issueId || iss.token === payload.issueId) {
+            return { ...iss, upvotes: iss.upvotes + 1 };
+          }
+          return iss;
+        }));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const login = (newRole: 'citizen' | 'official') => {
     setRole(newRole);
     if (newRole === 'citizen') {
@@ -210,6 +333,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setActivities(prev => [newActivity, ...prev]);
 
+    // Broadcast live across all devices and clones
+    broadcastSyncEvent({
+      type: 'NEW_ISSUE',
+      issue: newIssue,
+      activity: newActivity
+    });
+
     return { issue: newIssue, matchedCluster };
   };
 
@@ -294,6 +424,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       officerId: '#MP-SEH-0402'
     };
     setActivities(prev => [newAct, ...prev]);
+
+    broadcastSyncEvent({
+      type: 'UPDATE_STATUS',
+      issueId: id,
+      status,
+      notes
+    });
   };
 
   const escalateIssue = (id: string, reason?: string) => {
@@ -327,10 +464,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       memoRef: `Direct Memo #ESC-${Math.floor(100 + Math.random() * 900)}`
     };
     setActivities(prev => [newAct, ...prev]);
+
+    broadcastSyncEvent({
+      type: 'ESCALATE_ISSUE',
+      issueId: id,
+      reason
+    });
   };
 
   const upvoteIssue = (id: string) => {
     setIssues(prev => prev.map(iss => iss.id === id || iss.token === id ? { ...iss, upvotes: iss.upvotes + 1 } : iss));
+    broadcastSyncEvent({
+      type: 'UPVOTE_ISSUE',
+      issueId: id
+    });
   };
 
   const reassignIssue = (id: string, officer: any) => {
@@ -344,6 +491,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       return iss;
     }));
+
+    broadcastSyncEvent({
+      type: 'REASSIGN_ISSUE',
+      issueId: id,
+      officer
+    });
   };
 
   return (
