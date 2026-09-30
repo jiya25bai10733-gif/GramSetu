@@ -49,7 +49,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [issues, setIssues] = useState<Issue[]>(() => {
     const saved = localStorage.getItem('gramsetu_issues');
-    const loaded: Issue[] = saved ? JSON.parse(saved) : INITIAL_ISSUES;
+    const rawLoaded: Issue[] = saved ? JSON.parse(saved) : INITIAL_ISSUES;
+    const loaded: Issue[] = rawLoaded.filter(
+      (iss: Issue) => iss.id !== '#GS-1299' && iss.id !== 'GS-1299' && iss.token !== '#1299' && !iss.title?.includes('Friend Laptop Test')
+    );
     const canonicalMap = new Map(INITIAL_ISSUES.map(i => [i.id, i]));
 
     return loaded.map(iss => {
@@ -90,7 +93,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [activities, setActivities] = useState<ActivityItem[]>(() => {
     const saved = localStorage.getItem('gramsetu_activity');
-    return saved ? JSON.parse(saved) : INITIAL_ACTIVITY;
+    const rawLoaded: ActivityItem[] = saved ? JSON.parse(saved) : INITIAL_ACTIVITY;
+    return rawLoaded.filter(
+      (act: ActivityItem) => act.issueId !== '#1299' && act.issueId !== '#GS-1299' && !act.issueTitle?.includes('Friend Laptop Test')
+    );
   });
 
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
@@ -133,6 +139,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         let updated = [...prev];
         for (const ev of events) {
           if (ev.type === 'NEW_ISSUE' && ev.issue) {
+            if (ev.issue.id === '#GS-1299' || ev.issue.token === '#1299' || ev.issue.title?.includes('Friend Laptop Test')) continue;
             if (!updated.some(i => i.id === ev.issue!.id || i.token === ev.issue!.token)) {
               updated = [ev.issue, ...updated];
             }
@@ -151,7 +158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setActivities((prev) => {
         let updated = [...prev];
         for (const ev of events) {
-          if (ev.activity && !updated.some(a => a.id === ev.activity!.id)) {
+          if (ev.activity && ev.activity.issueId !== '#1299' && ev.activity.issueId !== '#GS-1299' && !ev.activity.issueTitle?.includes('Friend Laptop Test') && !updated.some(a => a.id === ev.activity!.id)) {
             updated = [ev.activity, ...updated];
           }
         }
@@ -163,6 +170,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const unsubscribe = subscribeToLiveSync((payload) => {
       if (payload.type === 'NEW_ISSUE' && payload.issue) {
         const incomingIssue = payload.issue;
+        if (incomingIssue.id === '#GS-1299' || incomingIssue.token === '#1299' || incomingIssue.title?.includes('Friend Laptop Test')) return;
         setIssues((prev) => {
           if (prev.some(i => i.id === incomingIssue.id || i.token === incomingIssue.token)) {
             return prev;

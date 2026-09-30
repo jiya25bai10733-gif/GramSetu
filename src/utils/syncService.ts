@@ -4,7 +4,7 @@
 
 import { Issue, IssueStatus, ActivityItem } from '../types';
 
-const SYNC_TOPIC = 'gramsetu_sync_live_central_panchayat_sehore';
+const SYNC_TOPIC = 'gramsetu_sehore_panchayat_live_prod_v2';
 const SYNC_URL = `https://ntfy.sh/${SYNC_TOPIC}`;
 
 export interface SyncPayload {
