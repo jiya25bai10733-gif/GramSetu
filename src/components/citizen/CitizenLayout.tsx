@@ -37,7 +37,7 @@ export const CitizenLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F7F9FC] text-slate-800 flex flex-col justify-between">
       {/* Top Header matching screenww.png */}
-      <header className="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-40 shadow-xs">
+      <header className="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-[2000] shadow-xs">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#0F2A4A] flex items-center justify-center text-amber-400 font-bold shadow-xs">
@@ -78,31 +78,37 @@ export const CitizenLayout: React.FC = () => {
 
               {/* Notification Dropdown */}
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in zoom-in-95">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className="text-xs font-bold text-slate-900">Notifications</span>
-                    <button
-                      onClick={() => setShowNotifications(false)}
-                      className="text-slate-400 hover:text-slate-600 p-0.5"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  <div className="space-y-2 mt-2 max-h-60 overflow-y-auto">
-                    {notifications.map(n => (
-                      <div
-                        key={n.id}
-                        onClick={() => markNotificationRead(n.id)}
-                        className={`p-2 rounded-lg text-xs cursor-pointer transition-all ${
-                          n.read ? 'bg-white text-slate-500' : 'bg-blue-50/70 text-slate-800 font-semibold'
-                        }`}
+                <>
+                  <div
+                    className="fixed inset-0 z-[2050]"
+                    onClick={() => setShowNotifications(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl border border-slate-200 shadow-2xl p-3 z-[2100] animate-in fade-in zoom-in-95">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <span className="text-xs font-bold text-slate-900">Notifications</span>
+                      <button
+                        onClick={() => setShowNotifications(false)}
+                        className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
                       >
-                        <p className="leading-snug">{n.title}</p>
-                        <span className="text-[10px] text-slate-400 mt-1 block">{n.time}</span>
-                      </div>
-                    ))}
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <div className="space-y-2 mt-2 max-h-60 overflow-y-auto">
+                      {notifications.map(n => (
+                        <div
+                          key={n.id}
+                          onClick={() => markNotificationRead(n.id)}
+                          className={`p-2 rounded-lg text-xs cursor-pointer transition-all ${
+                            n.read ? 'bg-white text-slate-500' : 'bg-blue-50/70 text-slate-800 font-semibold'
+                          }`}
+                        >
+                          <p className="leading-snug">{n.title}</p>
+                          <span className="text-[10px] text-slate-400 mt-1 block">{n.time}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
@@ -140,7 +146,7 @@ export const CitizenLayout: React.FC = () => {
       </main>
 
       {/* Bottom Navigation matching screenww.png */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 py-2 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-[1050] py-2 shadow-lg">
         <div className="max-w-md mx-auto px-4 flex items-center justify-between relative">
           {/* Home */}
           <button

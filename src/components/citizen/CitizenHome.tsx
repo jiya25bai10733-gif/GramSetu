@@ -792,7 +792,7 @@ export const CitizenHome: React.FC = () => {
           </MapContainer>
 
           {/* Floating Bottom Card */}
-          <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-slate-200 text-xs flex items-center justify-between shadow-xs z-[1000]">
+          <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-slate-200 text-xs flex items-center justify-between shadow-xs z-[500]">
             <span className="text-slate-700 font-semibold flex items-center">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mr-1.5" />
               Handpump failure at Ward 3 (500m)

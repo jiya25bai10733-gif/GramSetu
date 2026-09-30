@@ -58,7 +58,7 @@ export const OfficialLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F6F8FB] text-slate-800 flex flex-col justify-between">
       {/* Top Navigation Bar matching screen3.png & screen4.png */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-[2000] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Logo Brand */}
@@ -139,35 +139,41 @@ export const OfficialLayout: React.FC = () => {
 
                 {/* Dropdown */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in zoom-in-95">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                      <span className="text-xs font-bold text-slate-900">Official Priority Alerts</span>
-                      <button
-                        onClick={() => setShowNotifications(false)}
-                        className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <div className="space-y-2 mt-2 max-h-64 overflow-y-auto">
-                      {notifications.map((n) => (
-                        <div
-                          key={n.id}
-                          onClick={() => {
-                            markNotificationRead(n.id);
-                            setOfficialTab('escalations');
-                            setShowNotifications(false);
-                          }}
-                          className={`p-2.5 rounded-lg text-xs cursor-pointer transition-all ${
-                            n.read ? 'bg-white text-slate-500' : 'bg-red-50/70 text-slate-800 font-semibold'
-                          }`}
+                  <>
+                    <div
+                      className="fixed inset-0 z-[2050]"
+                      onClick={() => setShowNotifications(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl p-3 z-[2100] animate-in fade-in zoom-in-95">
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <span className="text-xs font-bold text-slate-900">Official Priority Alerts</span>
+                        <button
+                          onClick={() => setShowNotifications(false)}
+                          className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
                         >
-                          <p className="leading-snug">{n.title}</p>
-                          <span className="text-[10px] text-slate-400 mt-1 block">{n.time}</span>
-                        </div>
-                      ))}
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="space-y-2 mt-2 max-h-64 overflow-y-auto">
+                        {notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            onClick={() => {
+                              markNotificationRead(n.id);
+                              setOfficialTab('escalations');
+                              setShowNotifications(false);
+                            }}
+                            className={`p-2.5 rounded-lg text-xs cursor-pointer transition-all ${
+                              n.read ? 'bg-white text-slate-500' : 'bg-red-50/70 text-slate-800 font-semibold'
+                            }`}
+                          >
+                            <p className="leading-snug">{n.title}</p>
+                            <span className="text-[10px] text-slate-400 mt-1 block">{n.time}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
 
