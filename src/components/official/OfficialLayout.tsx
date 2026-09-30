@@ -10,7 +10,8 @@ import {
   UserCheck, 
   Sliders, 
   X,
-  ExternalLink
+  ExternalLink,
+  RefreshCw
 } from 'lucide-react';
 import { OfficialDashboard } from './OfficialDashboard';
 import { OfficialIssues } from './OfficialIssues';
@@ -31,7 +32,9 @@ export const OfficialLayout: React.FC = () => {
     notifications,
     markNotificationRead,
     logout,
-    login
+    login,
+    syncStatus,
+    triggerManualSync
   } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -120,11 +123,17 @@ export const OfficialLayout: React.FC = () => {
                 />
               </form>
 
-              {/* Online Pill */}
-              <div className="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#0F2A4A] text-white text-[11px] font-bold shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>ONLINE</span>
-              </div>
+              {/* Live Multi-Device Sync Pill & Manual Refresh */}
+              <button
+                type="button"
+                onClick={triggerManualSync}
+                title="Realtime Multi-Device Sync Active. Click to force instant cloud refresh."
+                className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#0F2A4A] text-white text-[11px] font-bold shadow-2xs hover:bg-[#18395f] transition-all cursor-pointer"
+              >
+                <span className={`w-2 h-2 rounded-full ${syncStatus === 'syncing' ? 'bg-amber-400 animate-ping' : syncStatus === 'offline' ? 'bg-red-400' : 'bg-emerald-400 animate-pulse'}`}></span>
+                <span className="hidden sm:inline">{syncStatus === 'syncing' ? 'SYNCING...' : 'LIVE SYNC'}</span>
+                <RefreshCw className={`w-3 h-3 text-slate-300 ml-0.5 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+              </button>
 
               {/* Notification Bell */}
               <div className="relative">

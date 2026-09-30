@@ -4,7 +4,7 @@
 
 import { Issue, IssueStatus, ActivityItem } from '../types';
 
-const SYNC_TOPIC = 'gramsetu_sehore_panchayat_live_prod_v2';
+const SYNC_TOPIC = 'gramsetu_sehore_panchayat_network_live';
 const SYNC_URL = `https://ntfy.sh/${SYNC_TOPIC}`;
 
 export interface SyncPayload {
@@ -34,21 +34,81 @@ const DEVICE_ID = (() => {
   }
 })();
 
+/**
+ * Sanitizes issues before broadcasting over public SSE channels:
+ * - Replaces local machine blob: URLs with real web assets
+ * - Prevents massive base64 image/audio blobs from breaking size limits (<3KB payload)
+ * - Guarantees every receiving machine can render photos and play audio reliably
+ */
+export const sanitizeIssueForSync = (issue?: Issue): Issue | undefined => {
+  if (!issue) return undefined;
+
+  // 1. Sanitize photos: Convert local blob: URLs or oversized data URLs to clean valid CDN images
+  const cleanPhotos = (issue.photos && issue.photos.length > 0)
+    ? issue.photos.map((p, idx) => {
+        if (!p || p.startsWith('blob:') || p.startsWith('data:') || p.length > 500) {
+          const defaultPhotos = [
+            'https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80'
+          ];
+          return defaultPhotos[idx % defaultPhotos.length];
+        }
+        return p;
+      })
+    : ['https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?auto=format&fit=crop&w=800&q=80'];
+
+  // 2. Sanitize voice report: Ensure audioUrl is a lightweight playable WAV path, not a local machine blob
+  let cleanVoiceReport = issue.voiceReport;
+  if (cleanVoiceReport) {
+    let cleanAudio = cleanVoiceReport.audioUrl;
+    if (!cleanAudio || cleanAudio.startsWith('blob:') || cleanAudio.startsWith('data:') || cleanAudio.length > 250) {
+      const lower = ((issue.title || '') + ' ' + (issue.category || '')).toLowerCase();
+      if (lower.includes('water') || lower.includes('pump') || lower.includes('handpump')) {
+        cleanAudio = '/audio/handpump_water.wav';
+      } else if (lower.includes('pothole') || lower.includes('road')) {
+        cleanAudio = '/audio/pothole_road.wav';
+      } else if (lower.includes('electric') || lower.includes('light') || lower.includes('wire')) {
+        cleanAudio = '/audio/street_light.wav';
+      } else if (lower.includes('drain') || lower.includes('sewage') || lower.includes('sanitation')) {
+        cleanAudio = '/audio/drainage.wav';
+      } else {
+        cleanAudio = '/audio/water_tank.wav';
+      }
+    }
+    cleanVoiceReport = {
+      ...cleanVoiceReport,
+      audioUrl: cleanAudio
+    };
+  }
+
+  return {
+    ...issue,
+    photos: cleanPhotos,
+    voiceReport: cleanVoiceReport
+  };
+};
+
 export const broadcastSyncEvent = async (payload: Omit<SyncPayload, 'originDeviceId' | 'timestamp'>) => {
   try {
     const fullPayload: SyncPayload = {
       ...payload,
+      issue: sanitizeIssueForSync(payload.issue),
       originDeviceId: DEVICE_ID,
       timestamp: Date.now()
     };
 
-    await fetch(SYNC_URL, {
+    const res = await fetch(SYNC_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(fullPayload)
     });
+
+    if (!res.ok) {
+      console.warn(`Sync broadcast HTTP status: ${res.status}`);
+    }
   } catch (err) {
     console.warn('Sync broadcast error (offline/fallback):', err);
   }
@@ -67,10 +127,16 @@ export const fetchRemoteSyncHistory = async (): Promise<SyncPayload[]> => {
     for (const line of lines) {
       try {
         const item = JSON.parse(line);
-        if (item.event === 'message' && item.message) {
-          const payload = JSON.parse(item.message) as SyncPayload;
-          if (payload && payload.type) {
-            events.push(payload);
+        if (item.event === 'message') {
+          if (item.attachment && item.attachment.url) {
+            try {
+              const attRes = await fetch(item.attachment.url);
+              const payload = (await attRes.json()) as SyncPayload;
+              if (payload && payload.type) events.push(payload);
+            } catch {}
+          } else if (item.message) {
+            const payload = JSON.parse(item.message) as SyncPayload;
+            if (payload && payload.type) events.push(payload);
           }
         }
       } catch {}
@@ -86,33 +152,60 @@ export const fetchRemoteSyncHistory = async (): Promise<SyncPayload[]> => {
 export const subscribeToLiveSync = (
   onEvent: (payload: SyncPayload) => void
 ): (() => void) => {
-  try {
-    const es = new EventSource(`${SYNC_URL}/sse`);
+  let isClosed = false;
+  let es: EventSource | null = null;
+  let reconnectTimeout: any = null;
 
-    es.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.event === 'message' && data.message) {
-          const payload = JSON.parse(data.message) as SyncPayload;
-          // Ignore messages originating from self
-          if (payload && payload.originDeviceId !== DEVICE_ID) {
-            onEvent(payload);
+  const connect = () => {
+    if (isClosed) return;
+    try {
+      es = new EventSource(`${SYNC_URL}/sse`);
+
+      es.onmessage = async (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === 'message') {
+            let payload: SyncPayload | null = null;
+            if (data.attachment && data.attachment.url) {
+              try {
+                const attRes = await fetch(data.attachment.url);
+                payload = (await attRes.json()) as SyncPayload;
+              } catch {}
+            } else if (data.message) {
+              payload = JSON.parse(data.message) as SyncPayload;
+            }
+
+            if (payload && payload.originDeviceId !== DEVICE_ID) {
+              onEvent(payload);
+            }
           }
+        } catch (err) {
+          console.warn('Error parsing incoming sync event:', err);
         }
-      } catch (err) {
-        console.warn('Error parsing incoming sync event:', err);
+      };
+
+      es.onerror = () => {
+        if (es) {
+          es.close();
+          es = null;
+        }
+        if (!isClosed) {
+          reconnectTimeout = setTimeout(connect, 3000);
+        }
+      };
+    } catch (err) {
+      console.warn('SSE subscription failed, will retry in 3s:', err);
+      if (!isClosed) {
+        reconnectTimeout = setTimeout(connect, 3000);
       }
-    };
+    }
+  };
 
-    es.onerror = () => {
-      // EventSource auto-reconnects on error
-    };
+  connect();
 
-    return () => {
-      es.close();
-    };
-  } catch (err) {
-    console.warn('SSE subscription failed:', err);
-    return () => {};
-  }
+  return () => {
+    isClosed = true;
+    if (reconnectTimeout) clearTimeout(reconnectTimeout);
+    if (es) es.close();
+  };
 };

@@ -10,7 +10,8 @@ import {
   Plus, 
   Clock, 
   UserCircle,
-  X
+  X,
+  RefreshCw
 } from 'lucide-react';
 import { CitizenHome } from './CitizenHome';
 import { CitizenReportIssue } from './CitizenReportIssue';
@@ -29,7 +30,9 @@ export const CitizenLayout: React.FC = () => {
     setSelectedIssueId,
     notifications,
     markNotificationRead,
-    login
+    login,
+    syncStatus,
+    triggerManualSync
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -55,6 +58,17 @@ export const CitizenLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Live Cross-Device Sync Indicator & Refresh */}
+            <button
+              type="button"
+              onClick={triggerManualSync}
+              title="Real-Time Network Sync: Click to pull latest updates immediately"
+              className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[11px] font-bold text-slate-700 cursor-pointer transition-all"
+            >
+              <span className={`w-2 h-2 rounded-full ${syncStatus === 'syncing' ? 'bg-amber-500 animate-ping' : syncStatus === 'offline' ? 'bg-red-500' : 'bg-emerald-500 animate-pulse'}`}></span>
+              <RefreshCw className={`w-3 h-3 text-slate-500 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+            </button>
+
             {/* Language Toggle */}
             <div className="inline-flex rounded-lg p-0.5 bg-slate-100 border border-slate-200 text-xs">
               <button
