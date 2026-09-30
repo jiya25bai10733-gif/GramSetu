@@ -103,20 +103,51 @@ export const CitizenReportIssue: React.FC = () => {
     };
   }, []);
 
+  const formatSeconds = (sec: number) => {
+    const mins = Math.floor(sec / 60);
+    const secs = sec % 60;
+    return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
   const stopAllMedia = () => {
-    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    if (recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch {}
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
     }
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      try { mediaRecorderRef.current.stop(); } catch {}
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+        recognitionRef.current.stop();
+      } catch {}
+      recognitionRef.current = null;
+    }
+    if (mediaRecorderRef.current) {
+      try {
+        if (mediaRecorderRef.current.state !== 'inactive') {
+          mediaRecorderRef.current.stop();
+        }
+      } catch (err) {
+        console.warn('Error stopping mediaRecorder:', err);
+      }
+      mediaRecorderRef.current = null;
     }
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
+      try {
+        streamRef.current.getTracks().forEach(t => t.stop());
+      } catch {}
+      streamRef.current = null;
     }
-    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-      try { audioContextRef.current.close(); } catch {}
+    if (audioContextRef.current) {
+      try {
+        if (audioContextRef.current.state !== 'closed') {
+          audioContextRef.current.close();
+        }
+      } catch {}
+      audioContextRef.current = null;
     }
     setActiveDictatingField(null);
     setIsRecording(false);
@@ -225,6 +256,7 @@ export const CitizenReportIssue: React.FC = () => {
   };
 
   const startGeneralMicRecording = async () => {
+    stopAllMedia();
     setMicError(null);
     setAudioBlobUrl(null);
     setRecordingSeconds(0);
@@ -479,7 +511,10 @@ export const CitizenReportIssue: React.FC = () => {
         <div className="grid grid-cols-2 gap-2 p-1 bg-slate-200/70 rounded-xl">
           <button
             type="button"
-            onClick={() => setMode('type')}
+            onClick={() => {
+              stopAllMedia();
+              setMode('type');
+            }}
             className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               mode === 'type'
                 ? 'bg-white text-slate-900 shadow-xs'
@@ -512,14 +547,15 @@ export const CitizenReportIssue: React.FC = () => {
           <div className="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 text-center space-y-3">
             <div className="relative inline-block">
               {isRecording && (
-                <div className="absolute -inset-2.5 rounded-full bg-red-400/40 animate-ping"></div>
+                <div className="absolute -inset-2.5 rounded-full bg-red-400/40 animate-ping pointer-events-none"></div>
               )}
               <button
                 type="button"
                 onClick={toggleGeneralRecording}
-                className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto text-white shadow-md transition-all cursor-pointer ${
-                  isRecording ? 'bg-red-600 ring-4 ring-red-200' : 'bg-[#0F2A4A]'
+                className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto text-white shadow-md transition-all cursor-pointer relative z-10 ${
+                  isRecording ? 'bg-red-600 ring-4 ring-red-200 hover:bg-red-700' : 'bg-[#0F2A4A] hover:bg-[#183d6a]'
                 }`}
+                title={isRecording ? 'Click to Stop Recording' : 'Click to Start Recording'}
               >
                 {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
               </button>
@@ -527,12 +563,37 @@ export const CitizenReportIssue: React.FC = () => {
 
             <div>
               <p className="text-xs font-bold text-slate-900">
-                {isRecording ? `Recording... 00:0${recordingSeconds}` : 'Tap Mic to Dictate Grievance'}
+                {isRecording ? (
+                  <span className="text-red-600 font-extrabold flex items-center justify-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                    <span>Recording... {formatSeconds(recordingSeconds)}</span>
+                  </span>
+                ) : (
+                  'Tap Mic to Dictate Grievance'
+                )}
               </p>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 mt-0.5">
                 Speaks Hindi or English, words are typed in real-time below
               </p>
             </div>
+
+            {/* Explicit Stop Recording Button when Active */}
+            {isRecording && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    stopAllMedia();
+                  }}
+                  className="px-5 py-2.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center space-x-2 mx-auto shadow-md cursor-pointer transition-all"
+                >
+                  <span className="w-2.5 h-2.5 bg-white rounded-xs"></span>
+                  <span>⏹ Stop Recording</span>
+                </button>
+              </div>
+            )}
 
             {/* Live Waveform */}
             {isRecording && (
