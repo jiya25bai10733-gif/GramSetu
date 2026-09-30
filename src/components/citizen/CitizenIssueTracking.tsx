@@ -47,8 +47,12 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
 
     const fallbackText = issue.voiceReport?.transcriptHindi || issue.title || 'शिकायत का विवरण दर्ज किया गया है।';
 
+    const effectiveUrl = (issue.voiceReport?.audioUrl && !issue.voiceReport.audioUrl.startsWith('data:audio/mp3;base64,//Nkx'))
+      ? issue.voiceReport.audioUrl
+      : undefined;
+
     playbackControllerRef.current = playAudioWithFallback(
-      issue.voiceReport?.audioUrl,
+      effectiveUrl,
       fallbackText,
       () => setIsPlayingAudio(true),
       () => {

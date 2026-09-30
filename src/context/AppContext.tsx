@@ -59,7 +59,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           voiceReport: canonical.voiceReport || iss.voiceReport
         };
       }
-      if (!iss.voiceReport?.audioUrl || iss.voiceReport.audioUrl.length < 50) {
+      const currentUrl = iss.voiceReport?.audioUrl;
+      const isValidAudioUrl = currentUrl && (
+        currentUrl.startsWith('/audio/') || 
+        currentUrl.startsWith('blob:') || 
+        (currentUrl.startsWith('data:audio/') && !currentUrl.startsWith('data:audio/mp3;base64,//Nkx'))
+      );
+
+      if (!isValidAudioUrl) {
         return {
           ...iss,
           voiceReport: {
@@ -67,7 +74,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             transcriptEnglish: iss.voiceReport?.transcriptEnglish || iss.title,
             dialect: iss.voiceReport?.dialect || 'Hindi Regional Voice (Authentic)',
             duration: iss.voiceReport?.duration || '00:08',
-            audioUrl: getRealisticHumanVoice(iss.category, (iss.title || '') + ' ' + (iss.summary || ''))
+            audioUrl: getRealisticHumanVoice(iss.category, (iss.title || '') + ' ' + (iss.summary || '') + ' ' + (iss.voiceReport?.transcriptHindi || ''))
           }
         };
       }

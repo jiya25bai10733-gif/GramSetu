@@ -39,7 +39,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'Our village handpump has been broken for 3 days, causing serious drinking water scarcity.',
       dialect: 'Hindi Regional Voice (Authentic)',
       duration: '00:08',
-      audioUrl: HUMAN_VOICE_BASE64.handpump_water
+      audioUrl: '/audio/handpump_water.ogg'
     },
     clusterId: 'cluster-handpump-1',
     clusterMembersCount: 17
@@ -80,7 +80,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'A huge pothole has developed on the road, two scooters slipped last night.',
       dialect: 'Hindi Regional Voice (Authentic)',
       duration: '00:07',
-      audioUrl: HUMAN_VOICE_BASE64.road_pothole
+      audioUrl: '/audio/road_pothole.ogg'
     },
     clusterMembersCount: 6
   },
@@ -120,7 +120,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'Oil is leaking from the transformer and sparks are flying, a major accident could happen at any time.',
       dialect: 'Hindi Regional Voice (Authentic)',
       duration: '00:08',
-      audioUrl: HUMAN_VOICE_BASE64.transformer_sparks
+      audioUrl: '/audio/transformer_sparks.ogg'
     }
   },
   {
@@ -237,7 +237,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'Power supply from the electrical substation is shut down, complete darkness all night.',
       dialect: 'Hindi Regional Voice (Authentic)',
       duration: '00:06',
-      audioUrl: HUMAN_VOICE_BASE64.substation_outage
+      audioUrl: '/audio/substation_outage.ogg'
     }
   },
   {
@@ -266,7 +266,7 @@ export const INITIAL_ISSUES: Issue[] = [
       transcriptEnglish: 'Dirty drainage water is overflowing onto the street, risk of disease outbreak.',
       dialect: 'Hindi Regional Voice (Authentic)',
       duration: '00:07',
-      audioUrl: HUMAN_VOICE_BASE64.sanitation_drainage
+      audioUrl: '/audio/sanitation_drainage.ogg'
     }
   }
 ];

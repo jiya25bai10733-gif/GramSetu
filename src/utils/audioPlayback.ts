@@ -6,6 +6,24 @@ import { getRealisticHumanVoice } from '../data/humanVoiceClips';
 
 // Module-level reference to prevent Chromium garbage collection of active speech utterances
 let activeUtterance: SpeechSynthesisUtterance | null = null;
+let sharedAudioContext: AudioContext | null = null;
+
+const getOrCreateAudioContext = (): AudioContext | null => {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return null;
+    if (!sharedAudioContext || sharedAudioContext.state === 'closed') {
+      sharedAudioContext = new AudioCtx();
+    }
+    if (sharedAudioContext.state === 'suspended') {
+      sharedAudioContext.resume().catch(() => {});
+    }
+    return sharedAudioContext;
+  } catch (e) {
+    console.warn('AudioContext creation failed:', e);
+    return null;
+  }
+};
 
 export const dataUrlToBlobUrl = (dataUrl: string): string => {
   if (!dataUrl || !dataUrl.startsWith('data:')) {
@@ -16,7 +34,7 @@ export const dataUrlToBlobUrl = (dataUrl: string): string => {
     if (parts.length < 2) return dataUrl;
     
     const mimeMatch = parts[0].match(/:(.*?);/);
-    const mime = mimeMatch ? mimeMatch[1] : 'audio/webm';
+    const mime = mimeMatch ? mimeMatch[1] : 'audio/ogg';
     const binaryStr = atob(parts[1]);
     const len = binaryStr.length;
     const bytes = new Uint8Array(len);
@@ -37,20 +55,40 @@ export const playAudioWithFallback = (
   onStart?: () => void,
   onEnd?: () => void
 ): { stop: () => void } => {
-  let activeAudio: HTMLAudioElement | null = null;
   let isStopped = false;
-  let hasFallenBackToTTS = false;
-  let hasTriedHumanClip = false;
-  let playStartTime = 0;
+  let activeAudioElement: HTMLAudioElement | null = null;
+  let activeBufferSource: AudioBufferSourceNode | null = null;
+  let hasTriggeredStart = false;
 
-  const handleStop = () => {
-    isStopped = true;
-    if (activeAudio) {
+  const triggerStart = () => {
+    if (!hasTriggeredStart && !isStopped) {
+      hasTriggeredStart = true;
+      if (onStart) onStart();
+    }
+  };
+
+  const triggerEnd = () => {
+    if (!isStopped) {
+      isStopped = true;
+      stopInternal();
+      if (onEnd) onEnd();
+    }
+  };
+
+  const stopInternal = () => {
+    if (activeBufferSource) {
       try {
-        activeAudio.pause();
-        activeAudio.currentTime = 0;
+        activeBufferSource.stop();
+        activeBufferSource.disconnect();
       } catch {}
-      activeAudio = null;
+      activeBufferSource = null;
+    }
+    if (activeAudioElement) {
+      try {
+        activeAudioElement.pause();
+        activeAudioElement.currentTime = 0;
+      } catch {}
+      activeAudioElement = null;
     }
     if ('speechSynthesis' in window) {
       try {
@@ -58,19 +96,18 @@ export const playAudioWithFallback = (
       } catch {}
     }
     activeUtterance = null;
+  };
+
+  const handleStop = () => {
+    isStopped = true;
+    stopInternal();
     if (onEnd) onEnd();
   };
 
-  const playTTS = () => {
-    if (isStopped || hasFallenBackToTTS) return;
-    hasFallenBackToTTS = true;
-
-    if (activeAudio) {
-      try {
-        activeAudio.pause();
-      } catch {}
-      activeAudio = null;
-    }
+  // Fallback 3: Speech Synthesis
+  const playSpeechSynthesis = () => {
+    if (isStopped) return;
+    stopInternal();
 
     if ('speechSynthesis' in window && fallbackText) {
       try {
@@ -93,107 +130,127 @@ export const playAudioWithFallback = (
         utterance.pitch = 1.0;
 
         utterance.onstart = () => {
-          if (!isStopped && onStart) onStart();
+          if (!isStopped) triggerStart();
         };
 
         utterance.onend = () => {
           activeUtterance = null;
-          if (onEnd) onEnd();
+          triggerEnd();
         };
 
         utterance.onerror = (e) => {
           console.warn('Speech synthesis error:', e);
           activeUtterance = null;
-          if (onEnd) onEnd();
+          triggerEnd();
         };
 
         window.speechSynthesis.speak(utterance);
       } catch (err) {
         console.warn('Speech synthesis exception:', err);
-        activeUtterance = null;
-        if (onEnd) onEnd();
+        triggerEnd();
       }
     } else {
-      if (onEnd) onEnd();
+      triggerEnd();
     }
   };
 
-  const tryPlayUrl = (url: string, isHumanClipFallback = false) => {
+  // Fallback 2: HTML5 Audio Element
+  const playViaAudioElement = (srcUrl: string) => {
     if (isStopped) return;
     try {
-      const playableUrl = dataUrlToBlobUrl(url);
-      const audio = new Audio(playableUrl);
-      activeAudio = audio;
+      const audio = new Audio();
+      activeAudioElement = audio;
+      audio.volume = 1.0;
       audio.preload = 'auto';
 
+      let playStarted = false;
+
       audio.onplay = () => {
-        playStartTime = Date.now();
-        if (!isStopped && onStart) onStart();
+        playStarted = true;
+        triggerStart();
       };
 
       audio.onended = () => {
-        const playedDuration = Date.now() - playStartTime;
-        if (playedDuration < 250 && !isStopped) {
-          if (!isHumanClipFallback && !hasTriedHumanClip) {
-            hasTriedHumanClip = true;
-            const humanClip = getRealisticHumanVoice(undefined, fallbackText);
-            tryPlayUrl(humanClip, true);
-          } else {
-            playTTS();
-          }
-        } else {
-          if (onEnd) onEnd();
-        }
+        triggerEnd();
       };
 
       audio.onerror = (e) => {
-        console.warn('Audio element error, falling back:', e);
-        if (!isStopped) {
-          if (!isHumanClipFallback && !hasTriedHumanClip) {
-            hasTriedHumanClip = true;
-            const humanClip = getRealisticHumanVoice(undefined, fallbackText);
-            tryPlayUrl(humanClip, true);
-          } else {
-            playTTS();
-          }
-        }
+        console.warn('HTML5 Audio error, trying TTS fallback:', e);
+        if (!isStopped) playSpeechSynthesis();
       };
 
+      // Set src (if data URI, convert or pass directly)
+      audio.src = srcUrl.startsWith('data:') ? dataUrlToBlobUrl(srcUrl) : srcUrl;
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
-          console.warn('audio.play() rejected, falling back:', err);
-          if (!isStopped) {
-            if (!isHumanClipFallback && !hasTriedHumanClip) {
-              hasTriedHumanClip = true;
-              const humanClip = getRealisticHumanVoice(undefined, fallbackText);
-              tryPlayUrl(humanClip, true);
-            } else {
-              playTTS();
-            }
+          console.warn('audio.play() rejected:', err);
+          if (!playStarted && !isStopped) {
+            playSpeechSynthesis();
           }
         });
       }
     } catch (err) {
-      console.warn('Audio setup failed, falling back:', err);
-      if (!isHumanClipFallback && !hasTriedHumanClip) {
-        hasTriedHumanClip = true;
-        const humanClip = getRealisticHumanVoice(undefined, fallbackText);
-        tryPlayUrl(humanClip, true);
-      } else {
-        playTTS();
+      console.warn('playViaAudioElement failed:', err);
+      if (!isStopped) playSpeechSynthesis();
+    }
+  };
+
+  // Primary: Web Audio API (decoded in memory — 100% resilient across browsers)
+  const playViaWebAudio = async (srcUrl: string) => {
+    if (isStopped) return;
+    const ctx = getOrCreateAudioContext();
+    if (!ctx) {
+      playViaAudioElement(srcUrl);
+      return;
+    }
+
+    try {
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+
+      // Fetch the audio binary (works seamlessly for data:, blob:, and /audio/... URLs)
+      const res = await fetch(srcUrl);
+      const arrayBuf = await res.arrayBuffer();
+      
+      if (isStopped) return;
+
+      const audioBuf = await ctx.decodeAudioData(arrayBuf);
+      if (isStopped) return;
+
+      const source = ctx.createBufferSource();
+      source.buffer = audioBuf;
+      source.connect(ctx.destination);
+      activeBufferSource = source;
+
+      source.onended = () => {
+        activeBufferSource = null;
+        triggerEnd();
+      };
+
+      source.start(0);
+      triggerStart();
+    } catch (err) {
+      console.warn('Web Audio API playback failed, attempting HTML5 Audio fallback:', err);
+      if (!isStopped) {
+        playViaAudioElement(srcUrl);
       }
     }
   };
 
-  // Determine starting audio URL
-  if (audioUrl && audioUrl.length > 50) {
-    tryPlayUrl(audioUrl, false);
+  // Resolve best available audio URL
+  let resolvedUrl = audioUrl;
+  // If no URL or old synthetic mp3 string from previous session, resolve directly to the authentic human recording
+  if (!resolvedUrl || resolvedUrl.startsWith('data:audio/mp3;base64,//Nkx') || resolvedUrl.length < 20) {
+    resolvedUrl = getRealisticHumanVoice(undefined, fallbackText);
+  }
+
+  // Start playback
+  if (resolvedUrl) {
+    playViaWebAudio(resolvedUrl);
   } else {
-    // If no custom audio was provided, start immediately with realistic human voice clip
-    hasTriedHumanClip = true;
-    const humanClip = getRealisticHumanVoice(undefined, fallbackText);
-    tryPlayUrl(humanClip, true);
+    playSpeechSynthesis();
   }
 
   return { stop: handleStop };
