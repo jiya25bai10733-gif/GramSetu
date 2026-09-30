@@ -34,7 +34,7 @@ export const dataUrlToBlobUrl = (dataUrl: string): string => {
     if (parts.length < 2) return dataUrl;
     
     const mimeMatch = parts[0].match(/:(.*?);/);
-    const mime = mimeMatch ? mimeMatch[1] : 'audio/ogg';
+    const mime = mimeMatch ? mimeMatch[1] : 'audio/wav';
     const binaryStr = atob(parts[1]);
     const len = binaryStr.length;
     const bytes = new Uint8Array(len);
