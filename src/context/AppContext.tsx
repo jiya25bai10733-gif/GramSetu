@@ -49,15 +49,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [issues, setIssues] = useState<Issue[]>(() => {
     const saved = localStorage.getItem('gramsetu_issues');
     const loaded: Issue[] = saved ? JSON.parse(saved) : INITIAL_ISSUES;
+    const canonicalMap = new Map(INITIAL_ISSUES.map(i => [i.id, i]));
+
     return loaded.map(iss => {
+      if (canonicalMap.has(iss.id)) {
+        const canonical = canonicalMap.get(iss.id)!;
+        return {
+          ...iss,
+          voiceReport: canonical.voiceReport || iss.voiceReport
+        };
+      }
       if (!iss.voiceReport?.audioUrl || iss.voiceReport.audioUrl.length < 50) {
         return {
           ...iss,
           voiceReport: {
             transcriptHindi: iss.voiceReport?.transcriptHindi || iss.summary || iss.title,
             transcriptEnglish: iss.voiceReport?.transcriptEnglish || iss.title,
-            dialect: iss.voiceReport?.dialect || 'Realtime Voice Capture Engine',
-            duration: iss.voiceReport?.duration || '00:09',
+            dialect: iss.voiceReport?.dialect || 'Hindi Regional Voice (Authentic)',
+            duration: iss.voiceReport?.duration || '00:08',
             audioUrl: getRealisticHumanVoice(iss.category, (iss.title || '') + ' ' + (iss.summary || ''))
           }
         };

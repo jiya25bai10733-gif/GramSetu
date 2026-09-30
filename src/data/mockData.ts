@@ -35,9 +35,9 @@ export const INITIAL_ISSUES: Issue[] = [
       'https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=800&q=80'
     ],
     voiceReport: {
-      transcriptHindi: 'हमारे गांव का हैंडपंप तीन दिन से खराब है, पीने के पानी की भारी समस्या हो रही है। पानी में मैला आ रहा है।',
-      transcriptEnglish: 'Our village handpump has been broken for 3 days, causing serious drinking water scarcity. Muddy water is coming out.',
-      dialect: 'Bundeli / Malwi Voice Engine',
+      transcriptHindi: 'हमारे गांव का हैंडपंप तीन दिन से खराब है, पानी के पीने की भारी समस्या हो रही है।',
+      transcriptEnglish: 'Our village handpump has been broken for 3 days, causing serious drinking water scarcity.',
+      dialect: 'Hindi Regional Voice (Authentic)',
       duration: '00:08',
       audioUrl: HUMAN_VOICE_BASE64.handpump_water
     },
@@ -76,10 +76,10 @@ export const INITIAL_ISSUES: Issue[] = [
       'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80'
     ],
     voiceReport: {
-      transcriptHindi: 'रास्ते पे बहुत बड़ा गड्ढा हो गया है, कल रात को दो स्कूटर गिर गए थे। जल्दी ठीक करवाइये।',
-      transcriptEnglish: 'A huge pothole has developed on the road, two scooters slipped last night. Please get it repaired urgently.',
-      dialect: 'Hindi Regional Engine',
-      duration: '00:12',
+      transcriptHindi: 'रास्ते पे बहुत बड़ा गड्ढा हो गया है, कल रात को दो स्कूटर गिर गए थे।',
+      transcriptEnglish: 'A huge pothole has developed on the road, two scooters slipped last night.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:07',
       audioUrl: HUMAN_VOICE_BASE64.road_pothole
     },
     clusterMembersCount: 6
@@ -116,10 +116,10 @@ export const INITIAL_ISSUES: Issue[] = [
       'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
     ],
     voiceReport: {
-      transcriptHindi: 'ट्रांसफार्मर से तेल टपक रहा है और बहुत चिंगारी निकल रही है। मोटरें नहीं चल पा रही हैं।',
-      transcriptEnglish: 'Oil is leaking from the transformer and heavy sparks are flying. Farm motors cannot run.',
-      dialect: 'Malwi Dialect Engine',
-      duration: '00:09',
+      transcriptHindi: 'ट्रांसफॉर्मर में से तेल टपक रहा है और चिंगारी निकल रही है, कभी भी बड़ा हादसा हो सकता है।',
+      transcriptEnglish: 'Oil is leaking from the transformer and sparks are flying, a major accident could happen at any time.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:08',
       audioUrl: HUMAN_VOICE_BASE64.transformer_sparks
     }
   },
@@ -233,10 +233,10 @@ export const INITIAL_ISSUES: Issue[] = [
       'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
     ],
     voiceReport: {
-      transcriptHindi: 'सबस्टेशन का ट्रांसफार्मर पूरी तरह बैठ गया है। पिछले 36 घंटे से बिजली गुल है।',
-      transcriptEnglish: 'The substation transformer has completely collapsed. No electricity for the last 36 hours.',
-      dialect: 'Bundeli Dialect Engine',
-      duration: '00:15',
+      transcriptHindi: 'बिजली सबस्टेशन से सप्लाई बंद है, पूरी रात अंधेरा रहता है।',
+      transcriptEnglish: 'Power supply from the electrical substation is shut down, complete darkness all night.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:06',
       audioUrl: HUMAN_VOICE_BASE64.substation_outage
     }
   },
@@ -262,10 +262,10 @@ export const INITIAL_ISSUES: Issue[] = [
     upvotes: 8,
     photos: [],
     voiceReport: {
-      transcriptHindi: 'वार्ड 3 में नाली का गंदा पानी सड़क पर बह रहा है, बहुत बदबू आ रही है और आने-जाने में परेशानी हो रही है।',
-      transcriptEnglish: 'Dirty canal sewage water is overflowing onto the street in Ward 3, causing foul smell and severe inconvenience.',
-      dialect: 'Hindi Regional Engine',
-      duration: '00:10',
+      transcriptHindi: 'नाली का गंदा पानी सड़क पर बह रहा है, बीमारी फैलने का डर है।',
+      transcriptEnglish: 'Dirty drainage water is overflowing onto the street, risk of disease outbreak.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:07',
       audioUrl: HUMAN_VOICE_BASE64.sanitation_drainage
     }
   }
