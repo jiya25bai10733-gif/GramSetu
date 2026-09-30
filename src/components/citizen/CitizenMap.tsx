@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { getFriendlyLocationName, reverseGeocodeAsync } from '../../utils/locationResolver';
 
 // Leaflet default icon fix
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -105,6 +106,7 @@ export const CitizenMap: React.FC = () => {
   
   // Real-life Location & Map Viewport State
   const [userLocation, setUserLocation] = useState<[number, number]>([23.2045, 77.0812]);
+  const [userLocationName, setUserLocationName] = useState<string>('Ward 3 • Rampur Gram Panchayat');
   const [userAccuracy, setUserAccuracy] = useState<number>(12);
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [hasAcquiredGps, setHasAcquiredGps] = useState<boolean>(false);
@@ -132,11 +134,17 @@ export const CitizenMap: React.FC = () => {
           setIsLocating(false);
           setMapCenter([lat, lng]);
           setMapZoom(16);
+          const initialName = getFriendlyLocationName([lat, lng]);
+          setUserLocationName(initialName);
+          reverseGeocodeAsync(lat, lng).then(addr => {
+            if (addr) setUserLocationName(addr);
+          });
         },
         (err) => {
           console.warn('Real GPS acquisition notice (using district anchor):', err);
           setIsLocating(false);
           setUserLocation([23.2045, 77.0812]);
+          setUserLocationName('Ward 3 • Rampur Gram Panchayat');
           setUserAccuracy(15);
           setHasAcquiredGps(true);
           setMapCenter([23.2045, 77.0812]);
@@ -165,7 +173,7 @@ export const CitizenMap: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <h1 className="text-base font-extrabold text-slate-900">Ward Community Map</h1>
             </div>
-            <p className="text-[11px] text-slate-500">Live civic coordinates across Rampur & Sehore</p>
+            <p className="text-[11px] text-slate-500">Live civic locations across Rampur & Sehore</p>
           </div>
           <div className="flex items-center space-x-1.5">
             <button
@@ -194,13 +202,13 @@ export const CitizenMap: React.FC = () => {
 
         {/* Real-time GPS Telemetry Banner */}
         <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 flex items-center justify-between text-[11px]">
-          <div className="flex items-center space-x-2">
-            <Compass className="w-3.5 h-3.5 text-[#0F2A4A]" />
-            <span className="font-mono text-slate-700 font-bold">
-              {userLocation[0].toFixed(4)}° N, {userLocation[1].toFixed(4)}° E
+          <div className="flex items-center space-x-2 min-w-0 pr-2">
+            <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+            <span className="text-slate-800 font-bold text-[11px] truncate">
+              {userLocationName}
             </span>
-            <span className="text-slate-400">•</span>
-            <span className="text-emerald-700 font-medium">±{userAccuracy}m GPS accuracy</span>
+            <span className="text-slate-300 hidden sm:inline">•</span>
+            <span className="text-emerald-700 font-medium hidden sm:inline whitespace-nowrap">±{userAccuracy}m GPS accuracy</span>
           </div>
           
           {/* Map Layer Switcher (Street vs Satellite) */}
@@ -349,12 +357,12 @@ export const CitizenMap: React.FC = () => {
           <Marker position={userLocation} icon={userGpsIcon}>
             <Popup>
               <div className="text-xs">
-                <span className="font-bold text-blue-700 block">📍 Your Real GPS Location</span>
-                <span className="font-mono text-slate-500 text-[10px]">
-                  {userLocation[0].toFixed(5)}° N, {userLocation[1].toFixed(5)}° E
+                <span className="font-bold text-blue-700 block">📍 Verified Ground Location</span>
+                <span className="text-slate-700 text-[11px] font-semibold block mt-0.5">
+                  {userLocationName}
                 </span>
                 <span className="block text-[10px] text-emerald-600 font-semibold mt-0.5">
-                  Accuracy: ±{userAccuracy} meters
+                  GPS Accuracy: ±{userAccuracy} meters
                 </span>
               </div>
             </Popup>
@@ -376,9 +384,9 @@ export const CitizenMap: React.FC = () => {
             <Marker position={[inspectedSpot.lat, inspectedSpot.lng]} icon={inspectionPinIcon}>
               <Popup>
                 <div className="text-xs space-y-1">
-                  <span className="font-bold text-slate-800 block">Selected Map Coordinates:</span>
-                  <span className="font-mono text-slate-600 text-[10px] block">
-                    {inspectedSpot.lat}° N, {inspectedSpot.lng}° E
+                  <span className="font-bold text-slate-800 block">Selected Ground Location:</span>
+                  <span className="text-slate-700 text-xs font-semibold block">
+                    {getFriendlyLocationName([inspectedSpot.lat, inspectedSpot.lng])}
                   </span>
                   <span className="text-[10px] text-slate-500 block">
                     Distance: {computeDistance(userLocation[0], userLocation[1], inspectedSpot.lat, inspectedSpot.lng)}
@@ -388,7 +396,7 @@ export const CitizenMap: React.FC = () => {
                     onClick={() => setCitizenTab('report')}
                     className="w-full mt-1.5 py-1 px-2 bg-[#0F2A4A] text-white text-[10px] font-bold rounded cursor-pointer"
                   >
-                    Report Issue At This Spot
+                    Report Issue At This Location
                   </button>
                 </div>
               </Popup>
@@ -417,7 +425,7 @@ export const CitizenMap: React.FC = () => {
 
         {/* Floating Instruction Overlay */}
         <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-md border border-slate-200/80 text-[10px] font-bold text-slate-700 shadow-xs z-[999] pointer-events-none">
-          Click any point to inspect coordinates or report
+          Click any point to inspect location or report
         </div>
       </div>
 
@@ -453,9 +461,12 @@ export const CitizenMap: React.FC = () => {
 
           <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
             <div className="text-[11px] text-slate-500">
-              <span className="font-semibold text-slate-700 block">{selectedIssue.locationName}</span>
-              <span className="font-mono text-[10px] text-slate-400">
-                {selectedIssue.coordinates[0].toFixed(4)}° N, {selectedIssue.coordinates[1].toFixed(4)}° E
+              <span className="font-bold text-slate-900 block flex items-center">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 mr-1 flex-shrink-0" />
+                {selectedIssue.locationName}
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium">
+                {selectedIssue.panchayat || 'Rampur Panchayat'}
               </span>
             </div>
             <button

@@ -186,8 +186,8 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
                 <span className="font-bold text-slate-700 block uppercase">
                   GIS NODE: {issue.panchayat.replace(/\s+/g, '-').toUpperCase()}
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono">
-                  GRID REF: {issue.coordinates[0].toFixed(5)}° N, {issue.coordinates[1].toFixed(5)}° E
+                <span className="text-[10px] text-slate-500 font-bold block">
+                  LOCATION: {issue.locationName.toUpperCase()}
                 </span>
               </div>
               <div className="flex items-center space-x-1.5">
@@ -279,10 +279,10 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
                   <Popup>
                     <div className="text-xs space-y-1">
                       <span className="font-bold text-slate-900 block">{issue.title}</span>
-                      <span className="font-mono text-[10px] text-slate-500 block">
-                        {issue.coordinates[0].toFixed(5)}° N, {issue.coordinates[1].toFixed(5)}° E
+                      <span className="text-[11px] font-bold text-slate-800 block flex items-center">
+                        📍 {issue.locationName}
                       </span>
-                      <span className="text-[10px] text-slate-600 block">{issue.locationName}</span>
+                      <span className="text-[10px] text-slate-500 block font-medium">{issue.panchayat}</span>
                     </div>
                   </Popup>
                 </Marker>
@@ -372,10 +372,8 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
                 <span className="font-bold text-slate-800">{issue.upvotes} Registered Upvotes</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 font-bold block uppercase">LAT / LNG</span>
-                <span className="font-mono text-slate-700">
-                  {issue.coordinates[0].toFixed(5)}, {issue.coordinates[1].toFixed(5)}
-                </span>
+                <span className="text-[10px] text-slate-500 font-bold block uppercase">PANCHAYAT JURISDICTION</span>
+                <span className="font-bold text-slate-800">{issue.panchayat}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-500 font-bold block uppercase">SLA REMAINING</span>
@@ -478,8 +476,9 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
                     alt="Pothole ground inspection"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute bottom-1 left-1 bg-black/70 text-white text-[9px] font-mono px-1.5 py-0.5 rounded">
-                    28.4110°N • 77.3190°E
+                  <div className="absolute bottom-1 left-1 bg-black/75 text-white text-[9px] font-medium px-2 py-0.5 rounded flex items-center gap-1">
+                    <MapPin className="w-2.5 h-2.5 text-emerald-400" />
+                    <span>{issue.locationName}</span>
                   </div>
                 </div>
 

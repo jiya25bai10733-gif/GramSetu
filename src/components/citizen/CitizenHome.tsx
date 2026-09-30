@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { getFriendlyLocationName } from '../../utils/locationResolver';
 
 const MapController: React.FC<{ center: [number, number]; zoom: number }> = ({ center, zoom }) => {
   const map = useMap();
@@ -721,9 +722,9 @@ export const CitizenHome: React.FC = () => {
             >
               <Popup>
                 <div className="text-xs">
-                  <span className="font-bold text-slate-800 block">Your Real-Life Location</span>
-                  <span className="font-mono text-[10px] text-slate-500">
-                    {homeUserGps[0].toFixed(5)}° N, {homeUserGps[1].toFixed(5)}° E
+                  <span className="font-bold text-slate-800 block">Your Ground Location</span>
+                  <span className="text-[11px] font-bold text-slate-700 block mt-0.5">
+                    {getFriendlyLocationName(homeUserGps)}
                   </span>
                 </div>
               </Popup>
@@ -758,7 +759,8 @@ export const CitizenHome: React.FC = () => {
             >
               <Popup>
                 <div className="text-xs font-bold">#GS-1248: Handpump Failure</div>
-                <div className="text-[10px] text-slate-500">17 citizens reported • 23.2045° N, 77.0812° E</div>
+                <div className="text-[11px] text-slate-700 font-semibold mt-0.5">Ward 3 • Rampur Gram Panchayat</div>
+                <div className="text-[10px] text-slate-500">17 citizens reported</div>
               </Popup>
             </Marker>
 
@@ -784,7 +786,7 @@ export const CitizenHome: React.FC = () => {
             >
               <Popup>
                 <div className="text-xs font-bold">#GS-1245: Main Road Pothole</div>
-                <div className="text-[10px] text-slate-500">23.2018° N, 77.0895° E</div>
+                <div className="text-[11px] text-slate-700 font-semibold mt-0.5">Sector 15 Central Road • Sehore Town</div>
               </Popup>
             </Marker>
           </MapContainer>

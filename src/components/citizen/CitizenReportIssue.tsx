@@ -29,6 +29,7 @@ import {
 import confetti from 'canvas-confetti';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { getFriendlyLocationName, reverseGeocodeAsync } from '../../utils/locationResolver';
 
 // Interactive Map Click Handler
 const MapClickPicker = ({ onLocationPick }: { onLocationPick: (lat: number, lng: number) => void }) => {
@@ -369,20 +370,24 @@ export const CitizenReportIssue: React.FC = () => {
           setCoordinates([lat, lng]);
           setGpsAccuracy(acc);
           setIsLocatingGps(false);
-          setLocation(`Live GPS: ${lat}° N, ${lng}° E (Ward 04, Rampur)`);
+          const initialName = getFriendlyLocationName([lat, lng]);
+          setLocation(initialName);
+          reverseGeocodeAsync(lat, lng).then(addr => {
+            if (addr) setLocation(addr);
+          });
         },
         (err) => {
           console.warn('Geolocation error:', err);
           setIsLocatingGps(false);
           setCoordinates([23.2045, 77.0812]);
           setGpsAccuracy(8);
-          setLocation('Ward 04, Rampur Gram Panchayat (23.2045° N, 77.0812° E)');
+          setLocation('Ward 4 • Rampur Gram Panchayat');
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     } else {
       setCoordinates([23.2045, 77.0812]);
-      setLocation('Ward 04, Rampur Gram Panchayat (23.2045° N, 77.0812° E)');
+      setLocation('Ward 4 • Rampur Gram Panchayat');
     }
   };
 
@@ -784,7 +789,11 @@ export const CitizenReportIssue: React.FC = () => {
                   <MapClickPicker
                     onLocationPick={(lat, lng) => {
                       setCoordinates([lat, lng]);
-                      setLocation(`Selected Pin: ${lat}° N, ${lng}° E (Ward 04, Rampur)`);
+                      const friendly = getFriendlyLocationName([lat, lng]);
+                      setLocation(friendly);
+                      reverseGeocodeAsync(lat, lng).then(addr => {
+                        if (addr) setLocation(addr);
+                      });
                     }}
                   />
                   <Marker
@@ -802,19 +811,19 @@ export const CitizenReportIssue: React.FC = () => {
                   >
                     <Popup>
                       <div className="text-xs font-bold">Defect Location</div>
-                      <div className="text-[10px] text-slate-500 font-mono">{coordinates[0]}° N, {coordinates[1]}° E</div>
+                      <div className="text-[11px] text-slate-700 font-semibold">{location}</div>
                     </Popup>
                   </Marker>
                 </MapContainer>
               </div>
 
-              {/* Coordinates & Verified Geo-Fence Footer */}
+              {/* Verified Location Footer */}
               <div className="bg-white p-2.5 border-t border-slate-200 flex items-center justify-between text-[11px]">
-                <div className="flex items-center space-x-1.5">
+                <div className="flex items-center space-x-1.5 min-w-0 pr-2">
                   <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="font-bold text-slate-800">Verified Geo-Fence:</span>
-                  <span className="font-mono text-slate-600 text-[10px]">
-                    {coordinates[0]}° N, {coordinates[1]}° E {gpsAccuracy ? `(±${gpsAccuracy}m)` : ''}
+                  <span className="font-bold text-slate-800 shrink-0">Location:</span>
+                  <span className="text-slate-700 font-medium text-[11px] truncate">
+                    {location} {gpsAccuracy ? `(±${gpsAccuracy}m)` : ''}
                   </span>
                 </div>
                 <button

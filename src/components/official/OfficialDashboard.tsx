@@ -149,8 +149,8 @@ export const OfficialDashboard: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span className="font-bold text-slate-700">GIS TELEMETRY:</span>
-                <span className="text-slate-500 font-mono">
-                  {activeWard} • {mapCenter[0].toFixed(4)}° N, {mapCenter[1].toFixed(4)}° E
+                <span className="text-slate-700 font-bold">
+                  {activeWard} • Rampur Gram Panchayat
                 </span>
               </div>
               <div className="flex items-center space-x-2">
@@ -158,7 +158,7 @@ export const OfficialDashboard: React.FC = () => {
                   type="button"
                   onClick={locateRealGps}
                   className="px-2 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-bold text-blue-700 hover:bg-blue-50 flex items-center space-x-1 cursor-pointer"
-                  title="Detect live GPS coordinates"
+                  title="Detect live GPS location"
                 >
                   <Crosshair className={`w-3 h-3 ${isLocating ? 'animate-spin' : ''}`} />
                   <span>{isLocating ? 'Fixing...' : 'Real GPS'}</span>
@@ -227,10 +227,10 @@ export const OfficialDashboard: React.FC = () => {
                       <Popup>
                         <div className="text-xs space-y-1">
                           <span className="font-bold text-slate-900 block">{iss.title}</span>
-                          <span className="font-mono text-[10px] text-slate-500 block">
-                            {iss.coordinates[0].toFixed(5)}° N, {iss.coordinates[1].toFixed(5)}° E
+                          <span className="text-[11px] font-bold text-slate-800 block flex items-center">
+                            📍 {iss.locationName}
                           </span>
-                          <span className="text-[10px] text-slate-600 block">{iss.locationName}</span>
+                          <span className="text-[10px] text-slate-500 block font-medium">{iss.panchayat}</span>
                           <button
                             type="button"
                             onClick={() => {

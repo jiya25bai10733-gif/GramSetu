@@ -15,8 +15,10 @@ import {
   Radio,
   Clock,
   CheckCircle2,
-  RefreshCw
+  RefreshCw,
+  MapPin
 } from 'lucide-react';
+import { getFriendlyLocationName } from '../../utils/locationResolver';
 
 const createPin = (color: string, label: string) => {
   return L.divIcon({
@@ -191,7 +193,7 @@ export const OfficialMap: React.FC = () => {
           }}
           className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg border border-blue-200 shrink-0 cursor-pointer"
         >
-          📍 Patrol Van GPS ({officerLocation[0].toFixed(4)}, {officerLocation[1].toFixed(4)})
+          📍 Patrol Van Ground Location
         </button>
         <button
           type="button"
@@ -277,8 +279,8 @@ export const OfficialMap: React.FC = () => {
             <Popup>
               <div className="text-xs p-1">
                 <span className="font-extrabold text-[#0F2A4A] block">FIELD PATROL VAN #04</span>
-                <span className="font-mono text-slate-500 text-[10px]">
-                  Real GPS: {officerLocation[0].toFixed(5)}° N, {officerLocation[1].toFixed(5)}° E
+                <span className="text-slate-700 font-bold text-[11px] block mt-0.5">
+                  📍 {getFriendlyLocationName(officerLocation)}
                 </span>
                 <span className="text-[10px] text-emerald-600 font-bold block mt-1">
                   Status: Active On-Duty • Speed: 0 km/h
@@ -334,11 +336,13 @@ export const OfficialMap: React.FC = () => {
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
-            <div className="mt-2 space-y-1 font-mono text-[11px]">
-              <div>LAT: <span className="text-slate-800 font-bold">{clickedCoord.lat}° N</span></div>
-              <div>LNG: <span className="text-slate-800 font-bold">{clickedCoord.lng}° E</span></div>
-              <div className="text-[10px] text-slate-500 font-sans mt-1">
-                Sub-Division: Sehore Tehsil Central Sector
+            <div className="mt-2 space-y-1 text-xs">
+              <div className="text-slate-800 font-bold flex items-center">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 mr-1 flex-shrink-0" />
+                <span>{getFriendlyLocationName(clickedCoord)}</span>
+              </div>
+              <div className="text-[11px] text-slate-500 font-medium">
+                Panchayat: Rampur Jurisdiction • Sehore
               </div>
             </div>
           </div>
@@ -377,9 +381,9 @@ export const OfficialMap: React.FC = () => {
 
             <div className="mt-3 pt-2 bg-slate-50 rounded-lg p-2 text-[11px] grid grid-cols-2 gap-2 border border-slate-200/70">
               <div>
-                <span className="text-slate-400 block text-[9px] uppercase font-bold">COORDINATES</span>
-                <span className="font-mono text-slate-700">
-                  {selectedIssue.coordinates[0].toFixed(4)}, {selectedIssue.coordinates[1].toFixed(4)}
+                <span className="text-slate-400 block text-[9px] uppercase font-bold">PANCHAYAT</span>
+                <span className="font-bold text-slate-800 text-[11px]">
+                  {selectedIssue.panchayat || 'Rampur Panchayat'}
                 </span>
               </div>
               <div>
