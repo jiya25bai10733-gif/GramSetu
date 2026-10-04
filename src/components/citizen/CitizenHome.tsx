@@ -43,6 +43,7 @@ export const CitizenHome: React.FC = () => {
     setSelectedIssueId, 
     submitNewIssue, 
     language,
+    t,
     joinCluster,
     clusters
   } = useApp();
@@ -367,15 +368,15 @@ export const CitizenHome: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Namaste, Ramesh</h1>
+              <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">{t('namaste', 'Namaste')}, Ramesh</h1>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                 <CheckCircle2 className="w-3 h-3 mr-1 text-emerald-600" />
-                VERIFIED CITIZEN
+                {t('verifiedCitizen', 'VERIFIED CITIZEN')}
               </span>
             </div>
             <p className="text-xs text-slate-500 font-medium flex items-center mt-1">
               <MapPin className="w-3 h-3 mr-1 text-emerald-600" />
-              Ward 3 • Rampur, Sehore, MP
+              {t('wardLocation', 'Ward 3 • Rampur, Sehore, MP')}
             </p>
           </div>
           <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0F2A4A] flex items-center justify-center border border-blue-100">
@@ -387,9 +388,9 @@ export const CitizenHome: React.FC = () => {
         <div className="mt-3 py-1.5 px-3 bg-slate-50 rounded-lg border border-slate-200/70 flex items-center justify-between text-xs">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-slate-600 font-medium">Gram Panchayat Portal Active</span>
+            <span className="text-slate-600 font-medium">{t('portalActive', 'Gram Panchayat Portal Active')}</span>
           </div>
-          <span className="font-mono text-slate-700 font-bold">Token #MP-SEH-084</span>
+          <span className="font-mono text-slate-700 font-bold">{t('token', 'Token')} #MP-SEH-084</span>
         </div>
       </div>
 
@@ -398,9 +399,9 @@ export const CitizenHome: React.FC = () => {
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-              SEVA SUVIDHA 24x7
+              {t('sevaSuvidha', 'SEVA SUVIDHA 24x7')}
             </span>
-            <h2 className="text-base font-extrabold text-slate-900">REPORT A PROBLEM</h2>
+            <h2 className="text-base font-extrabold text-slate-900">{t('reportAProblem', 'REPORT A PROBLEM')}</h2>
           </div>
           <span className="px-2.5 py-1 rounded-full bg-blue-50 text-[#0F2A4A] text-[11px] font-bold border border-blue-200 flex items-center space-x-1">
             <Sparkles className="w-3 h-3 text-amber-500" />
@@ -410,7 +411,7 @@ export const CitizenHome: React.FC = () => {
 
         <div className="p-4">
           <p className="text-xs text-slate-600 mb-4">
-            See something that needs municipal or panchayat attention? Speak directly into your microphone.
+            {t('micInstructions', 'See something that needs municipal or panchayat attention? Speak directly into your microphone.')}
           </p>
 
           {/* Real-time Voice Assistant Box */}
@@ -437,21 +438,21 @@ export const CitizenHome: React.FC = () => {
               {isRecording ? (
                 <span className="text-red-600 flex items-center justify-center space-x-1.5">
                   <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-                  <span>Listening... Bolte Rahiye ({formatSeconds(recordingSeconds)})</span>
+                  <span>{t('listening', 'Listening... Please speak')} ({formatSeconds(recordingSeconds)})</span>
                 </span>
               ) : (
-                'Tap to Speak'
+                t('tapToSpeak', 'Tap to Speak')
               )}
             </p>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              {isRecording ? 'Capturing live audio from your microphone' : 'Hindi, Malwi, Bundeli & English supported'}
+              {isRecording ? 'Capturing live audio from your microphone' : t('speechSupported', 'Hindi, Malwi, Bundeli & English supported')}
             </p>
 
             {/* Quick 1-Click Demo Voice Chips (Always Works Even If Mic Is Offline) */}
             {!isRecording && !hasRecordedAudio && (
               <div className="mt-3.5 pt-3 border-t border-blue-200/50">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  OR TRY 1-CLICK DEMO VOICE SAMPLES:
+                  {t('demoVoiceChipsTitle', 'OR TRY 1-CLICK DEMO VOICE SAMPLES:')}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-1.5">
                   <button
@@ -460,7 +461,7 @@ export const CitizenHome: React.FC = () => {
                     className="px-2.5 py-1 bg-white hover:bg-blue-50 text-[#0F2A4A] border border-blue-200 rounded-full text-[11px] font-bold shadow-2xs transition-all cursor-pointer flex items-center space-x-1"
                   >
                     <span>💧</span>
-                    <span>हैंडपंप व पेयजल (Ward 3)</span>
+                    <span>{t('sampleHandpump', 'हैंडपंप व पेयजल (Ward 3)')}</span>
                   </button>
                   <button
                     type="button"
@@ -468,7 +469,7 @@ export const CitizenHome: React.FC = () => {
                     className="px-2.5 py-1 bg-white hover:bg-blue-50 text-[#0F2A4A] border border-blue-200 rounded-full text-[11px] font-bold shadow-2xs transition-all cursor-pointer flex items-center space-x-1"
                   >
                     <span>🚧</span>
-                    <span>सड़क का गड्ढा (Sector 15)</span>
+                    <span>{t('samplePothole', 'सड़क का गड्ढा (Sector 15)')}</span>
                   </button>
                   <button
                     type="button"
@@ -476,7 +477,7 @@ export const CitizenHome: React.FC = () => {
                     className="px-2.5 py-1 bg-white hover:bg-blue-50 text-[#0F2A4A] border border-blue-200 rounded-full text-[11px] font-bold shadow-2xs transition-all cursor-pointer flex items-center space-x-1"
                   >
                     <span>💡</span>
-                    <span>स्ट्रीट लाइट / बिजली</span>
+                    <span>{t('sampleLight', 'स्ट्रीट लाइट / बिजली')}</span>
                   </button>
                 </div>
               </div>
@@ -521,7 +522,7 @@ export const CitizenHome: React.FC = () => {
                     </p>
                   ) : (
                     <p className="text-slate-400 italic text-[11px]">
-                      Listening... say e.g. "हैंडपंप से पानी नहीं आ रहा है" or "Road has deep pothole"...
+                      {language === 'hi' ? 'सुन रहे हैं... जैसे बोलें: "हैंडपंप से पानी नहीं आ रहा है" या "सड़क पर गड्ढा है"...' : 'Listening... say e.g. "हैंडपंप से पानी नहीं आ रहा है" or "Road has deep pothole"...'}
                     </p>
                   )}
                 </div>
@@ -532,7 +533,7 @@ export const CitizenHome: React.FC = () => {
                     onClick={stopRealtimeRecording}
                     className="py-1.5 px-4 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg cursor-pointer transition-all shadow-xs"
                   >
-                    Done Speaking (Stop)
+                    {t('doneSpeaking', 'Done Speaking (Stop)')}
                   </button>
                 </div>
               </div>
@@ -544,7 +545,7 @@ export const CitizenHome: React.FC = () => {
                 <div className="flex items-center justify-between text-[11px] mb-2">
                   <span className="flex items-center space-x-1.5 font-semibold text-emerald-700">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>Real Microphone Recording</span>
+                    <span>{t('realMicRecording', 'Real Microphone Recording')}</span>
                   </span>
                   <span className="font-mono text-slate-400">
                     {formatSeconds(recordingSeconds)}
@@ -569,7 +570,7 @@ export const CitizenHome: React.FC = () => {
                       {isPlayingAudio ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
                     </button>
                     <span className="text-xs font-bold text-slate-700">
-                      {isPlayingAudio ? 'Playing your voice recording...' : 'Play your voice recording'}
+                      {isPlayingAudio ? t('playingVoice', 'Playing your voice recording...') : t('playVoice', 'Play your voice recording')}
                     </span>
                   </div>
 
@@ -577,10 +578,10 @@ export const CitizenHome: React.FC = () => {
                     type="button"
                     onClick={startRealtimeRecording}
                     className="text-[11px] text-slate-500 hover:text-slate-800 flex items-center space-x-1 cursor-pointer"
-                    title="Record again"
+                    title={t('rerecord', 'Re-record')}
                   >
                     <RotateCcw className="w-3 h-3" />
-                    <span>Re-record</span>
+                    <span>{t('rerecord', 'Re-record')}</span>
                   </button>
                 </div>
 
@@ -596,7 +597,7 @@ export const CitizenHome: React.FC = () => {
                       <div>
                         <div className="flex items-center space-x-1.5">
                           <span className="text-[10px] font-black uppercase tracking-wider bg-amber-300 text-slate-950 px-1.5 py-0.5 rounded">AI Match 94%</span>
-                          <span className="text-xs font-bold">Similar Community Issue Detected!</span>
+                          <span className="text-xs font-bold">{t('similarCommunityFound', 'Similar Community Issue Detected!')}</span>
                         </div>
                         <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
                           {isWaterMatch 
@@ -616,14 +617,14 @@ export const CitizenHome: React.FC = () => {
                     className="py-2 px-3 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center space-x-1"
                   >
                     <Edit className="w-3.5 h-3.5" />
-                    <span>Edit Text</span>
+                    <span>{t('editText', 'Edit Text')}</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleVoiceSubmit}
                     className="py-2 px-3 rounded-lg bg-[#0F2A4A] hover:bg-[#1a4474] text-white text-xs font-semibold transition-all shadow-sm cursor-pointer flex items-center justify-center space-x-1"
                   >
-                    <span>Submit Report</span>
+                    <span>{t('submitReport', 'Submit Report')}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -637,7 +638,7 @@ export const CitizenHome: React.FC = () => {
               onClick={() => setCitizenTab('report')}
               className="text-xs font-semibold text-[#0F2A4A] hover:underline inline-flex items-center space-x-1 cursor-pointer"
             >
-              <span>Or type your report manually</span>
+              <span>{t('orTypeManually', 'Or type your report manually')}</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -648,7 +649,7 @@ export const CitizenHome: React.FC = () => {
       <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-            MY CIVIC TRACKER
+            {t('myCivicTracker', 'MY CIVIC TRACKER')}
           </h2>
           <span className="text-[11px] text-slate-500 font-medium">Ward 3 Overview</span>
         </div>
@@ -656,7 +657,7 @@ export const CitizenHome: React.FC = () => {
         <div className="grid grid-cols-2 gap-2.5">
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">TOTAL FILED</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">{language === 'hi' ? 'कुल दर्ज' : 'TOTAL FILED'}</span>
               <span className="text-2xl font-black text-slate-900">05</span>
             </div>
             <FileText className="w-5 h-5 text-slate-400" />
@@ -664,7 +665,7 @@ export const CitizenHome: React.FC = () => {
 
           <div className="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">RESOLVED</span>
+              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">{t('statusResolved', 'RESOLVED')}</span>
               <span className="text-2xl font-black text-emerald-700">03</span>
             </div>
             <CheckCircle2 className="w-5 h-5 text-emerald-600" />
@@ -672,7 +673,7 @@ export const CitizenHome: React.FC = () => {
 
           <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide block">IN PROGRESS</span>
+              <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide block">{t('statusInProgress', 'IN PROGRESS')}</span>
               <span className="text-2xl font-black text-[#0F2A4A]">01</span>
             </div>
             <Hourglass className="w-5 h-5 text-blue-600" />
@@ -680,7 +681,7 @@ export const CitizenHome: React.FC = () => {
 
           <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-100 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide block">PENDING REVIEW</span>
+              <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wide block">{t('statusOpen', 'PENDING REVIEW')}</span>
               <span className="text-2xl font-black text-amber-700">01</span>
             </div>
             <Clock className="w-5 h-5 text-amber-600" />
@@ -976,37 +977,37 @@ export const CitizenHome: React.FC = () => {
                 <Sparkles className="w-6 h-6 text-amber-600" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                AI SIMILARITY DETECTION (94% MATCH)
+                {t('aiSimilarityMatch', 'AI SIMILARITY DETECTION (94% MATCH)')}
               </span>
               <h3 className="text-base font-extrabold text-slate-900 mt-2">
-                SIMILAR COMMUNITY ISSUE FOUND
+                {t('similarCommunityFound', 'SIMILAR COMMUNITY ISSUE FOUND')}
               </h3>
               <p className="text-sm font-bold text-[#0F2A4A] mt-1">
-                {matchedClusterTitle || 'Village Handpump Not Working'}
+                {matchedClusterTitle || (language === 'hi' ? 'ग्राम पंचायत हैंडपंप खराबी' : 'Village Handpump Not Working')}
               </p>
               <p className="text-xs text-slate-500 mt-0.5">
-                <strong className="text-slate-800">17 citizens</strong> have already reported this issue near Ward 3.
+                <strong className="text-slate-800">17 {language === 'hi' ? 'ग्रामीण' : 'citizens'}</strong> {language === 'hi' ? 'वार्ड 3 के पास यह शिकायत पहले ही दर्ज करा चुके हैं।' : 'have already reported this issue near Ward 3.'}
               </p>
             </div>
 
             {/* Cluster Stats */}
             <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 grid grid-cols-3 gap-2 text-center mb-4">
               <div>
-                <span className="text-[10px] text-slate-500 font-bold block">CITIZENS</span>
+                <span className="text-[10px] text-slate-500 font-bold block">{language === 'hi' ? 'ग्रामीण' : 'CITIZENS'}</span>
                 <span className="text-sm font-extrabold text-slate-800">31</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 font-bold block">PHOTOS</span>
+                <span className="text-[10px] text-slate-500 font-bold block">{language === 'hi' ? 'तस्वीरें' : 'PHOTOS'}</span>
                 <span className="text-sm font-extrabold text-slate-800">12</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 font-bold block">VOICE LOGS</span>
+                <span className="text-[10px] text-slate-500 font-bold block">{language === 'hi' ? 'आवाज लॉग' : 'VOICE LOGS'}</span>
                 <span className="text-sm font-extrabold text-slate-800">5</span>
               </div>
             </div>
 
             <p className="text-xs text-slate-600 mb-4 leading-normal text-center">
-              Joining this community cluster will combine your petition with your neighbors and increase the priority of repair!
+              {language === 'hi' ? 'इस जन-याचिका से जुड़ने से आपकी शिकायत पड़ोसियों के साथ मिलकर सीधे उच्च प्राथमिकता पर हल होगी!' : 'Joining this community cluster will combine your petition with your neighbors and increase the priority of repair!'}
             </p>
 
             <div className="space-y-2">
@@ -1020,7 +1021,7 @@ export const CitizenHome: React.FC = () => {
                 }}
                 className="w-full py-2.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white text-xs font-bold rounded-lg shadow-sm cursor-pointer"
               >
-                JOIN & ENDORSE COMMUNITY ISSUE
+                {t('joinCommunityPetition', 'JOIN & ENDORSE COMMUNITY ISSUE')}
               </button>
 
               <button
@@ -1032,7 +1033,7 @@ export const CitizenHome: React.FC = () => {
                 }}
                 className="w-full py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold rounded-lg cursor-pointer"
               >
-                CONTINUE AS SEPARATE REPORT
+                {t('continueSeparate', 'CONTINUE AS SEPARATE REPORT')}
               </button>
             </div>
           </div>

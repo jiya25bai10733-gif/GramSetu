@@ -51,7 +51,7 @@ const MapRecenter = ({ coords }: { coords: [number, number] }) => {
 };
 
 export const CitizenReportIssue: React.FC = () => {
-  const { setCitizenTab, submitNewIssue, setSelectedIssueId, joinCluster, language } = useApp();
+  const { setCitizenTab, submitNewIssue, setSelectedIssueId, joinCluster, language, t } = useApp();
 
   const [mode, setMode] = useState<'type' | 'voice'>('type');
   const [category, setCategory] = useState('Water Supply & Sanitation');
@@ -481,7 +481,7 @@ export const CitizenReportIssue: React.FC = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="font-bold text-base text-slate-900 tracking-tight">Report Grievance</h1>
+          <h1 className="font-bold text-base text-slate-900 tracking-tight">{t('navReport', 'Report Grievance')}</h1>
         </div>
         <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
           <User className="w-4 h-4" />
@@ -492,18 +492,20 @@ export const CitizenReportIssue: React.FC = () => {
         {/* Title Badges */}
         <div className="flex items-center space-x-2">
           <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#0F2A4A] text-white">
-            CIVIC GRIEVANCE LODGEMENT
+            {language === 'hi' ? 'नागरिक शिकायत पंजीकरण' : 'CIVIC GRIEVANCE LODGEMENT'}
           </span>
           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
-            SECURE PORTAL
+            {language === 'hi' ? 'सुरक्षित पोर्टल' : 'SECURE PORTAL'}
           </span>
         </div>
 
         <div>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight">Report an Issue</h2>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">{t('reportAProblem', 'Report an Issue')}</h2>
           <p className="text-xs text-slate-500 mt-0.5 leading-normal">
-            Report local public infrastructure issues such as potholes, broken streetlights, or water leakages.
+            {language === 'hi' 
+              ? 'सड़क का गड्ढा, बंद हैंडपंप, बिजली या सफाई जैसी पंचायत समस्याओं की तत्काल शिकायत दर्ज करें।' 
+              : 'Report local public infrastructure issues such as potholes, broken streetlights, or water leakages.'}
           </p>
         </div>
 
@@ -529,7 +531,7 @@ export const CitizenReportIssue: React.FC = () => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Type & Fill Details
+            {language === 'hi' ? 'लिखकर भरें' : 'Type & Fill Details'}
           </button>
           <button
             type="button"
@@ -543,9 +545,9 @@ export const CitizenReportIssue: React.FC = () => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <span>Speak (Voice Report)</span>
+            <span>{language === 'hi' ? 'बोलकर बताएं (माइक)' : 'Speak (Voice Report)'}</span>
             <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-900">
-              HINDI / DIALECTS
+              {language === 'hi' ? 'हिंदी समर्थित' : 'HINDI / DIALECTS'}
             </span>
           </button>
         </div>
@@ -1002,17 +1004,17 @@ export const CitizenReportIssue: React.FC = () => {
               type="submit"
               className="w-full py-3 bg-[#0F2A4A] hover:bg-[#163861] text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center space-x-2 cursor-pointer transition-all"
             >
-              <span>Submit Report</span>
+              <span>{t('submitReport', 'Submit Report')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
               type="button"
-              onClick={() => alert('Draft saved locally in offline cache.')}
+              onClick={() => alert(language === 'hi' ? 'शिकायत का ड्राफ्ट ऑफ़लाइन सुरक्षित कर लिया गया है।' : 'Draft saved locally in offline cache.')}
               className="w-full py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-semibold text-xs flex items-center justify-center space-x-2 cursor-pointer transition-all"
             >
               <Clock className="w-3.5 h-3.5 text-slate-500" />
-              <span>Save as Draft</span>
+              <span>{language === 'hi' ? 'ड्राफ्ट के रूप में सहेजें' : 'Save as Draft'}</span>
             </button>
           </div>
         </form>
@@ -1043,16 +1045,16 @@ export const CitizenReportIssue: React.FC = () => {
                 <Sparkles className="w-6 h-6 text-amber-600" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                AI SIMILARITY DETECTION (94% MATCH)
+                {t('aiSimilarityMatch', 'AI SIMILARITY DETECTION (94% MATCH)')}
               </span>
               <h3 className="text-base font-extrabold text-slate-900 mt-2">
-                SIMILAR COMMUNITY ISSUE FOUND
+                {t('similarCommunityFound', 'SIMILAR COMMUNITY ISSUE FOUND')}
               </h3>
               <p className="text-sm font-bold text-[#0F2A4A] mt-1">
-                {matchedClusterTitle || 'Village Handpump Not Working'}
+                {matchedClusterTitle || (language === 'hi' ? 'ग्राम पंचायत हैंडपंप खराबी' : 'Village Handpump Not Working')}
               </p>
               <p className="text-xs text-slate-500 mt-0.5">
-                <strong className="text-slate-800">17 citizens</strong> reported this issue
+                <strong className="text-slate-800">17 {language === 'hi' ? 'ग्रामीणों' : 'citizens'}</strong> {language === 'hi' ? 'ने यह समस्या पहले दर्ज कराई है' : 'reported this issue'}
               </p>
             </div>
 
@@ -1067,7 +1069,7 @@ export const CitizenReportIssue: React.FC = () => {
                 }}
                 className="w-full py-2.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white text-xs font-bold rounded-lg shadow-sm cursor-pointer"
               >
-                VIEW COMMUNITY ISSUE & ENDORSE
+                {t('joinCommunityPetition', 'VIEW COMMUNITY ISSUE & ENDORSE')}
               </button>
 
               <button
@@ -1079,7 +1081,7 @@ export const CitizenReportIssue: React.FC = () => {
                 }}
                 className="w-full py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold rounded-lg cursor-pointer"
               >
-                CONTINUE AS SEPARATE REPORT
+                {t('continueSeparate', 'CONTINUE AS SEPARATE REPORT')}
               </button>
             </div>
           </div>

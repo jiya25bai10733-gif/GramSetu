@@ -3,12 +3,14 @@ import { Issue, CommunityCluster, ActivityItem, IssueStatus, AdministrativeTier 
 import { INITIAL_ISSUES, INITIAL_CLUSTERS, INITIAL_ACTIVITY } from '../data/mockData';
 import { getRealisticHumanVoice } from '../data/humanVoiceClips';
 import { broadcastSyncEvent, subscribeToLiveSync, fetchRemoteSyncHistory, SyncPayload } from '../utils/syncService';
+import { getTranslation } from '../utils/translations';
 
 interface AppContextType {
   role: 'citizen' | 'official' | null;
   setRole: (role: 'citizen' | 'official' | null) => void;
   language: 'hi' | 'en' | 'malwi';
   setLanguage: (lang: 'hi' | 'en' | 'malwi') => void;
+  t: (key: string, fallback?: string) => string;
   citizenTab: 'home' | 'report' | 'map' | 'activity' | 'profile';
   setCitizenTab: (tab: 'home' | 'report' | 'map' | 'activity' | 'profile') => void;
   officialTab: 'dashboard' | 'issues' | 'community' | 'map' | 'escalations' | 'analytics' | 'activity' | 'profile';
@@ -530,6 +532,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const t = (key: string, fallback?: string) => {
+    return getTranslation(key, language, fallback);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -537,6 +543,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setRole,
         language,
         setLanguage,
+        t,
         citizenTab,
         setCitizenTab,
         officialTab,

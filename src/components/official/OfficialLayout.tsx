@@ -33,6 +33,9 @@ export const OfficialLayout: React.FC = () => {
     markNotificationRead,
     logout,
     login,
+    language,
+    setLanguage,
+    t,
     syncStatus,
     triggerManualSync
   } = useApp();
@@ -42,13 +45,13 @@ export const OfficialLayout: React.FC = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'issues', label: 'Issues' },
-    { id: 'community', label: 'Community Issues' },
-    { id: 'map', label: 'Map' },
-    { id: 'escalations', label: 'Escalations' },
-    { id: 'analytics', label: 'Analytics' },
-    { id: 'activity', label: 'Activity' }
+    { id: 'dashboard', label: t('navDashboard', 'Dashboard') },
+    { id: 'issues', label: t('navIssues', 'All Issues') },
+    { id: 'community', label: t('navCommunity', 'Community Issues') },
+    { id: 'map', label: t('navMap', 'Map') },
+    { id: 'escalations', label: t('navEscalations', 'Escalations') },
+    { id: 'analytics', label: t('navAnalytics', 'Analytics') },
+    { id: 'activity', label: t('navActivity', 'Activity') }
   ] as const;
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -116,12 +119,22 @@ export const OfficialLayout: React.FC = () => {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="Search issues..."
+                  placeholder={t('searchIssues', 'Search issues...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-44 lg:w-56 pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#0F2A4A]"
                 />
               </form>
+
+              {/* Language Switcher Button */}
+              <button
+                type="button"
+                onClick={() => setLanguage(language === 'hi' ? 'en' : 'hi')}
+                className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-[#0F2A4A] cursor-pointer transition-all shadow-2xs"
+                title="Click to switch between Hindi and English"
+              >
+                {language === 'hi' ? '🇮🇳 हिंदी' : '🇬🇧 English'}
+              </button>
 
               {/* Live Multi-Device Sync Pill & Manual Refresh */}
               <button
@@ -155,7 +168,7 @@ export const OfficialLayout: React.FC = () => {
                     />
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl border border-slate-200 shadow-2xl p-3 z-[2100] animate-in fade-in zoom-in-95">
                       <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                        <span className="text-xs font-bold text-slate-900">Official Priority Alerts</span>
+                        <span className="text-xs font-bold text-slate-900">{t('officialAlerts', 'Official Priority Alerts')}</span>
                         <button
                           onClick={() => setShowNotifications(false)}
                           className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"

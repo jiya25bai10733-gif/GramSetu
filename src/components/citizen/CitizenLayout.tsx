@@ -26,6 +26,7 @@ export const CitizenLayout: React.FC = () => {
     setCitizenTab, 
     language, 
     setLanguage, 
+    t,
     selectedIssueId, 
     setSelectedIssueId,
     notifications,
@@ -48,11 +49,11 @@ export const CitizenLayout: React.FC = () => {
             </div>
             <div>
               <span className="font-extrabold text-base text-[#0F2A4A] tracking-tight block leading-tight">
-                GramSetu
+                {t('appName', 'GramSetu')}
               </span>
               <span className="text-[10px] text-slate-500 font-semibold flex items-center">
                 <MapPin className="w-2.5 h-2.5 mr-0.5 text-emerald-600" />
-                Rampur, Ward 3
+                {t('wardLocation', 'Rampur, Ward 3')}
               </span>
             </div>
           </div>
@@ -69,15 +70,15 @@ export const CitizenLayout: React.FC = () => {
               <RefreshCw className={`w-3 h-3 text-slate-500 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
             </button>
 
-            {/* Language Toggle */}
-            <div className="inline-flex rounded-lg p-0.5 bg-slate-100 border border-slate-200 text-xs">
-              <button
-                onClick={() => setLanguage(language === 'hi' ? 'en' : 'hi')}
-                className="px-2 py-1 font-bold text-[#0F2A4A] cursor-pointer"
-              >
-                {language === 'hi' ? 'हिंदी / ENG' : 'ENG / हिंदी'}
-              </button>
-            </div>
+            {/* Language Toggle with Clear Hindi/English indicator */}
+            <button
+              type="button"
+              onClick={() => setLanguage(language === 'hi' ? 'en' : 'hi')}
+              className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#0F2A4A] text-amber-300 hover:bg-[#183d6a] border border-[#0F2A4A] text-xs font-bold cursor-pointer transition-all shadow-2xs"
+              title="Click to switch between Hindi and English"
+            >
+              {language === 'hi' ? '🇮🇳 हिंदी' : '🇬🇧 English'}
+            </button>
 
             {/* Notification Bell */}
             <div className="relative">
@@ -174,7 +175,7 @@ export const CitizenLayout: React.FC = () => {
             }`}
           >
             <Home className="w-5 h-5" />
-            <span className="text-[10px] font-bold mt-0.5">Home</span>
+            <span className="text-[10px] font-bold mt-0.5">{t('navHome', 'Home')}</span>
           </button>
 
           {/* Map */}
@@ -189,7 +190,7 @@ export const CitizenLayout: React.FC = () => {
             }`}
           >
             <Compass className="w-5 h-5" />
-            <span className="text-[10px] font-bold mt-0.5">Map</span>
+            <span className="text-[10px] font-bold mt-0.5">{t('navMap', 'Map')}</span>
           </button>
 
           {/* Center Floating FAB (+) Report */}
@@ -200,6 +201,7 @@ export const CitizenLayout: React.FC = () => {
                 setSelectedIssueId(null);
                 setCitizenTab('report');
               }}
+              title={t('navReport', 'Report')}
               className="w-13 h-13 rounded-full bg-[#0F2A4A] hover:bg-[#183d6a] text-white flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border-4 border-[#F7F9FC]"
             >
               <Plus className="w-7 h-7 stroke-[2.5]" />
@@ -218,7 +220,7 @@ export const CitizenLayout: React.FC = () => {
             }`}
           >
             <Clock className="w-5 h-5" />
-            <span className="text-[10px] font-bold mt-0.5">Activity</span>
+            <span className="text-[10px] font-bold mt-0.5">{t('navActivity', 'Activity')}</span>
           </button>
 
           {/* Profile */}
@@ -233,7 +235,7 @@ export const CitizenLayout: React.FC = () => {
             }`}
           >
             <UserCircle className="w-5 h-5" />
-            <span className="text-[10px] font-bold mt-0.5">Profile</span>
+            <span className="text-[10px] font-bold mt-0.5">{t('navProfile', 'Profile')}</span>
           </button>
         </div>
       </nav>

@@ -57,7 +57,9 @@ export const OfficialDashboard: React.FC = () => {
     setSelectedIssueId, 
     setOfficialTab, 
     clusters, 
-    setSelectedClusterId 
+    setSelectedClusterId,
+    language,
+    t
   } = useApp();
 
   const [activeWard, setActiveWard] = useState<string>('Sehore Block (HQ)');
@@ -107,24 +109,24 @@ export const OfficialDashboard: React.FC = () => {
       {/* Top Bar with Ward Selector & Live Refresh */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-[#0F2A4A] tracking-tight">Official Dashboard</h1>
+          <h1 className="text-2xl font-extrabold text-[#0F2A4A] tracking-tight">{t('officialCommandTitle', 'Official Dashboard')}</h1>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Monitor and resolve community issues across your jurisdiction • Sehore Administrative Division
+            {t('officialSubtitle', 'Monitor and resolve community issues across your jurisdiction • Sehore Administrative Division')}
           </p>
         </div>
 
         <div className="flex items-center space-x-2.5">
           <div className="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-1.5 shadow-2xs text-xs">
-            <span className="text-slate-400 font-bold mr-2 text-[10px] uppercase tracking-wider">ACTIVE WARD:</span>
+            <span className="text-slate-400 font-bold mr-2 text-[10px] uppercase tracking-wider">{language === 'hi' ? 'सक्रिय वार्ड:' : 'ACTIVE WARD:'}</span>
             <select 
               value={activeWard}
               onChange={(e) => handleWardChange(e.target.value)}
               className="bg-transparent font-bold text-slate-800 focus:outline-hidden cursor-pointer"
             >
-              <option value="Sehore Block (HQ)">Sehore Block (HQ)</option>
-              <option value="Rampur Gram Panchayat">Rampur Gram Panchayat</option>
-              <option value="Bilkisganj Sub-Division">Bilkisganj Sub-Division</option>
-              <option value="Shyampur Tehsil">Shyampur Tehsil</option>
+              <option value="Sehore Block (HQ)">{language === 'hi' ? 'सीहोर ब्लॉक मुख्यालय' : 'Sehore Block (HQ)'}</option>
+              <option value="Rampur Gram Panchayat">{language === 'hi' ? 'रामपुर ग्राम पंचायत' : 'Rampur Gram Panchayat'}</option>
+              <option value="Bilkisganj Sub-Division">{language === 'hi' ? 'बिलकिसगंज अनुभाग' : 'Bilkisganj Sub-Division'}</option>
+              <option value="Shyampur Tehsil">{language === 'hi' ? 'श्यामपुर तहसील' : 'Shyampur Tehsil'}</option>
             </select>
           </div>
 
@@ -134,7 +136,7 @@ export const OfficialDashboard: React.FC = () => {
             className="px-3 py-1.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 shadow-xs cursor-pointer transition-all"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>LIVE REFRESH</span>
+            <span>{language === 'hi' ? 'ताज़ा करें' : 'LIVE REFRESH'}</span>
           </button>
         </div>
       </div>
@@ -448,7 +450,7 @@ export const OfficialDashboard: React.FC = () => {
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                SYSTEM METRICS
+                {language === 'hi' ? 'प्रशासनिक आंकड़े' : 'SYSTEM METRICS'}
               </h2>
               <span className="text-[11px] font-bold text-slate-400">FY 2026-Q2</span>
             </div>
@@ -458,25 +460,25 @@ export const OfficialDashboard: React.FC = () => {
               <div className="text-center p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-3xl font-black text-slate-900 block">1,284</span>
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  TOTAL ISSUES
+                  {t('totalGrievances', 'TOTAL ISSUES')}
                 </span>
               </div>
               <div className="text-center p-3 bg-emerald-50/60 rounded-xl border border-emerald-100">
                 <span className="text-3xl font-black text-emerald-600 block">846</span>
                 <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
-                  RESOLVED
+                  {t('statusResolved', 'RESOLVED')}
                 </span>
               </div>
               <div className="text-center p-3 bg-blue-50/60 rounded-xl border border-blue-100">
                 <span className="text-3xl font-black text-[#0F2A4A] block">312</span>
                 <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wider">
-                  IN PROGRESS
+                  {t('statusInProgress', 'IN PROGRESS')}
                 </span>
               </div>
               <div className="text-center p-3 bg-amber-50/60 rounded-xl border border-amber-100">
                 <span className="text-3xl font-black text-amber-600 block">126</span>
                 <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">
-                  PENDING
+                  {t('openPending', 'PENDING')}
                 </span>
               </div>
             </div>
@@ -485,9 +487,9 @@ export const OfficialDashboard: React.FC = () => {
             <div className="p-4 bg-red-50/80 rounded-xl border border-red-200 flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wide text-red-900 block">
-                  URGENT ESCALATIONS
+                  {language === 'hi' ? 'अति-आवश्यक मामले' : 'URGENT ESCALATIONS'}
                 </span>
-                <span className="text-[11px] text-red-700">SLA breach threshold exceeded &gt; 48h</span>
+                <span className="text-[11px] text-red-700">{language === 'hi' ? 'समय-सीमा समाप्त > ४८ घंटे' : 'SLA breach threshold exceeded > 48h'}</span>
               </div>
               <span className="text-3xl font-black text-red-600">24</span>
             </div>
@@ -495,15 +497,15 @@ export const OfficialDashboard: React.FC = () => {
             {/* Resolution Rate Progress */}
             <div className="space-y-1.5 pt-2 border-t border-slate-100">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-700">Overall Resolution Rate</span>
+                <span className="font-bold text-slate-700">{language === 'hi' ? 'कुल निवारण दर' : 'Overall Resolution Rate'}</span>
                 <span className="font-extrabold text-slate-900">65.8%</span>
               </div>
               <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
                 <div className="bg-[#0F2A4A] h-full rounded-full" style={{ width: '65.8%' }}></div>
               </div>
               <div className="flex items-center justify-between text-[11px] text-slate-500">
-                <span>Target: 75% per Directive</span>
-                <span className="text-emerald-600 font-bold">+4.2% this week</span>
+                <span>{language === 'hi' ? 'लक्ष्य: ७५%' : 'Target: 75% per Directive'}</span>
+                <span className="text-emerald-600 font-bold">{language === 'hi' ? '+४.२% इस सप्ताह' : '+4.2% this week'}</span>
               </div>
             </div>
           </div>

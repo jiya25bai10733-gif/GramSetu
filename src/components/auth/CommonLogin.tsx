@@ -103,7 +103,7 @@ export const DEMO_OFFICIAL_ACCOUNTS: DemoOfficialAccount[] = [
 ];
 
 export const CommonLogin: React.FC = () => {
-  const { login, language, setLanguage } = useApp();
+  const { login, language, setLanguage, t } = useApp();
   const [activeTab, setActiveTab] = useState<'citizen' | 'official'>('citizen');
   
   // Citizen form state
@@ -164,9 +164,9 @@ export const CommonLogin: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-lg tracking-tight text-[#0F2A4A]">GramSetu</span>
+              <span className="font-extrabold text-lg tracking-tight text-[#0F2A4A]">{t('appName', 'GramSetu')}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">NATIONAL PORTAL</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{t('nationalPortal', 'NATIONAL PORTAL')}</span>
             </div>
             <p className="text-xs text-slate-500 font-medium">Awaaz se Samadhan • आवाज से समाधान</p>
           </div>
@@ -177,21 +177,21 @@ export const CommonLogin: React.FC = () => {
           <div className="inline-flex rounded-md p-0.5 bg-slate-100 border border-slate-200">
             <button 
               onClick={() => setLanguage('hi')}
-              className={`px-3 py-1.5 rounded font-medium transition-all ${language === 'hi' ? 'bg-white shadow-xs text-[#0F2A4A] font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`px-3 py-1.5 rounded font-medium transition-all ${language === 'hi' ? 'bg-[#0F2A4A] shadow-xs text-amber-300 font-bold' : 'text-slate-600 hover:text-slate-900'}`}
             >
-              हिंदी
+              🇮🇳 हिंदी
             </button>
             <button 
               onClick={() => setLanguage('en')}
-              className={`px-3 py-1.5 rounded font-medium transition-all ${language === 'en' ? 'bg-white shadow-xs text-[#0F2A4A] font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`px-3 py-1.5 rounded font-medium transition-all ${language === 'en' ? 'bg-[#0F2A4A] shadow-xs text-white font-bold' : 'text-slate-600 hover:text-slate-900'}`}
             >
-              English
+              🇬🇧 English
             </button>
             <button 
               onClick={() => setLanguage('malwi')}
-              className={`px-3 py-1.5 rounded font-medium transition-all ${language === 'malwi' ? 'bg-white shadow-xs text-[#0F2A4A] font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`px-3 py-1.5 rounded font-medium transition-all ${language === 'malwi' ? 'bg-[#0F2A4A] shadow-xs text-amber-300 font-bold' : 'text-slate-600 hover:text-slate-900'}`}
             >
-              Malwi
+              मालवी
             </button>
           </div>
         </div>
@@ -215,7 +215,7 @@ export const CommonLogin: React.FC = () => {
                 <div className="w-12 h-12 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center mx-auto mb-3 text-slate-700 shadow-2xs">
                   <Clock className="w-6 h-6 text-[#0F2A4A]" />
                 </div>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">GramSetu Portal</h1>
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{t('appName', 'GramSetu')} {t('nationalPortal', 'Portal')}</h1>
                 <p className="text-xs text-slate-500 font-medium mt-1">
                   Awaaz se Samadhan • Unified Grievance Platform
                 </p>
@@ -224,7 +224,7 @@ export const CommonLogin: React.FC = () => {
               {/* Login As Selection Tabs */}
               <div className="mb-6">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center mb-2.5">
-                  LOGIN AS
+                  {language === 'hi' ? 'प्रवेश प्रकार चुनें' : 'LOGIN AS'}
                 </p>
                 <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl border border-slate-200/70">
                   {/* Citizen Tab */}
@@ -238,13 +238,13 @@ export const CommonLogin: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold block">Citizen</span>
+                      <span className="text-sm font-bold block">{t('citizenRole', 'Citizen')}</span>
                       {activeTab === 'citizen' && (
                         <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                       )}
                     </div>
                     <span className={`text-[11px] block mt-0.5 leading-tight ${activeTab === 'citizen' ? 'text-slate-300' : 'text-slate-500'}`}>
-                      Report & track community issues
+                      {language === 'hi' ? 'समस्या दर्ज करें व स्थिति देखें' : 'Report & track community issues'}
                     </span>
                   </button>
 
@@ -259,13 +259,13 @@ export const CommonLogin: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold block">Official</span>
+                      <span className="text-sm font-bold block">{t('officialRole', 'Official')}</span>
                       {activeTab === 'official' && (
                         <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                       )}
                     </div>
                     <span className={`text-[11px] block mt-0.5 leading-tight ${activeTab === 'official' ? 'text-slate-300' : 'text-slate-500'}`}>
-                      Manage & resolve civic matters
+                      {language === 'hi' ? 'नागरिक शिकायतों का त्वरित निवारण' : 'Manage & resolve civic matters'}
                     </span>
                   </button>
                 </div>
