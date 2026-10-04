@@ -339,10 +339,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const textToCheck = `${newIssue.title} ${newIssue.summary} ${newIssue.voiceReport?.transcriptHindi || ''} ${newIssue.voiceReport?.transcriptEnglish || ''}`.toLowerCase();
     
     let matchedCluster: CommunityCluster | undefined;
-    if (textToCheck.includes('handpump') || textToCheck.includes('pump') || textToCheck.includes('हैंडपंप') || textToCheck.includes('paani') || textToCheck.includes('पानी')) {
-      matchedCluster = clusters.find(c => c.id === 'cluster-handpump-1');
-    } else if (textToCheck.includes('pothole') || textToCheck.includes('road') || textToCheck.includes('गड्ढा') || textToCheck.includes('सड़क')) {
-      matchedCluster = clusters.find(c => c.id === 'cluster-pothole-2');
+    const isWaterHandpump = textToCheck.includes('handpump') || textToCheck.includes('pump') || textToCheck.includes('हैंडपंप') || textToCheck.includes('हैंडपम्प') || textToCheck.includes('पंप') || textToCheck.includes('paani') || textToCheck.includes('pani') || textToCheck.includes('पानी') || textToCheck.includes('जल') || textToCheck.includes('बोरवेल') || textToCheck.includes('नल') || textToCheck.includes('water');
+    const isRoadPothole = textToCheck.includes('pothole') || textToCheck.includes('road') || textToCheck.includes('गड्ढा') || textToCheck.includes('सड़क') || textToCheck.includes('मार्ग') || textToCheck.includes('रास्ता') || textToCheck.includes('street');
+
+    if (isWaterHandpump) {
+      matchedCluster = clusters.find(c => c.id === 'cluster-handpump-1') || INITIAL_CLUSTERS.find(c => c.id === 'cluster-handpump-1');
+    } else if (isRoadPothole) {
+      matchedCluster = clusters.find(c => c.id === 'cluster-pothole-2') || INITIAL_CLUSTERS.find(c => c.id === 'cluster-pothole-2');
     }
 
     setIssues(prev => [newIssue, ...prev]);
