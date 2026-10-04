@@ -14,8 +14,93 @@ import {
   Building2,
   KeyRound,
   X,
-  Sparkles
+  Sparkles,
+  Users,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
+
+export interface DemoOfficialAccount {
+  id: string;
+  name: string;
+  role: string;
+  tier: string;
+  department: string;
+  officialId: string;
+  password: string;
+  badgeColor: string;
+  avatarText: string;
+}
+
+export const DEMO_OFFICIAL_ACCOUNTS: DemoOfficialAccount[] = [
+  {
+    id: 'off-gp',
+    name: 'Rajesh Patel',
+    role: 'Gram Panchayat Secretary',
+    tier: 'Tier 1 • Gram Panchayat Level',
+    department: 'Rampur Gram Panchayat (Ward 1-5)',
+    officialId: 'GP-RAM-012',
+    password: 'gp1234',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    avatarText: 'GP'
+  },
+  {
+    id: 'off-block',
+    name: 'Ramesh Sharma',
+    role: 'Block Development Officer',
+    tier: 'Tier 2 • Block Administration',
+    department: 'Sehore Block Headquarters (42 Panchayats)',
+    officialId: 'MP-SEH-0402',
+    password: 'admin1234',
+    badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+    avatarText: 'BDO'
+  },
+  {
+    id: 'off-dist',
+    name: 'Dr. Neha Varma, IAS',
+    role: 'District Magistrate / Collector',
+    tier: 'Tier 3 • District Oversight',
+    department: 'District Redressal Oversight Cell, Sehore',
+    officialId: 'DIST-SEH-01',
+    password: 'dist1234',
+    badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
+    avatarText: 'DM'
+  },
+  {
+    id: 'off-water',
+    name: 'Er. Alok Saxena',
+    role: 'SDO Jal Nigam (PHED)',
+    tier: 'Department Specialist • Water',
+    department: 'Public Health Engineering & Drinking Water',
+    officialId: 'PHE-SEH-108',
+    password: 'water123',
+    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+    avatarText: 'PHE'
+  },
+  {
+    id: 'off-road',
+    name: 'Er. Vikram Singh',
+    role: 'Executive Engineer, PWD',
+    tier: 'Department Specialist • Roads',
+    department: 'Public Works Dept (Roads & Bridges)',
+    officialId: 'PWD-SEH-204',
+    password: 'road123',
+    badgeColor: 'bg-orange-100 text-orange-800 border-orange-200',
+    avatarText: 'PWD'
+  },
+  {
+    id: 'off-power',
+    name: 'Er. Manoj Verma',
+    role: 'Assistant Engineer, DISCOM',
+    tier: 'Department Specialist • Power Grid',
+    department: 'MPPKVVCL Rural Power Distribution',
+    officialId: 'MPPKVV-SEH-301',
+    password: 'power123',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
+    avatarText: 'ELEC'
+  }
+];
 
 export const CommonLogin: React.FC = () => {
   const { login, language, setLanguage } = useApp();
@@ -53,6 +138,14 @@ export const CommonLogin: React.FC = () => {
     setOfficialId('MP-SEH-0402');
     setOfficialPassword('admin1234');
     login('official');
+  };
+
+  const handleSelectOfficialAccount = (acc: DemoOfficialAccount, autoSubmit = true) => {
+    setOfficialId(acc.officialId);
+    setOfficialPassword(acc.password);
+    if (autoSubmit) {
+      login('official');
+    }
   };
 
   const handleQuickCitizen = () => {
@@ -382,20 +475,63 @@ export const CommonLogin: React.FC = () => {
                       <span>Official OTP Login</span>
                     </button>
 
-                    {/* Quick Demo Pre-load */}
+                    {/* DEMO ACCOUNTS FOR ALL OFFICIAL TIERS */}
                     <div className="pt-2">
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex items-center justify-between">
-                        <div className="text-left">
-                          <p className="text-[11px] font-bold text-amber-900">Demo Account</p>
-                          <p className="text-[10px] text-amber-700">Ramesh Sharma • Block Administrator</p>
+                      <div className="bg-amber-50/80 border border-amber-200/90 rounded-xl p-3">
+                        <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-amber-200/70">
+                          <div className="flex items-center space-x-1.5 text-amber-950 font-bold text-xs">
+                            <Users className="w-3.5 h-3.5 text-amber-700" />
+                            <span>Demo Accounts for All Officials</span>
+                          </div>
+                          <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200">
+                            6 Tiers & Specialists
+                          </span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={handleQuickOfficial}
-                          className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-[11px] rounded shadow-xs cursor-pointer"
-                        >
-                          Quick Login
-                        </button>
+
+                        <p className="text-[10px] text-amber-800 mb-2 leading-tight">
+                          Click any administrative officer below to instantly test their jurisdiction & redressal view:
+                        </p>
+
+                        <div className="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">
+                          {DEMO_OFFICIAL_ACCOUNTS.map((acc) => (
+                            <div
+                              key={acc.id}
+                              className={`p-2 rounded-lg border transition-all text-left flex items-center justify-between ${
+                                officialId === acc.officialId
+                                  ? 'bg-white border-[#0F2A4A] ring-1 ring-[#0F2A4A] shadow-xs'
+                                  : 'bg-white/80 hover:bg-white border-amber-200/80 hover:border-amber-300'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2 min-w-0">
+                                <span className={`w-7 h-7 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 border ${acc.badgeColor}`}>
+                                  {acc.avatarText}
+                                </span>
+                                <div className="min-w-0">
+                                  <div className="flex items-center space-x-1.5">
+                                    <p className="text-xs font-bold text-slate-900 truncate leading-tight">
+                                      {acc.name}
+                                    </p>
+                                    <span className="text-[9px] font-bold px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200 shrink-0 font-mono">
+                                      {acc.officialId}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-slate-500 truncate leading-tight mt-0.5">
+                                    {acc.role} • {acc.tier.split('•')[0].trim()}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => handleSelectOfficialAccount(acc, true)}
+                                className="ml-2 px-2.5 py-1 bg-[#0F2A4A] hover:bg-[#1a4373] text-white font-bold text-[10px] rounded shadow-2xs cursor-pointer shrink-0 transition-all flex items-center space-x-0.5"
+                              >
+                                <span>Login</span>
+                                <ArrowRight className="w-2.5 h-2.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </form>

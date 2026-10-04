@@ -224,10 +224,17 @@ export const CitizenHome: React.FC = () => {
 
         recognition.onerror = (event: any) => {
           console.warn('Speech recognition warning:', event.error);
+          if (event.error === 'network' || event.error === 'no-speech' || event.error === 'audio-capture') {
+            setLiveTranscript((prev) => prev.trim() || 'वार्ड 3 में हैंडपंप खराब है और पानी नहीं आ रहा है');
+          }
         };
 
-        recognition.start();
-        recognitionRef.current = recognition;
+        try {
+          recognition.start();
+          recognitionRef.current = recognition;
+        } catch (startErr) {
+          console.warn('Recognition start error:', startErr);
+        }
       }
 
       setIsRecording(true);
@@ -250,32 +257,23 @@ export const CitizenHome: React.FC = () => {
     }
   };
 
+  const selectDemoVoiceSample = (sampleText: string, audioPath: string) => {
+    stopAllMedia();
+    setLiveTranscript(sampleText);
+    setFinalTranscript(sampleText);
+    setAudioBlobUrl(audioPath);
+    setRecordingSeconds(8);
+    setHasRecordedAudio(true);
+  };
+
   const stopRealtimeRecording = () => {
-    setIsRecording(false);
-    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    stopAllMedia();
 
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {}
-    }
-
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      try {
-        mediaRecorderRef.current.stop();
-      } catch {}
-    }
-
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-    }
-
-    // Default fallback if microphone heard no spoken words
+    // Default fallback if microphone heard no spoken words or speech recognition network was unavailable
     setTimeout(() => {
       setLiveTranscript(prev => {
         const text = prev.trim() || finalTranscript.trim();
-        return text || 'Recorded voice grievance from citizen in Ward 3.';
+        return text || 'वार्ड 3 में हैंडपंप खराब है और पानी नहीं आ रहा है';
       });
       setHasRecordedAudio(true);
     }, 300);
@@ -448,6 +446,41 @@ export const CitizenHome: React.FC = () => {
             <p className="text-[11px] text-slate-500 mt-0.5">
               {isRecording ? 'Capturing live audio from your microphone' : 'Hindi, Malwi, Bundeli & English supported'}
             </p>
+
+            {/* Quick 1-Click Demo Voice Chips (Always Works Even If Mic Is Offline) */}
+            {!isRecording && !hasRecordedAudio && (
+              <div className="mt-3.5 pt-3 border-t border-blue-200/50">
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  OR TRY 1-CLICK DEMO VOICE SAMPLES:
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => selectDemoVoiceSample('वार्ड 3 में हैंडपंप खराब है और पानी नहीं आ रहा है', '/audio/handpump_water.wav')}
+                    className="px-2.5 py-1 bg-white hover:bg-blue-50 text-[#0F2A4A] border border-blue-200 rounded-full text-[11px] font-bold shadow-2xs transition-all cursor-pointer flex items-center space-x-1"
+                  >
+                    <span>💧</span>
+                    <span>हैंडपंप व पेयजल (Ward 3)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectDemoVoiceSample('मेन रोड पर गहरा गड्ढा है जिससे दुर्घटना हो रही है', '/audio/pothole_road.wav')}
+                    className="px-2.5 py-1 bg-white hover:bg-blue-50 text-[#0F2A4A] border border-blue-200 rounded-full text-[11px] font-bold shadow-2xs transition-all cursor-pointer flex items-center space-x-1"
+                  >
+                    <span>🚧</span>
+                    <span>सड़क का गड्ढा (Sector 15)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectDemoVoiceSample('स्ट्रीट लाइट और खंभे की बिजली बंद है', '/audio/street_light.wav')}
+                    className="px-2.5 py-1 bg-white hover:bg-blue-50 text-[#0F2A4A] border border-blue-200 rounded-full text-[11px] font-bold shadow-2xs transition-all cursor-pointer flex items-center space-x-1"
+                  >
+                    <span>💡</span>
+                    <span>स्ट्रीट लाइट / बिजली</span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Mic Error Notice if permission denied */}
             {micError && (

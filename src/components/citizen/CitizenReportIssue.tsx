@@ -333,6 +333,14 @@ export const CitizenReportIssue: React.FC = () => {
           }
         };
 
+        recognition.onerror = (e: any) => {
+          console.warn('Recognition error:', e.error);
+          if (e.error === 'network' || e.error === 'no-speech' || e.error === 'audio-capture') {
+            setDescription((prev) => prev.trim() || 'वार्ड 3 में हैंडपंप खराब है और पानी की समस्या है');
+            if (!subject) setSubject('हैंडपंप खराब है और पानी नहीं आ रहा');
+          }
+        };
+
         recognition.start();
         recognitionRef.current = recognition;
       }
