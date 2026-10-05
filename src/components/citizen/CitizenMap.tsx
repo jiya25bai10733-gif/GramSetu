@@ -100,7 +100,7 @@ const computeDistance = (lat1: number, lon1: number, lat2: number, lon2: number)
 };
 
 export const CitizenMap: React.FC = () => {
-  const { issues, setSelectedIssueId, setCitizenTab } = useApp();
+  const { issues, setSelectedIssueId, setCitizenTab, language } = useApp();
   const [filter, setFilter] = useState<'all' | 'water' | 'roads' | 'power' | 'resolved'>('all');
   const [selectedIssue, setSelectedIssue] = useState<any | null>(null);
   
@@ -144,7 +144,7 @@ export const CitizenMap: React.FC = () => {
           console.warn('Real GPS acquisition notice (using district anchor):', err);
           setIsLocating(false);
           setUserLocation([23.2045, 77.0812]);
-          setUserLocationName('Ward 3 • Rampur Gram Panchayat');
+          setUserLocationName(language === 'hi' ? 'वार्ड ३ • रामपुर ग्राम पंचायत' : 'Ward 3 • Rampur Gram Panchayat');
           setUserAccuracy(15);
           setHasAcquiredGps(true);
           setMapCenter([23.2045, 77.0812]);
@@ -171,9 +171,13 @@ export const CitizenMap: React.FC = () => {
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <h1 className="text-base font-extrabold text-slate-900">Ward Community Map</h1>
+              <h1 className="text-base font-extrabold text-slate-900">
+                {language === 'hi' ? 'वार्ड सामुदायिक नक्शा' : 'Ward Community Map'}
+              </h1>
             </div>
-            <p className="text-[11px] text-slate-500">Live civic locations across Rampur & Sehore</p>
+            <p className="text-[11px] text-slate-500">
+              {language === 'hi' ? 'रामपुर एवं सीहोर में वास्तविक समय की नागरिक समस्याएं' : 'Live civic locations across Rampur & Sehore'}
+            </p>
           </div>
           <div className="flex items-center space-x-1.5">
             <button
@@ -187,7 +191,9 @@ export const CitizenMap: React.FC = () => {
               title="Locate my real-life GPS position"
             >
               <Crosshair className={`w-3.5 h-3.5 text-blue-600 ${isLocating ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">{isLocating ? 'Locating...' : 'Locate Me'}</span>
+              <span className="hidden sm:inline">
+                {isLocating ? (language === 'hi' ? 'स्थान खोज रहे...' : 'Locating...') : (language === 'hi' ? 'मेरा स्थान' : 'Locate Me')}
+              </span>
             </button>
             <button
               type="button"
@@ -195,7 +201,7 @@ export const CitizenMap: React.FC = () => {
               className="py-1.5 px-3 bg-[#0F2A4A] hover:bg-[#183d6a] text-white rounded-lg text-xs font-bold flex items-center space-x-1 cursor-pointer transition-all shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Report Here</span>
+              <span>{language === 'hi' ? 'यहाँ रिपोर्ट करें' : 'Report Here'}</span>
             </button>
           </div>
         </div>
@@ -220,7 +226,7 @@ export const CitizenMap: React.FC = () => {
                 mapLayer === 'street' ? 'bg-[#0F2A4A] text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Street
+              {language === 'hi' ? 'सड़क' : 'Street'}
             </button>
             <button
               type="button"
@@ -229,14 +235,16 @@ export const CitizenMap: React.FC = () => {
                 mapLayer === 'satellite' ? 'bg-[#0F2A4A] text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Satellite
+              {language === 'hi' ? 'सैटेलाइट' : 'Satellite'}
             </button>
           </div>
         </div>
 
         {/* Quick Area Jump Presets */}
         <div className="flex gap-1.5 overflow-x-auto pb-0.5 text-[11px]">
-          <span className="text-[10px] uppercase font-bold text-slate-400 self-center shrink-0">JUMP TO:</span>
+          <span className="text-[10px] uppercase font-bold text-slate-400 self-center shrink-0">
+            {language === 'hi' ? 'सीधे जाएं:' : 'JUMP TO:'}
+          </span>
           <button
             type="button"
             onClick={() => {
@@ -245,7 +253,7 @@ export const CitizenMap: React.FC = () => {
             }}
             className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-[10px] font-bold shrink-0 cursor-pointer hover:bg-blue-100"
           >
-            📍 My Real GPS
+            {language === 'hi' ? '📍 मेरा लाइव GPS' : '📍 My Real GPS'}
           </button>
           <button
             type="button"
@@ -255,7 +263,7 @@ export const CitizenMap: React.FC = () => {
             }}
             className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[10px] font-medium shrink-0 cursor-pointer hover:bg-slate-200"
           >
-            Rampur Ward 3
+            {language === 'hi' ? 'रामपुर वार्ड ३' : 'Rampur Ward 3'}
           </button>
           <button
             type="button"
@@ -265,7 +273,7 @@ export const CitizenMap: React.FC = () => {
             }}
             className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[10px] font-medium shrink-0 cursor-pointer hover:bg-slate-200"
           >
-            Sector 15 Main Road
+            {language === 'hi' ? 'सेक्टर १५ मुख्य मार्ग' : 'Sector 15 Main Road'}
           </button>
           <button
             type="button"
@@ -275,7 +283,7 @@ export const CitizenMap: React.FC = () => {
             }}
             className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[10px] font-medium shrink-0 cursor-pointer hover:bg-slate-200"
           >
-            Shyampur Feeder
+            {language === 'hi' ? 'श्यामपुर फीडर' : 'Shyampur Feeder'}
           </button>
         </div>
 
@@ -287,7 +295,7 @@ export const CitizenMap: React.FC = () => {
               filter === 'all' ? 'bg-[#0F2A4A] text-white' : 'bg-slate-100 text-slate-600'
             }`}
           >
-            All ({issues.length})
+            {language === 'hi' ? `सभी (${issues.length})` : `All (${issues.length})`}
           </button>
           <button
             onClick={() => setFilter('water')}
@@ -295,7 +303,7 @@ export const CitizenMap: React.FC = () => {
               filter === 'water' ? 'bg-[#0F2A4A] text-white' : 'bg-slate-100 text-slate-600'
             }`}
           >
-            Water Supply
+            {language === 'hi' ? 'पेयजल आपूर्ति' : 'Water Supply'}
           </button>
           <button
             onClick={() => setFilter('roads')}
@@ -303,7 +311,7 @@ export const CitizenMap: React.FC = () => {
               filter === 'roads' ? 'bg-[#0F2A4A] text-white' : 'bg-slate-100 text-slate-600'
             }`}
           >
-            Roads
+            {language === 'hi' ? 'सड़कें' : 'Roads'}
           </button>
           <button
             onClick={() => setFilter('power')}
@@ -311,7 +319,7 @@ export const CitizenMap: React.FC = () => {
               filter === 'power' ? 'bg-[#0F2A4A] text-white' : 'bg-slate-100 text-slate-600'
             }`}
           >
-            Power
+            {language === 'hi' ? 'बिजली' : 'Power'}
           </button>
           <button
             onClick={() => setFilter('resolved')}
@@ -319,7 +327,7 @@ export const CitizenMap: React.FC = () => {
               filter === 'resolved' ? 'bg-[#0F2A4A] text-white' : 'bg-slate-100 text-slate-600'
             }`}
           >
-            Resolved
+            {language === 'hi' ? 'समाधान' : 'Resolved'}
           </button>
         </div>
       </div>
@@ -357,12 +365,14 @@ export const CitizenMap: React.FC = () => {
           <Marker position={userLocation} icon={userGpsIcon}>
             <Popup>
               <div className="text-xs">
-                <span className="font-bold text-blue-700 block">📍 Verified Ground Location</span>
+                <span className="font-bold text-blue-700 block">
+                  {language === 'hi' ? '📍 सत्यापित भू-स्थान' : '📍 Verified Ground Location'}
+                </span>
                 <span className="text-slate-700 text-[11px] font-semibold block mt-0.5">
                   {userLocationName}
                 </span>
                 <span className="block text-[10px] text-emerald-600 font-semibold mt-0.5">
-                  GPS Accuracy: ±{userAccuracy} meters
+                  {language === 'hi' ? `GPS सटीकता: ±${userAccuracy} मीटर` : `GPS Accuracy: ±${userAccuracy} meters`}
                 </span>
               </div>
             </Popup>
@@ -384,19 +394,21 @@ export const CitizenMap: React.FC = () => {
             <Marker position={[inspectedSpot.lat, inspectedSpot.lng]} icon={inspectionPinIcon}>
               <Popup>
                 <div className="text-xs space-y-1">
-                  <span className="font-bold text-slate-800 block">Selected Ground Location:</span>
+                  <span className="font-bold text-slate-800 block">
+                    {language === 'hi' ? 'चयनित भू-स्थान:' : 'Selected Ground Location:'}
+                  </span>
                   <span className="text-slate-700 text-xs font-semibold block">
                     {getFriendlyLocationName([inspectedSpot.lat, inspectedSpot.lng])}
                   </span>
                   <span className="text-[10px] text-slate-500 block">
-                    Distance: {computeDistance(userLocation[0], userLocation[1], inspectedSpot.lat, inspectedSpot.lng)}
+                    {language === 'hi' ? 'दूरी:' : 'Distance:'} {computeDistance(userLocation[0], userLocation[1], inspectedSpot.lat, inspectedSpot.lng)}
                   </span>
                   <button
                     type="button"
                     onClick={() => setCitizenTab('report')}
                     className="w-full mt-1.5 py-1 px-2 bg-[#0F2A4A] text-white text-[10px] font-bold rounded cursor-pointer"
                   >
-                    Report Issue At This Location
+                    {language === 'hi' ? 'इस स्थान पर समस्या दर्ज करें' : 'Report Issue At This Location'}
                   </button>
                 </div>
               </Popup>
@@ -425,7 +437,7 @@ export const CitizenMap: React.FC = () => {
 
         {/* Floating Instruction Overlay */}
         <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-md border border-slate-200/80 text-[10px] font-bold text-slate-700 shadow-xs z-[999] pointer-events-none">
-          Click any point to inspect location or report
+          {language === 'hi' ? 'स्थान जांचने या रिपोर्ट करने के लिए किसी भी बिंदु पर क्लिक करें' : 'Click any point to inspect location or report'}
         </div>
       </div>
 
@@ -466,7 +478,7 @@ export const CitizenMap: React.FC = () => {
                 {selectedIssue.locationName}
               </span>
               <span className="text-[10px] text-slate-500 font-medium">
-                {selectedIssue.panchayat || 'Rampur Panchayat'}
+                {selectedIssue.panchayat || (language === 'hi' ? 'रामपुर पंचायत' : 'Rampur Panchayat')}
               </span>
             </div>
             <button
@@ -477,7 +489,7 @@ export const CitizenMap: React.FC = () => {
               }}
               className="py-1.5 px-3 bg-[#0F2A4A] hover:bg-[#183d6a] text-white rounded-lg text-xs font-bold flex items-center space-x-1 cursor-pointer"
             >
-              <span>Track Issue</span>
+              <span>{language === 'hi' ? 'स्थिति देखें' : 'Track Issue'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

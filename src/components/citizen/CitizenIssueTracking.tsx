@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => void }> = ({ issueId, onBack }) => {
-  const { issues, upvoteIssue } = useApp();
+  const { issues, upvoteIssue, language } = useApp();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [hasConfirmedResolution, setHasConfirmedResolution] = useState(false);
 
@@ -63,12 +63,44 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
   };
 
   const steps = [
-    { key: 'OPEN', label: 'Report Submitted', desc: 'Verified by GramSetu Citizen Engine', completed: true },
-    { key: 'VERIFIED', label: 'Verified by Gram Panchayat', desc: 'Geotag & spatial duplicate check passed', completed: true },
-    { key: 'ASSIGNED', label: 'Assigned to Department', desc: issue.assignedOfficer ? `${issue.assignedOfficer.department} (${issue.assignedOfficer.name})` : 'Awaiting officer dispatch', completed: issue.status !== 'OPEN' },
-    { key: 'IN PROGRESS', label: 'In Progress / Crew Dispatched', desc: 'Field repair work commenced on site', completed: issue.status === 'IN PROGRESS' || issue.status === 'REPAIR SCHEDULED' || issue.status === 'RESOLVED' || issue.status === 'CLOSED' },
-    { key: 'REPAIR SCHEDULED', label: 'Repair Scheduled & Quality Check', desc: 'Civil parts delivery & maintenance inspection', completed: issue.status === 'REPAIR SCHEDULED' || issue.status === 'RESOLVED' || issue.status === 'CLOSED' },
-    { key: 'RESOLVED', label: 'Resolved & Citizen Verified', desc: issue.resolutionDetails?.notes || 'Ground verification completed with photographic evidence', completed: issue.status === 'RESOLVED' || issue.status === 'CLOSED' }
+    { 
+      key: 'OPEN', 
+      label: language === 'hi' ? 'शिकायत दर्ज की गई' : 'Report Submitted', 
+      desc: language === 'hi' ? 'ग्रामसेतु नागरिक इंजन द्वारा सत्यापित' : 'Verified by GramSetu Citizen Engine', 
+      completed: true 
+    },
+    { 
+      key: 'VERIFIED', 
+      label: language === 'hi' ? 'ग्राम पंचायत द्वारा सत्यापित' : 'Verified by Gram Panchayat', 
+      desc: language === 'hi' ? 'भू-टैग व स्थानिक डुप्लिकेट जांच पूर्ण' : 'Geotag & spatial duplicate check passed', 
+      completed: true 
+    },
+    { 
+      key: 'ASSIGNED', 
+      label: language === 'hi' ? 'विभाग को सौंपा गया' : 'Assigned to Department', 
+      desc: issue.assignedOfficer 
+        ? `${issue.assignedOfficer.department} (${issue.assignedOfficer.name})` 
+        : (language === 'hi' ? 'अधिकारी आवंटन प्रतीक्षारत' : 'Awaiting officer dispatch'), 
+      completed: issue.status !== 'OPEN' 
+    },
+    { 
+      key: 'IN PROGRESS', 
+      label: language === 'hi' ? 'प्रगति पर / टीम रवाना' : 'In Progress / Crew Dispatched', 
+      desc: language === 'hi' ? 'स्थल पर मरम्मत कार्य शुरू हो गया है' : 'Field repair work commenced on site', 
+      completed: issue.status === 'IN PROGRESS' || issue.status === 'REPAIR SCHEDULED' || issue.status === 'RESOLVED' || issue.status === 'CLOSED' 
+    },
+    { 
+      key: 'REPAIR SCHEDULED', 
+      label: language === 'hi' ? 'मरम्मत निर्धारित व गुणवत्ता जांच' : 'Repair Scheduled & Quality Check', 
+      desc: language === 'hi' ? 'सामग्री वितरण एवं रखरखाव निरीक्षण' : 'Civil parts delivery & maintenance inspection', 
+      completed: issue.status === 'REPAIR SCHEDULED' || issue.status === 'RESOLVED' || issue.status === 'CLOSED' 
+    },
+    { 
+      key: 'RESOLVED', 
+      label: language === 'hi' ? 'समाधान पूर्ण एवं सत्यापित' : 'Resolved & Citizen Verified', 
+      desc: issue.resolutionDetails?.notes || (language === 'hi' ? 'फोटो प्रमाण के साथ स्थल सत्यापन पूर्ण' : 'Ground verification completed with photographic evidence'), 
+      completed: issue.status === 'RESOLVED' || issue.status === 'CLOSED' 
+    }
   ];
 
   return (
@@ -84,7 +116,9 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="font-bold text-sm text-slate-900 leading-tight">Issue Tracking</h1>
+            <h1 className="font-bold text-sm text-slate-900 leading-tight">
+              {language === 'hi' ? 'शिकायत ट्रैकिंग' : 'Issue Tracking'}
+            </h1>
             <span className="text-[10px] font-mono text-slate-500">{issue.id}</span>
           </div>
         </div>
@@ -119,7 +153,7 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
               ? 'bg-blue-100 text-blue-800 border border-blue-200'
               : 'bg-amber-100 text-amber-800 border border-amber-200'
           }`}>
-            {issue.status}
+            {issue.status === 'RESOLVED' ? (language === 'hi' ? 'समाधान हुआ' : 'RESOLVED') : issue.status === 'IN PROGRESS' ? (language === 'hi' ? 'प्रगति पर' : 'IN PROGRESS') : (language === 'hi' ? 'लंबित' : 'OPEN')}
           </span>
         </div>
 
@@ -134,7 +168,9 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
           </div>
           <div className="flex items-center space-x-1.5 text-slate-600">
             <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span>SLA: {issue.slaRemainingHours}h remaining</span>
+            <span>
+              {language === 'hi' ? `SLA: ${issue.slaRemainingHours} घंटे शेष` : `SLA: ${issue.slaRemainingHours}h remaining`}
+            </span>
           </div>
         </div>
       </div>
@@ -145,10 +181,12 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-900 flex items-center space-x-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>
-              <span>Voice Report ({issue.voiceReport.dialect})</span>
+              <span>
+                {language === 'hi' ? `वॉइस रिपोर्ट (${issue.voiceReport.dialect})` : `Voice Report (${issue.voiceReport.dialect})`}
+              </span>
               {issue.voiceReport.audioUrl && (
                 <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold border border-emerald-200">
-                  🎙️ Saved Audio
+                  {language === 'hi' ? '🎙️ सहेजा गया ऑडियो' : '🎙️ Saved Audio'}
                 </span>
               )}
             </span>
@@ -169,7 +207,11 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
                 title="Play recorded voice audio"
               >
                 {isPlayingAudio ? <Pause className="w-3.5 h-3.5 text-red-600" /> : <Play className="w-3.5 h-3.5 text-[#0F2A4A]" />}
-                <span>{isPlayingAudio ? 'Pause' : 'Play Audio'}</span>
+                <span>
+                  {isPlayingAudio 
+                    ? (language === 'hi' ? 'रोकें' : 'Pause') 
+                    : (language === 'hi' ? 'ऑडियो सुनें' : 'Play Audio')}
+                </span>
               </button>
             </div>
           </div>
@@ -183,13 +225,15 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
       {/* Photos attached */}
       {issue.photos.length > 0 && (
         <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
-          <h3 className="text-xs font-bold text-slate-900 mb-2">Photographic Evidence</h3>
+          <h3 className="text-xs font-bold text-slate-900 mb-2">
+            {language === 'hi' ? 'तस्वीर साक्ष्य (फ़ोटो)' : 'Photographic Evidence'}
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             {issue.photos.map((p, i) => (
               <div key={i} className="relative rounded-xl overflow-hidden h-28 border border-slate-200">
                 <img src={p} alt="Evidence" className="w-full h-full object-cover" />
                 <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
-                  Geotagged
+                  {language === 'hi' ? 'भू-टैग' : 'Geotagged'}
                 </span>
               </div>
             ))}
@@ -201,7 +245,7 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
       {issue.assignedOfficer && (
         <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
-            ASSIGNED NODAL OFFICER
+            {language === 'hi' ? 'नियुक्त नोडल अधिकारी' : 'ASSIGNED NODAL OFFICER'}
           </span>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -226,7 +270,7 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
       {/* Resolution Stepper Timeline */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
         <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-4">
-          Resolution Timeline & Logistics
+          {language === 'hi' ? 'समाधान समयरेखा एवं विवरण' : 'Resolution Timeline & Logistics'}
         </h3>
 
         <div className="space-y-4 relative pl-6 border-l-2 border-slate-200 ml-3">
@@ -252,9 +296,13 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
         {/* Citizen Verification Confirmation */}
         {issue.status === 'RESOLVED' && (
           <div className="mt-5 p-3.5 bg-emerald-50 rounded-xl border border-emerald-200">
-            <h4 className="text-xs font-bold text-emerald-900">Ward Redressal Verification</h4>
+            <h4 className="text-xs font-bold text-emerald-900">
+              {language === 'hi' ? 'वार्ड समाधान सत्यापन' : 'Ward Redressal Verification'}
+            </h4>
             <p className="text-xs text-slate-700 mt-1">
-              Field technician has completed the repair. Are you satisfied with the water supply flow?
+              {language === 'hi' 
+                ? 'कर्मचारी ने मरम्मत कार्य पूरा कर लिया है। क्या आप समाधान से संतुष्ट हैं?' 
+                : 'Field technician has completed the repair. Are you satisfied with the water supply flow?'}
             </p>
             <div className="flex gap-2 mt-3">
               <button
@@ -264,14 +312,16 @@ export const CitizenIssueTracking: React.FC<{ issueId: string; onBack: () => voi
                   hasConfirmedResolution ? 'bg-emerald-700 text-white' : 'bg-emerald-600 text-white hover:bg-emerald-700'
                 }`}
               >
-                {hasConfirmedResolution ? '✓ Verified by You' : 'Confirm Resolution'}
+                {hasConfirmedResolution 
+                  ? (language === 'hi' ? '✓ आपके द्वारा सत्यापित' : '✓ Verified by You') 
+                  : (language === 'hi' ? 'समाधान की पुष्टि करें' : 'Confirm Resolution')}
               </button>
               <button
                 type="button"
-                onClick={() => alert('Re-open request submitted to District Oversight Cell.')}
+                onClick={() => alert(language === 'hi' ? 'पुनः खोलने का अनुरोध जिला निगरानी सेल को भेजा गया।' : 'Re-open request submitted to District Oversight Cell.')}
                 className="py-1.5 px-3 bg-white border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 cursor-pointer"
               >
-                Re-open
+                {language === 'hi' ? 'पुनः खोलें' : 'Re-open'}
               </button>
             </div>
           </div>

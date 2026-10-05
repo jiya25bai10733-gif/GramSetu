@@ -51,7 +51,7 @@ export const CitizenProfile: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               </div>
               <p className="text-xs text-slate-500 font-medium">
-                Rampur Resident • Ward 3, Sehore
+                {language === 'hi' ? 'रामपुर निवासी • वार्ड ३, सीहोर' : 'Rampur Resident • Ward 3, Sehore'}
               </p>
               <div className="inline-flex items-center mt-1 px-2 py-0.5 rounded-md bg-blue-50 text-[#0F2A4A] text-[10px] font-bold border border-blue-200">
                 <span>ID: #CIT-SEH-402</span>
@@ -68,10 +68,12 @@ export const CitizenProfile: React.FC = () => {
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">
-                REPORTED
+                {language === 'hi' ? 'दर्ज की गई' : 'REPORTED'}
               </span>
               <span className="text-2xl font-black text-slate-900">4</span>
-              <span className="text-[10px] text-slate-400 block">Logged grievances</span>
+              <span className="text-[10px] text-slate-400 block">
+                {language === 'hi' ? 'कुल शिकायतें' : 'Logged grievances'}
+              </span>
             </div>
             <BellRing className="w-5 h-5 text-slate-400" />
           </div>
@@ -79,10 +81,12 @@ export const CitizenProfile: React.FC = () => {
           <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">
-                RESOLVED
+                {language === 'hi' ? 'समाधान हुआ' : 'RESOLVED'}
               </span>
               <span className="text-2xl font-black text-emerald-700">2</span>
-              <span className="text-[10px] text-emerald-600 block">Completed 100%</span>
+              <span className="text-[10px] text-emerald-600 block">
+                {language === 'hi' ? '१००% पूर्ण' : 'Completed 100%'}
+              </span>
             </div>
             <CheckCircle2 className="w-5 h-5 text-emerald-600" />
           </div>
@@ -95,11 +99,11 @@ export const CitizenProfile: React.FC = () => {
           <div className="flex items-center space-x-2">
             <SlidersHorizontal className="w-4 h-4 text-[#0F2A4A]" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-              Communication & Alerts
+              {language === 'hi' ? 'संचार एवं सूचनाएं' : 'Communication & Alerts'}
             </h2>
           </div>
           <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-            Active
+            {language === 'hi' ? 'सक्रिय' : 'Active'}
           </span>
         </div>
 
@@ -109,8 +113,12 @@ export const CitizenProfile: React.FC = () => {
               <MessageSquare className="w-3.5 h-3.5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-slate-900 block">SMS Status Alerts</span>
-              <span className="text-[10px] text-slate-500">Dispatch updates to +91 98765-XXXXX</span>
+              <span className="text-xs font-bold text-slate-900 block">
+                {language === 'hi' ? 'एसएमएस स्टेटस अलर्ट' : 'SMS Status Alerts'}
+              </span>
+              <span className="text-[10px] text-slate-500">
+                {language === 'hi' ? '+91 98765-XXXXX पर अपडेट भेजें' : 'Dispatch updates to +91 98765-XXXXX'}
+              </span>
             </div>
           </div>
           <input
@@ -127,8 +135,12 @@ export const CitizenProfile: React.FC = () => {
               <MessageSquare className="w-3.5 h-3.5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-slate-900 block">WhatsApp Resolution Updates</span>
-              <span className="text-[10px] text-slate-500">Instant audio & photo proofs</span>
+              <span className="text-xs font-bold text-slate-900 block">
+                {language === 'hi' ? 'व्हाट्सएप समाधान अपडेट' : 'WhatsApp Resolution Updates'}
+              </span>
+              <span className="text-[10px] text-slate-500">
+                {language === 'hi' ? 'तुरंत ऑडियो एवं फोटो प्रमाण' : 'Instant audio & photo proofs'}
+              </span>
             </div>
           </div>
           <input
@@ -145,8 +157,12 @@ export const CitizenProfile: React.FC = () => {
               <MessageSquare className="w-3.5 h-3.5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-slate-900 block">Community Cluster Alerts</span>
-              <span className="text-[10px] text-slate-500">Ward 3 panchayat public notices</span>
+              <span className="text-xs font-bold text-slate-900 block">
+                {language === 'hi' ? 'सामुदायिक समूह अलर्ट' : 'Community Cluster Alerts'}
+              </span>
+              <span className="text-[10px] text-slate-500">
+                {language === 'hi' ? 'वार्ड ३ पंचायत सार्वजनिक सूचनाएं' : 'Ward 3 panchayat public notices'}
+              </span>
             </div>
           </div>
           <input
@@ -158,7 +174,9 @@ export const CitizenProfile: React.FC = () => {
         </label>
 
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-xs text-slate-600 font-medium">Interface Dialect</span>
+          <span className="text-xs text-slate-600 font-medium">
+            {language === 'hi' ? 'इंटरफ़ेस भाषा' : 'Interface Dialect'}
+          </span>
           <div className="inline-flex rounded-lg p-0.5 bg-slate-100 border border-slate-200">
             <button
               onClick={() => setLanguage('hi')}
@@ -191,17 +209,19 @@ export const CitizenProfile: React.FC = () => {
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
-                  GRAM PANCHAYAT HELPLINE
+                  {language === 'hi' ? 'ग्राम पंचायत हेल्पलाइन' : 'GRAM PANCHAYAT HELPLINE'}
                 </span>
                 <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-600 text-white">
-                  Active 24/7
+                  {language === 'hi' ? '२४/७ सक्रिय' : 'Active 24/7'}
                 </span>
               </div>
               <h3 className="text-base font-black text-white mt-0.5">
                 Toll Free 1800-233-0450
               </h3>
               <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">
-                Immediate assistance for water, roads, & civic safety
+                {language === 'hi' 
+                  ? 'पानी, सड़क और नागरिक सुरक्षा के लिए तुरंत सहायता' 
+                  : 'Immediate assistance for water, roads, & civic safety'}
               </p>
             </div>
           </div>
@@ -221,11 +241,13 @@ export const CitizenProfile: React.FC = () => {
             <div className="flex items-center space-x-2">
               <span className="w-1.5 h-3 bg-[#0F2A4A] rounded-full"></span>
               <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                MY REPORTED ISSUES
+                {language === 'hi' ? 'मेरी दर्ज शिकायतें' : 'MY REPORTED ISSUES'}
               </h2>
             </div>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Review and trace active progress details for complaints logged by your account.
+              {language === 'hi' 
+                ? 'आपके खाते से दर्ज की गई शिकायतों की प्रगति व स्थिति देखें।' 
+                : 'Review and trace active progress details for complaints logged by your account.'}
             </p>
           </div>
           <button
@@ -234,7 +256,9 @@ export const CitizenProfile: React.FC = () => {
             className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg flex items-center space-x-1 cursor-pointer"
           >
             <SlidersHorizontal className="w-3 h-3" />
-            <span className="capitalize">{filterType}</span>
+            <span className="capitalize">
+              {filterType === 'all' ? (language === 'hi' ? 'सभी' : 'all') : filterType === 'open' ? (language === 'hi' ? 'लंबित' : 'open') : (language === 'hi' ? 'समाधान' : 'resolved')}
+            </span>
           </button>
         </div>
 
@@ -248,12 +272,16 @@ export const CitizenProfile: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-bold text-slate-900">VILLAGE HANDPUMP NOT WORKING</h3>
+                    <h3 className="text-xs font-bold text-slate-900">
+                      {language === 'hi' ? 'गांव का हैंडपंप खराब है' : 'VILLAGE HANDPUMP NOT WORKING'}
+                    </h3>
                     <span className="px-2 py-0.2 rounded text-[9px] font-black bg-amber-100 text-amber-800">
-                      OPEN
+                      {language === 'hi' ? 'लंबित' : 'OPEN'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">Ward 3 Rampur | Water Supply</p>
+                  <p className="text-[11px] text-slate-500">
+                    {language === 'hi' ? 'वार्ड ३ रामपुर | पेयजल आपूर्ति' : 'Ward 3 Rampur | Water Supply'}
+                  </p>
                   <p className="text-[10px] text-slate-400 font-mono">Token: #GS-1248</p>
                 </div>
               </div>
@@ -261,7 +289,7 @@ export const CitizenProfile: React.FC = () => {
             <div className="flex items-center justify-between pt-1 border-t border-slate-200/50">
               <span className="text-[11px] text-slate-500 flex items-center">
                 <Clock className="w-3 h-3 mr-1 text-slate-400" />
-                Logged 4h ago
+                {language === 'hi' ? '४ घंटे पहले दर्ज' : 'Logged 4h ago'}
               </span>
               <button
                 type="button"
@@ -271,7 +299,7 @@ export const CitizenProfile: React.FC = () => {
                 }}
                 className="px-3 py-1 bg-[#0F2A4A] text-white hover:bg-[#183d6a] rounded-lg text-xs font-bold flex items-center space-x-1 cursor-pointer"
               >
-                <span>TRACK</span>
+                <span>{language === 'hi' ? 'ट्रैक करें' : 'TRACK'}</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>
@@ -286,12 +314,16 @@ export const CitizenProfile: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-bold text-slate-900">LARGE POTHOLE NEAR SCHOOL</h3>
+                    <h3 className="text-xs font-bold text-slate-900">
+                      {language === 'hi' ? 'स्कूल के पास बड़ा गड्ढा' : 'LARGE POTHOLE NEAR SCHOOL'}
+                    </h3>
                     <span className="px-2 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-800">
-                      IN PROGRESS
+                      {language === 'hi' ? 'प्रगति पर' : 'IN PROGRESS'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">Sector 15 Central Road | Roads</p>
+                  <p className="text-[11px] text-slate-500">
+                    {language === 'hi' ? 'सेक्टर १५ मुख्य मार्ग | सड़कें' : 'Sector 15 Central Road | Roads'}
+                  </p>
                   <p className="text-[10px] text-slate-400 font-mono">Token: #GS-1245</p>
                 </div>
               </div>
@@ -304,7 +336,7 @@ export const CitizenProfile: React.FC = () => {
 
             <div className="flex items-center justify-between pt-1 border-t border-slate-200/50">
               <span className="text-[11px] text-slate-600 font-medium">
-                Work Order Issued
+                {language === 'hi' ? 'कार्य आदेश जारी' : 'Work Order Issued'}
               </span>
               <button
                 type="button"
@@ -314,7 +346,7 @@ export const CitizenProfile: React.FC = () => {
                 }}
                 className="px-3 py-1 bg-[#0F2A4A] text-white hover:bg-[#183d6a] rounded-lg text-xs font-bold flex items-center space-x-1 cursor-pointer"
               >
-                <span>TRACK</span>
+                <span>{language === 'hi' ? 'ट्रैक करें' : 'TRACK'}</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>
@@ -329,12 +361,16 @@ export const CitizenProfile: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-bold text-slate-900">DAMAGED DRAINAGE SLUICE</h3>
+                    <h3 className="text-xs font-bold text-slate-900">
+                      {language === 'hi' ? 'टूटी हुई जल निकासी नाली' : 'DAMAGED DRAINAGE SLUICE'}
+                    </h3>
                     <span className="px-2 py-0.2 rounded text-[9px] font-black bg-emerald-100 text-emerald-800">
-                      RESOLVED
+                      {language === 'hi' ? 'समाधान' : 'RESOLVED'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">Mathura Road Market | Sanitation</p>
+                  <p className="text-[11px] text-slate-500">
+                    {language === 'hi' ? 'मथुरा रोड बाज़ार | स्वच्छता' : 'Mathura Road Market | Sanitation'}
+                  </p>
                   <p className="text-[10px] text-slate-400 font-mono">Token: #GS-1244</p>
                 </div>
               </div>
@@ -343,7 +379,7 @@ export const CitizenProfile: React.FC = () => {
             <div className="flex items-center justify-between pt-1 border-t border-slate-200/50">
               <span className="text-[11px] text-emerald-700 font-semibold flex items-center">
                 <CheckCircle2 className="w-3 h-3 mr-1" />
-                Verified by Ward Overseer
+                {language === 'hi' ? 'वार्ड सदस्य द्वारा सत्यापित' : 'Verified by Ward Overseer'}
               </span>
               <button
                 type="button"
@@ -353,7 +389,7 @@ export const CitizenProfile: React.FC = () => {
                 }}
                 className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-[#0F2A4A] rounded-lg text-xs font-bold cursor-pointer"
               >
-                VIEW SUMMARY
+                {language === 'hi' ? 'विवरण देखें' : 'VIEW SUMMARY'}
               </button>
             </div>
           </div>
@@ -367,12 +403,16 @@ export const CitizenProfile: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-bold text-slate-900">BROKEN STREETLIGHT POLE</h3>
+                    <h3 className="text-xs font-bold text-slate-900">
+                      {language === 'hi' ? 'टूटा हुआ स्ट्रीटलाइट पोल' : 'BROKEN STREETLIGHT POLE'}
+                    </h3>
                     <span className="px-2 py-0.2 rounded text-[9px] font-black bg-emerald-100 text-emerald-800">
-                      RESOLVED
+                      {language === 'hi' ? 'समाधान' : 'RESOLVED'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">Main Chowk | Utilities</p>
+                  <p className="text-[11px] text-slate-500">
+                    {language === 'hi' ? 'मुख्य चौक | उपयोगिताएं' : 'Main Chowk | Utilities'}
+                  </p>
                   <p className="text-[10px] text-slate-400 font-mono">Token: #GS-1239</p>
                 </div>
               </div>
@@ -381,7 +421,7 @@ export const CitizenProfile: React.FC = () => {
             <div className="flex items-center justify-between pt-1 border-t border-slate-200/50">
               <span className="text-[11px] text-emerald-700 font-semibold flex items-center">
                 <CheckCircle2 className="w-3 h-3 mr-1" />
-                Verified by Ward Overseer
+                {language === 'hi' ? 'वार्ड सदस्य द्वारा सत्यापित' : 'Verified by Ward Overseer'}
               </span>
               <button
                 type="button"
@@ -391,7 +431,7 @@ export const CitizenProfile: React.FC = () => {
                 }}
                 className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-[#0F2A4A] rounded-lg text-xs font-bold cursor-pointer"
               >
-                VIEW SUMMARY
+                {language === 'hi' ? 'विवरण देखें' : 'VIEW SUMMARY'}
               </button>
             </div>
           </div>
@@ -399,10 +439,12 @@ export const CitizenProfile: React.FC = () => {
 
         {/* Sync stamp */}
         <div className="pt-2 text-center">
-          <p className="text-[11px] text-slate-400">Showing 4 of 4 complaints</p>
+          <p className="text-[11px] text-slate-400">
+            {language === 'hi' ? '४ में से ४ शिकायतें दिखाई जा रही हैं' : 'Showing 4 of 4 complaints'}
+          </p>
           <div className="mt-2 py-1.5 px-3 bg-blue-50/50 rounded-lg border border-blue-100 inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-700">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>All Records Synced</span>
+            <span>{language === 'hi' ? 'सभी रिकॉर्ड सिंक हैं' : 'All Records Synced'}</span>
           </div>
         </div>
       </div>
@@ -414,7 +456,7 @@ export const CitizenProfile: React.FC = () => {
           onClick={() => login('official')}
           className="text-xs font-bold text-[#0F2A4A] hover:underline flex items-center space-x-1 cursor-pointer"
         >
-          <span>Switch to Official View</span>
+          <span>{language === 'hi' ? 'अधिकारी पोर्टल पर जाएं' : 'Switch to Official View'}</span>
           <ChevronRight className="w-3.5 h-3.5" />
         </button>
 
@@ -424,7 +466,7 @@ export const CitizenProfile: React.FC = () => {
           className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center space-x-1 cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
-          <span>Sign Out</span>
+          <span>{language === 'hi' ? 'लॉग आउट' : 'Sign Out'}</span>
         </button>
       </div>
     </div>

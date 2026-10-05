@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export const CitizenActivity: React.FC = () => {
-  const { activities, setSelectedIssueId } = useApp();
+  const { activities, setSelectedIssueId, language } = useApp();
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'NEW' | 'UPDATES' | 'RESOLVED'>('ALL');
 
   const filtered = activities.filter(act => {
@@ -23,13 +23,27 @@ export const CitizenActivity: React.FC = () => {
     return true;
   });
 
+  const getTabLabel = (tab: 'ALL' | 'NEW' | 'UPDATES' | 'RESOLVED') => {
+    if (language !== 'hi') return tab;
+    switch (tab) {
+      case 'ALL': return 'सभी';
+      case 'NEW': return 'नई शिकायतें';
+      case 'UPDATES': return 'अपडेट्स';
+      case 'RESOLVED': return 'समाधान';
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto space-y-4 pb-24">
       {/* Activity Header */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
-        <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">Public Activity Stream</h1>
+        <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">
+          {language === 'hi' ? 'सार्वजनिक गतिविधि प्रवाह' : 'Public Activity Stream'}
+        </h1>
         <p className="text-xs text-slate-500 mt-0.5 leading-normal">
-          Real-time, transparent log of community problem updates and redressals in Sehore Block.
+          {language === 'hi' 
+            ? 'सीहोर ब्लॉक में सामुदायिक समस्याओं एवं निवारणों का पारदर्शी वास्तविक समय रिकॉर्ड।' 
+            : 'Real-time, transparent log of community problem updates and redressals in Sehore Block.'}
         </p>
 
         {/* Filter Pills */}
@@ -44,7 +58,7 @@ export const CitizenActivity: React.FC = () => {
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
               }`}
             >
-              {tab}
+              {getTabLabel(tab)}
             </button>
           ))}
         </div>
@@ -80,7 +94,9 @@ export const CitizenActivity: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900">{item.location}</h3>
-                    <span className="text-[10px] font-mono text-slate-400">Issue {item.issueId}</span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {language === 'hi' ? 'शिकायत' : 'Issue'} {item.issueId}
+                    </span>
                   </div>
                 </div>
                 <span className="text-[10px] font-bold text-slate-400">{item.timeAgo}</span>
@@ -98,13 +114,21 @@ export const CitizenActivity: React.FC = () => {
                     isEscalated ? 'bg-red-50 text-red-800 border border-red-200' :
                     'bg-blue-50 text-blue-800 border border-blue-200'
                   }`}>
-                    System Log [{item.type}]
+                    {language === 'hi' ? 'सिस्टम लॉग' : 'System Log'} [{item.type}]
                   </span>
-                  {item.officerId && <span className="text-slate-400">Officer: {item.officerId}</span>}
-                  {item.dialectEngine && <span className="text-slate-500">Dialect: {item.dialectEngine}</span>}
+                  {item.officerId && (
+                    <span className="text-slate-400">
+                      {language === 'hi' ? 'अधिकारी' : 'Officer'}: {item.officerId}
+                    </span>
+                  )}
+                  {item.dialectEngine && (
+                    <span className="text-slate-500">
+                      {language === 'hi' ? 'बोली' : 'Dialect'}: {item.dialectEngine}
+                    </span>
+                  )}
                 </div>
                 <span className="text-[#0F2A4A] font-bold flex items-center hover:underline">
-                  Track <ChevronRight className="w-3 h-3 ml-0.5" />
+                  {language === 'hi' ? 'ट्रैक करें' : 'Track'} <ChevronRight className="w-3 h-3 ml-0.5" />
                 </span>
               </div>
             </div>

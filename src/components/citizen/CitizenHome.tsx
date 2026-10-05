@@ -696,10 +696,12 @@ export const CitizenHome: React.FC = () => {
             <div className="flex items-center space-x-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                COMMUNITY MAP
+                {language === 'hi' ? 'सामुदायिक नक्शा' : 'COMMUNITY MAP'}
               </h2>
             </div>
-            <p className="text-[11px] text-slate-500">Live issues near your location • Rampur & Sehore</p>
+            <p className="text-[11px] text-slate-500">
+              {language === 'hi' ? 'आपके आस-पास की समस्याएं • रामपुर एवं सीहोर' : 'Live issues near your location • Rampur & Sehore'}
+            </p>
           </div>
           
           <div className="flex items-center space-x-1.5">
@@ -712,7 +714,7 @@ export const CitizenHome: React.FC = () => {
                   homeMapLayer === 'street' ? 'bg-[#0F2A4A] text-white' : 'text-slate-600'
                 }`}
               >
-                Street
+                {language === 'hi' ? 'सड़क' : 'Street'}
               </button>
               <button
                 type="button"
@@ -721,7 +723,7 @@ export const CitizenHome: React.FC = () => {
                   homeMapLayer === 'satellite' ? 'bg-[#0F2A4A] text-white' : 'text-slate-600'
                 }`}
               >
-                Satellite
+                {language === 'hi' ? 'सैटेलाइट' : 'Satellite'}
               </button>
             </div>
 
@@ -733,13 +735,13 @@ export const CitizenHome: React.FC = () => {
               title="Locate device GPS position"
             >
               <Crosshair className={`w-3 h-3 text-blue-600 ${isLocatingHomeGps ? 'animate-spin' : ''}`} />
-              <span>{isLocatingHomeGps ? 'Locating...' : 'GPS'}</span>
+              <span>{isLocatingHomeGps ? (language === 'hi' ? 'खोज रहे...' : 'Locating...') : (language === 'hi' ? 'जीपीएस' : 'GPS')}</span>
             </button>
 
             <button 
               onClick={() => setCitizenTab('map')}
               className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 cursor-pointer"
-              title="Expand full map"
+              title={language === 'hi' ? 'पूरा नक्शा देखें' : 'Expand full map'}
             >
               <MapPin className="w-3.5 h-3.5" />
             </button>
@@ -776,7 +778,7 @@ export const CitizenHome: React.FC = () => {
                 html: `
                   <div style="background-color: #0F2A4A; color: white; padding: 2px 6px; border-radius: 9999px; font-weight: bold; font-size: 9px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid white; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #34D399; display: inline-block;"></span>
-                    <span>Your GPS</span>
+                    <span>${language === 'hi' ? 'आपका स्थान' : 'Your GPS'}</span>
                   </div>
                 `,
                 iconSize: [75, 20],
@@ -785,7 +787,7 @@ export const CitizenHome: React.FC = () => {
             >
               <Popup>
                 <div className="text-xs">
-                  <span className="font-bold text-slate-800 block">Your Ground Location</span>
+                  <span className="font-bold text-slate-800 block">{language === 'hi' ? 'आपका वास्तविक स्थान' : 'Your Ground Location'}</span>
                   <span className="text-[11px] font-bold text-slate-700 block mt-0.5">
                     {getFriendlyLocationName(homeUserGps)}
                   </span>
@@ -807,7 +809,7 @@ export const CitizenHome: React.FC = () => {
                 className: 'issue-pin',
                 html: `
                   <div style="background-color: #EF4444; color: white; padding: 3px 6px; border-radius: 6px; font-weight: bold; font-size: 9px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1.5px solid white; white-space: nowrap;">
-                    ⚠️ Handpump Issue
+                    ⚠️ ${language === 'hi' ? 'हैंडपंप समस्या' : 'Handpump Issue'}
                   </div>
                 `,
                 iconSize: [95, 20],
@@ -821,9 +823,9 @@ export const CitizenHome: React.FC = () => {
               }}
             >
               <Popup>
-                <div className="text-xs font-bold">#GS-1248: Handpump Failure</div>
-                <div className="text-[11px] text-slate-700 font-semibold mt-0.5">Ward 3 • Rampur Gram Panchayat</div>
-                <div className="text-[10px] text-slate-500">17 citizens reported</div>
+                <div className="text-xs font-bold">{language === 'hi' ? '#GS-1248: हैंडपंप खराबी' : '#GS-1248: Handpump Failure'}</div>
+                <div className="text-[11px] text-slate-700 font-semibold mt-0.5">{language === 'hi' ? 'वार्ड 3 • रामपुर ग्राम पंचायत' : 'Ward 3 • Rampur Gram Panchayat'}</div>
+                <div className="text-[10px] text-slate-500">{language === 'hi' ? '१७ ग्रामीणों ने दर्ज किया' : '17 citizens reported'}</div>
               </Popup>
             </Marker>
 
@@ -834,7 +836,7 @@ export const CitizenHome: React.FC = () => {
                 className: 'pothole-pin',
                 html: `
                   <div style="background-color: #F59E0B; color: white; padding: 3px 6px; border-radius: 6px; font-weight: bold; font-size: 9px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1.5px solid white; white-space: nowrap;">
-                    ⚠️ Pothole #1245
+                    ⚠️ ${language === 'hi' ? 'सड़क का गड्ढा #1245' : 'Pothole #1245'}
                   </div>
                 `,
                 iconSize: [80, 20],
@@ -848,8 +850,8 @@ export const CitizenHome: React.FC = () => {
               }}
             >
               <Popup>
-                <div className="text-xs font-bold">#GS-1245: Main Road Pothole</div>
-                <div className="text-[11px] text-slate-700 font-semibold mt-0.5">Sector 15 Central Road • Sehore Town</div>
+                <div className="text-xs font-bold">{language === 'hi' ? '#GS-1245: मुख्य सड़क पर गड्ढा' : '#GS-1245: Main Road Pothole'}</div>
+                <div className="text-[11px] text-slate-700 font-semibold mt-0.5">{language === 'hi' ? 'सेक्टर 15 सेंट्रल रोड • सीहोर' : 'Sector 15 Central Road • Sehore Town'}</div>
               </Popup>
             </Marker>
           </MapContainer>
@@ -858,7 +860,7 @@ export const CitizenHome: React.FC = () => {
           <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-slate-200 text-xs flex items-center justify-between shadow-xs z-[500]">
             <span className="text-slate-700 font-semibold flex items-center">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mr-1.5" />
-              Handpump failure at Ward 3 (500m)
+              {language === 'hi' ? 'वार्ड 3 में हैंडपंप खराबी (५०० मीटर)' : 'Handpump failure at Ward 3 (500m)'}
             </span>
             <button
               type="button"
@@ -868,7 +870,7 @@ export const CitizenHome: React.FC = () => {
               }}
               className="text-[11px] font-bold text-[#0F2A4A] hover:underline cursor-pointer"
             >
-              Track Issue
+              {language === 'hi' ? 'स्थिति देखें' : 'Track Issue'}
             </button>
           </div>
         </div>
@@ -880,7 +882,7 @@ export const CitizenHome: React.FC = () => {
             className="w-full py-2 px-3 bg-blue-50 hover:bg-blue-100 text-[#0F2A4A] rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer"
           >
             <MapPin className="w-3.5 h-3.5" />
-            <span>Open Full Interactive Community Map</span>
+            <span>{language === 'hi' ? 'पूरा वार्ड नक्शा खोलें' : 'Open Full Interactive Community Map'}</span>
           </button>
         </div>
       </div>
@@ -889,13 +891,13 @@ export const CitizenHome: React.FC = () => {
       <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-            NEARBY COMMUNITY MATTERS
+            {language === 'hi' ? 'आस-पास के सामुदायिक मामले' : 'NEARBY COMMUNITY MATTERS'}
           </h2>
           <button 
             onClick={() => setCitizenTab('activity')}
             className="text-[11px] font-bold text-[#0F2A4A] hover:underline cursor-pointer"
           >
-            View All
+            {language === 'hi' ? 'सभी देखें' : 'View All'}
           </button>
         </div>
 
@@ -908,11 +910,11 @@ export const CitizenHome: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="text-xs font-bold text-slate-900">Broken Streetlight</h3>
-                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-200 text-slate-700">OPEN</span>
+                  <h3 className="text-xs font-bold text-slate-900">{language === 'hi' ? 'स्ट्रीट लाइट बंद' : 'Broken Streetlight'}</h3>
+                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-200 text-slate-700">{t('statusOpen', 'OPEN')}</span>
                 </div>
-                <p className="text-[11px] text-slate-500">Sector 12 Market Road</p>
-                <p className="text-[10px] text-slate-400">Reported 2 hrs ago by Sanjay V.</p>
+                <p className="text-[11px] text-slate-500">{language === 'hi' ? 'सेक्टर 12 मार्केट रोड' : 'Sector 12 Market Road'}</p>
+                <p className="text-[10px] text-slate-400">{language === 'hi' ? 'संजय वी. द्वारा २ घंटे पहले दर्ज' : 'Reported 2 hrs ago by Sanjay V.'}</p>
               </div>
             </div>
             <button
@@ -922,7 +924,7 @@ export const CitizenHome: React.FC = () => {
               }}
               className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-[#0F2A4A] rounded-lg text-xs font-bold cursor-pointer"
             >
-              Track
+              {language === 'hi' ? 'देखें' : 'Track'}
             </button>
           </div>
 
@@ -934,11 +936,11 @@ export const CitizenHome: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="text-xs font-bold text-slate-900">Village Handpump</h3>
-                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-800">IN PROGRESS</span>
+                  <h3 className="text-xs font-bold text-slate-900">{language === 'hi' ? 'गांव का हैंडपंप' : 'Village Handpump'}</h3>
+                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-800">{t('statusInProgress', 'IN PROGRESS')}</span>
                 </div>
-                <p className="text-[11px] text-slate-500">Ward 3 Rampur</p>
-                <p className="text-[10px] text-slate-400">Reported Yesterday • Assigned to PHED</p>
+                <p className="text-[11px] text-slate-500">{language === 'hi' ? 'वार्ड 3 रामपुर' : 'Ward 3 Rampur'}</p>
+                <p className="text-[10px] text-slate-400">{language === 'hi' ? 'कल दर्ज • जल निगम (PHED) को सौंपा गया' : 'Reported Yesterday • Assigned to PHED'}</p>
               </div>
             </div>
             <button
@@ -948,7 +950,7 @@ export const CitizenHome: React.FC = () => {
               }}
               className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-[#0F2A4A] rounded-lg text-xs font-bold cursor-pointer"
             >
-              Track
+              {language === 'hi' ? 'देखें' : 'Track'}
             </button>
           </div>
 
@@ -956,13 +958,15 @@ export const CitizenHome: React.FC = () => {
           <div className="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 border-l-4 border-l-emerald-600">
             <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-900">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Redressal Completed</span>
+              <span>{language === 'hi' ? 'समस्या का समाधान पूर्ण' : 'Redressal Completed'}</span>
             </div>
             <p className="text-xs text-slate-700 mt-1 leading-snug">
-              Panchayat sanitation vehicle cleared garbage accumulation at Galla Mandi crossing within 18h.
+              {language === 'hi' 
+                ? 'पंचायत सफाई वाहन ने गल्ला मंडी चौराहे से १८ घंटे में कचरा पूरी तरह हटा दिया।' 
+                : 'Panchayat sanitation vehicle cleared garbage accumulation at Galla Mandi crossing within 18h.'}
             </p>
             <p className="text-[10px] text-emerald-800 font-medium mt-1">
-              Verified by Ward Member • 4h ago
+              {language === 'hi' ? 'वार्ड सदस्य द्वारा सत्यापित • ४ घंटे पहले' : 'Verified by Ward Member • 4h ago'}
             </p>
           </div>
         </div>
