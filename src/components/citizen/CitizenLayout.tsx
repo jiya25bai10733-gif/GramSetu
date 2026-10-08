@@ -40,7 +40,7 @@ export const CitizenLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F7F9FC] text-slate-800 flex flex-col justify-between">
-      {/* Top Header matching screenww.png */}
+      {/* Top Header */}
       <header className="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-[2000] shadow-xs">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
@@ -160,7 +160,7 @@ export const CitizenLayout: React.FC = () => {
         )}
       </main>
 
-      {/* Bottom Navigation matching screenww.png */}
+      {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-[1050] py-2 shadow-lg">
         <div className="max-w-md mx-auto px-4 flex items-center justify-between relative">
           {/* Home */}

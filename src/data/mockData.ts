@@ -268,6 +268,130 @@ export const INITIAL_ISSUES: Issue[] = [
       duration: '00:07',
       audioUrl: '/audio/sanitation_drainage.wav'
     }
+  },
+  {
+    id: '#GS-1252',
+    token: '#1252',
+    title: 'Primary Health Center Doctor & Medicine Shortage',
+    summary: 'Doctor has been absent for 4 days at the primary health center. No essential paracetamol, ORS or basic antibiotics available for fever and seasonal viral outbreak.',
+    category: 'Public Health & Dispensary',
+    locationName: 'Rampur Primary Health Center • Ward 2',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2060, 77.0830],
+    status: 'OPEN',
+    priority: 'URGENT',
+    reportedBy: 'Kamla Bai',
+    reporterToken: '#CIT-RAM-610',
+    createdAt: '2026-06-20T10:00:00Z',
+    timeAgo: '1 day ago',
+    administrativeLevel: 'Gram Panchayat',
+    currentAuthority: 'Block Medical Officer (BMO) Sehore',
+    slaRemainingHours: 20,
+    slaBreached: false,
+    upvotes: 27,
+    photos: ['https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80'],
+    voiceReport: {
+      transcriptHindi: 'अस्पताल में डॉक्टर नहीं आते और दवाइयां भी नहीं मिलती, बच्चों को बहुत बुखार है।',
+      transcriptEnglish: 'Doctor does not visit the clinic and medicines are unavailable, children have high fever.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:08',
+      audioUrl: '/audio/health_dispensary.wav'
+    },
+    clusterId: 'cluster-health-5',
+    clusterMembersCount: 11
+  },
+  {
+    id: '#GS-1253',
+    token: '#1253',
+    title: 'Ward Main Road Streetlights Outage',
+    summary: 'All 8 LED street lights on the main market road are non-operational. Total darkness after 19:00 hrs creating safety hazard for women and pedestrians.',
+    category: 'Street Lighting',
+    locationName: 'Ward 3 Main Chowk',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2030, 77.0805],
+    status: 'OPEN',
+    priority: 'HIGH',
+    reportedBy: 'Mohan Singh',
+    reporterToken: '#CIT-RAM-311',
+    createdAt: '2026-06-21T15:00:00Z',
+    timeAgo: 'Yesterday',
+    administrativeLevel: 'Gram Panchayat',
+    currentAuthority: 'Panchayat Electrical Maintenance',
+    slaRemainingHours: 36,
+    slaBreached: false,
+    upvotes: 18,
+    photos: ['https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80'],
+    voiceReport: {
+      transcriptHindi: 'खंभे की लाइट पिछले एक हफ्ते से बंद है, सड़क पर अंधेरा रहता है।',
+      transcriptEnglish: 'Streetlight pole is turned off for past week, complete darkness on road.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:06',
+      audioUrl: '/audio/streetlight_outage.wav'
+    },
+    clusterId: 'cluster-light-6',
+    clusterMembersCount: 13
+  },
+  {
+    id: '#GS-1254',
+    token: '#1254',
+    title: 'Anganwadi Center Ceiling Leak & Nutrition Supply',
+    summary: 'Severe water seepage through roof of Anganwadi building during rains. Mid-day nutrition ration bags damaged.',
+    category: 'School & Anganwadi',
+    locationName: 'Ward 2 Anganwadi Bhawan',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2055, 77.0825],
+    status: 'OPEN',
+    priority: 'HIGH',
+    reportedBy: 'Radha Bai',
+    reporterToken: '#CIT-RAM-104',
+    createdAt: '2026-06-19T11:00:00Z',
+    timeAgo: '2 days ago',
+    administrativeLevel: 'Gram Panchayat',
+    currentAuthority: 'Women & Child Dev Supervisor',
+    slaRemainingHours: 28,
+    slaBreached: false,
+    upvotes: 14,
+    photos: ['https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80'],
+    voiceReport: {
+      transcriptHindi: 'आंगनवाड़ी केंद्र की छत टपक रही है और बच्चों का राशन खराब हो रहा है।',
+      transcriptEnglish: 'Anganwadi ceiling is leaking and children nutrition food is getting damaged.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:07',
+      audioUrl: '/audio/anganwadi_repair.wav'
+    },
+    clusterId: 'cluster-anganwadi-7',
+    clusterMembersCount: 7
+  },
+  {
+    id: '#GS-1255',
+    token: '#1255',
+    title: 'Fair Price Ration Shop Grain Distribution Irregularity',
+    summary: 'Ration dealer refusing to distribute monthly wheat and rice quota to BPL cardholders without unlawful extra charges.',
+    category: 'Ration & Social Welfare',
+    locationName: 'Panchayat Ration Depot #4',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2040, 77.0790],
+    status: 'OPEN',
+    priority: 'URGENT',
+    reportedBy: 'Ramcharan Verma',
+    reporterToken: '#CIT-RAM-921',
+    createdAt: '2026-06-21T08:30:00Z',
+    timeAgo: 'Yesterday',
+    administrativeLevel: 'Block',
+    currentAuthority: 'Block Food & Civil Supplies Officer',
+    slaRemainingHours: 16,
+    slaBreached: false,
+    upvotes: 35,
+    photos: ['https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&w=800&q=80'],
+    voiceReport: {
+      transcriptHindi: 'कोटेदार समय पर राशन नहीं दे रहा है और कार्डधारकों को परेशान कर रहा है।',
+      transcriptEnglish: 'Ration dealer is not providing monthly grains on time and harassing cardholders.',
+      dialect: 'Hindi Regional Voice (Authentic)',
+      duration: '00:07',
+      audioUrl: '/audio/ration_pds.wav'
+    },
+    clusterId: 'cluster-ration-8',
+    clusterMembersCount: 15
   }
 ];
 
@@ -341,6 +465,192 @@ export const INITIAL_CLUSTERS: CommunityCluster[] = [
         text: 'Dangerous pothole near park gate, two-wheelers slipping',
         time: '6h ago',
         type: 'text'
+      }
+    ]
+  },
+  {
+    id: 'cluster-power-3',
+    title: 'Substation Transformer & Power Outage Cluster',
+    category: 'Electricity & Power Grid',
+    locationName: 'Bilkisganj Substation & Feeder #4',
+    panchayat: 'Bilkisganj Panchayat',
+    coordinates: [23.190, 77.068],
+    reportsCount: 14,
+    citizensAffected: 48,
+    photosCount: 9,
+    voiceReportsCount: 6,
+    similarityScore: 93,
+    dialectEngine: 'Hindi Regional Engine',
+    status: 'IN PROGRESS',
+    primaryIssueId: '#GS-1187',
+    sampleReports: [
+      {
+        citizen: 'Kailash Chand',
+        text: 'Bijli substation se supply band hai, andhera hai',
+        time: 'Yesterday',
+        type: 'voice'
+      },
+      {
+        citizen: 'Anita Chauhan',
+        text: 'Transformer se chingari nikal rahi hai, light band',
+        time: '1d ago',
+        type: 'voice'
+      }
+    ]
+  },
+  {
+    id: 'cluster-drainage-4',
+    title: 'Gram Mandi Drainage & Overflow Cluster',
+    category: 'Sanitation & Drainage',
+    locationName: 'Gram Mandi Gate #2',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.208, 77.078],
+    reportsCount: 8,
+    citizensAffected: 24,
+    photosCount: 5,
+    voiceReportsCount: 4,
+    similarityScore: 89,
+    dialectEngine: 'Bundeli / Hindi Engine',
+    status: 'OPEN',
+    primaryIssueId: '#GS-1251',
+    sampleReports: [
+      {
+        citizen: 'Citizen IVR Caller',
+        text: 'Naali ka ganda paani sadak par beh raha hai, kachra jama hai',
+        time: 'Yesterday',
+        type: 'voice'
+      },
+      {
+        citizen: 'Mohan Lal',
+        text: 'Drainage blocked near Mandi gate, badboo aur bimari ka darr',
+        time: '2d ago',
+        type: 'text'
+      }
+    ]
+  },
+  {
+    id: 'cluster-health-5',
+    title: 'Primary Health Center Doctor & Medicine Shortage',
+    category: 'Public Health & Dispensary',
+    locationName: 'Rampur Primary Health Center • Ward 2',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2060, 77.0830],
+    reportsCount: 11,
+    citizensAffected: 45,
+    photosCount: 4,
+    voiceReportsCount: 6,
+    similarityScore: 92,
+    dialectEngine: 'Hindi Regional Engine',
+    status: 'OPEN',
+    primaryIssueId: '#GS-1252',
+    sampleReports: [
+      {
+        citizen: 'Kamla Bai',
+        text: 'अस्पताल में डॉक्टर नहीं आते और दवाइयां नहीं मिलती, बच्चों को बुखार है',
+        time: '1d ago',
+        type: 'voice'
+      },
+      {
+        citizen: 'Suresh Verma',
+        text: 'PHC dispensary band rehti hai, dawai nahi hai',
+        time: '2d ago',
+        type: 'text'
+      }
+    ]
+  },
+  {
+    id: 'cluster-canal-6',
+    title: 'Damaged Irrigation Canal Sluice & Water Supply',
+    category: 'Irrigation Infrastructure',
+    locationName: 'Rehti Minor Canal Ch. 12+400',
+    panchayat: 'Shyampur Panchayat',
+    coordinates: [23.218, 77.105],
+    reportsCount: 9,
+    citizensAffected: 38,
+    photosCount: 6,
+    voiceReportsCount: 3,
+    similarityScore: 90,
+    dialectEngine: 'Hindi / Malwi Engine',
+    status: 'OPEN',
+    primaryIssueId: '#GS-1239',
+    sampleReports: [
+      {
+        citizen: 'Devendra Patel',
+        text: 'Nahar ka paani khet me nahi aa raha, gate toota hai',
+        time: '1d ago',
+        type: 'voice'
+      }
+    ]
+  },
+  {
+    id: 'cluster-light-7',
+    title: 'Main Road Streetlight Outage & Dark Spots',
+    category: 'Street Lighting',
+    locationName: 'Ward 3 Main Chowk',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2030, 77.0805],
+    reportsCount: 13,
+    citizensAffected: 28,
+    photosCount: 7,
+    voiceReportsCount: 4,
+    similarityScore: 93,
+    dialectEngine: 'Hindi Regional Engine',
+    status: 'OPEN',
+    primaryIssueId: '#GS-1253',
+    sampleReports: [
+      {
+        citizen: 'Mohan Singh',
+        text: 'खंभे की स्ट्रीट लाइट 1 हफ्ते से बंद है, रात में अंधेरा रहता है',
+        time: '1d ago',
+        type: 'voice'
+      }
+    ]
+  },
+  {
+    id: 'cluster-anganwadi-8',
+    title: 'Anganwadi Center Ceiling Leak & Nutrition Supply',
+    category: 'School & Anganwadi',
+    locationName: 'Ward 2 Anganwadi Bhawan',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2055, 77.0825],
+    reportsCount: 7,
+    citizensAffected: 22,
+    photosCount: 3,
+    voiceReportsCount: 3,
+    similarityScore: 89,
+    dialectEngine: 'Hindi Regional Engine',
+    status: 'OPEN',
+    primaryIssueId: '#GS-1254',
+    sampleReports: [
+      {
+        citizen: 'Radha Bai',
+        text: 'आंगनवाड़ी केंद्र की छत टपक रही है और बच्चों का पोषण आहार नहीं मिल रहा',
+        time: '2d ago',
+        type: 'voice'
+      }
+    ]
+  },
+  {
+    id: 'cluster-ration-9',
+    title: 'Fair Price Ration Shop Grain Distribution Irregularity',
+    category: 'Ration & Social Welfare',
+    locationName: 'Panchayat Ration Depot #4',
+    panchayat: 'Rampur Panchayat',
+    coordinates: [23.2040, 77.0790],
+    reportsCount: 15,
+    citizensAffected: 52,
+    photosCount: 5,
+    voiceReportsCount: 5,
+    similarityScore: 91,
+    dialectEngine: 'Hindi Regional Engine',
+    status: 'OPEN',
+    primaryIssueId: '#GS-1255',
+    sampleReports: [
+      {
+        citizen: 'Ramcharan',
+        text: 'कोटेदार समय पर राशन नहीं दे रहा और तौल में गड़बड़ी है',
+        time: '1d ago',
+        type: 'voice'
       }
     ]
   }

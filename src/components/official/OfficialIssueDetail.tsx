@@ -142,7 +142,7 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
 
   return (
     <div className="space-y-4">
-      {/* Breadcrumb & Sub-header Bar matching screen4.png */}
+      {/* Breadcrumb & Sub-header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-200">
         <div className="flex items-center space-x-2 text-xs text-slate-500 font-semibold">
           <button
@@ -178,7 +178,7 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
         </div>
       </div>
 
-      {/* Main Two-Column Layout matching screen4.png */}
+      {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (5 Cols): GIS Node & Tech Specs */}
         <div className="lg:col-span-5 space-y-4">
@@ -460,7 +460,7 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
               </div>
             </div>
 
-            {/* Community Evidence Dossier matching screen4.png */}
+            {/* Community Evidence Dossier */}
             <div className="p-4 bg-blue-50/40 rounded-xl border border-blue-200/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
@@ -533,7 +533,7 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
               </div>
             </div>
 
-            {/* Official Action Controls matching screen4.png */}
+            {/* Official Action Controls */}
             <div className="grid grid-cols-3 gap-3 pt-2">
               <button
                 type="button"
@@ -564,7 +564,7 @@ export const OfficialIssueDetail: React.FC<{ issueId: string; onBack: () => void
             </div>
           </div>
 
-          {/* Junior Engineer Unit Card matching screen4.png bottom */}
+          {/* Junior Engineer Unit Card */}
           <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-blue-100 text-[#0F2A4A] flex items-center justify-center font-bold">

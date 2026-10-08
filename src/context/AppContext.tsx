@@ -4,6 +4,7 @@ import { INITIAL_ISSUES, INITIAL_CLUSTERS, INITIAL_ACTIVITY } from '../data/mock
 import { getRealisticHumanVoice } from '../data/humanVoiceClips';
 import { broadcastSyncEvent, subscribeToLiveSync, fetchRemoteSyncHistory, SyncPayload } from '../utils/syncService';
 import { getTranslation } from '../utils/translations';
+import { detectDuplicateIssue, indexIssueInCorpus, syncCorpusFromDatabase } from '../utils/similarityEngine';
 
 interface AppContextType {
   role: 'citizen' | 'official' | null;
@@ -130,6 +131,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('gramsetu_clusters', JSON.stringify(clusters));
   }, [clusters]);
 
+  // Continuously ensure dynamic keyword corpus includes all active issues and clusters
+  useEffect(() => {
+    syncCorpusFromDatabase(issues, clusters);
+  }, [issues, clusters]);
+
   useEffect(() => {
     localStorage.setItem('gramsetu_activity', JSON.stringify(activities));
   }, [activities]);
@@ -144,6 +150,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (payload.type === 'NEW_ISSUE' && payload.issue) {
       const incomingIssue = payload.issue;
       if (incomingIssue.id === '#GS-1299' || incomingIssue.token === '#1299' || incomingIssue.title?.includes('Friend Laptop Test')) return;
+
+      // Dynamically learn and index keywords for this incoming issue
+      indexIssueInCorpus(incomingIssue);
 
       setIssues((prev) => {
         if (prev.some(i => i.id === incomingIssue.id || i.token === incomingIssue.token)) {
@@ -337,20 +346,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
 
-    // Check for community similarity (e.g. if handpump or water in text)
-    const textToCheck = `${newIssue.title} ${newIssue.summary} ${newIssue.voiceReport?.transcriptHindi || ''} ${newIssue.voiceReport?.transcriptEnglish || ''}`.toLowerCase();
-    
-    let matchedCluster: CommunityCluster | undefined;
-    const isWaterHandpump = textToCheck.includes('handpump') || textToCheck.includes('pump') || textToCheck.includes('हैंडपंप') || textToCheck.includes('हैंडपम्प') || textToCheck.includes('पंप') || textToCheck.includes('paani') || textToCheck.includes('pani') || textToCheck.includes('पानी') || textToCheck.includes('जल') || textToCheck.includes('बोरवेल') || textToCheck.includes('नल') || textToCheck.includes('water');
-    const isRoadPothole = textToCheck.includes('pothole') || textToCheck.includes('road') || textToCheck.includes('गड्ढा') || textToCheck.includes('सड़क') || textToCheck.includes('मार्ग') || textToCheck.includes('रास्ता') || textToCheck.includes('street');
+    // Evaluate Hybrid Duplicate Detection (NLP Semantic Embeddings + Haversine Geodesic Distance)
+    const dupResult = detectDuplicateIssue(
+      {
+        title: newIssue.title,
+        summary: newIssue.summary,
+        transcript: newIssue.voiceReport?.transcriptHindi || newIssue.voiceReport?.transcriptEnglish,
+        category: newIssue.category,
+        coordinates: newIssue.coordinates,
+        locationName: newIssue.locationName
+      },
+      clusters,
+      issues
+    );
 
-    if (isWaterHandpump) {
-      matchedCluster = clusters.find(c => c.id === 'cluster-handpump-1') || INITIAL_CLUSTERS.find(c => c.id === 'cluster-handpump-1');
-    } else if (isRoadPothole) {
-      matchedCluster = clusters.find(c => c.id === 'cluster-pothole-2') || INITIAL_CLUSTERS.find(c => c.id === 'cluster-pothole-2');
+    let matchedCluster: CommunityCluster | undefined;
+    if (dupResult.isDuplicate && dupResult.matchedCluster) {
+      matchedCluster = {
+        ...dupResult.matchedCluster,
+        similarityScore: dupResult.similarityScore
+      };
     }
 
     setIssues(prev => [newIssue, ...prev]);
+
+    // Dynamically learn and index keywords for this newly submitted issue
+    indexIssueInCorpus(newIssue);
 
     // Add to activity stream
     const newActivity: ActivityItem = {

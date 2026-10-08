@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { CommunityCluster } from '../../types';
 import { playAudioWithFallback } from '../../utils/audioPlayback';
+import { detectLiveVoiceMatch } from '../../utils/similarityEngine';
 import { 
   ArrowLeft, 
   User, 
@@ -81,6 +83,7 @@ export const CitizenReportIssue: React.FC = () => {
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [submittedIssueId, setSubmittedIssueId] = useState<string | null>(null);
   const [matchedClusterTitle, setMatchedClusterTitle] = useState('');
+  const [matchedClusterObj, setMatchedClusterObj] = useState<CommunityCluster | null>(null);
 
   // Refs for media recording & speech recognition
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -102,6 +105,17 @@ export const CitizenReportIssue: React.FC = () => {
       }
     };
   }, []);
+
+  // Auto-detect category and synchronize from typed or spoken text
+  useEffect(() => {
+    const fullInput = `${subject} ${description}`.trim();
+    if (fullInput.length >= 4) {
+      const match = detectLiveVoiceMatch(fullInput);
+      if (match && match.category && (category === 'Water Supply & Sanitation' || !category)) {
+        setCategory(match.category);
+      }
+    }
+  }, [subject, description]);
 
   const formatSeconds = (sec: number) => {
     const mins = Math.floor(sec / 60);
@@ -462,6 +476,7 @@ export const CitizenReportIssue: React.FC = () => {
 
     if (result.matchedCluster) {
       setMatchedClusterTitle(result.matchedCluster.title);
+      setMatchedClusterObj(result.matchedCluster);
       setShowMatchModal(true);
     } else {
       setSelectedIssueId(result.issue.id);
@@ -615,15 +630,58 @@ export const CitizenReportIssue: React.FC = () => {
             )}
 
             {audioBlobUrl && !isRecording && (
-              <div className="flex items-center justify-center space-x-2 pt-1">
-                <button
-                  type="button"
-                  onClick={toggleAudioPlayback}
-                  className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 flex items-center space-x-1 cursor-pointer"
-                >
-                  {isPlayingAudio ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                  <span>{isPlayingAudio ? 'Pause' : 'Play Voice Recording'}</span>
-                </button>
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center justify-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={toggleAudioPlayback}
+                    className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 flex items-center space-x-1 cursor-pointer"
+                  >
+                    {isPlayingAudio ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                    <span>{isPlayingAudio ? 'Pause' : 'Play Voice Recording'}</span>
+                  </button>
+                </div>
+
+                {/* AI Duplicate Detection Card — Appears ONLY AFTER voice recording stops */}
+                {(() => {
+                  const fullInput = `${subject} ${description}`.trim();
+                  const liveMatch = detectLiveVoiceMatch(fullInput);
+                  if (!liveMatch) return null;
+                  return (
+                    <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-950 flex items-start space-x-2.5 text-left animate-in fade-in">
+                      <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="text-[10px] font-black uppercase tracking-wider bg-amber-300 text-slate-950 px-1.5 py-0.5 rounded shadow-2xs">
+                            AI MATCH {liveMatch.score}%
+                          </span>
+                          <span className="text-xs font-bold text-amber-900">
+                            {language === 'hi' ? 'समान सामुदायिक समस्या पहचानी गई!' : 'Similar Community Issue Detected!'}
+                          </span>
+                        </div>
+                        <p className="text-xs font-extrabold text-[#0F2A4A] mt-1">
+                          {language === 'hi' ? liveMatch.titleHindi : liveMatch.title}
+                        </p>
+                        <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
+                          <strong>{liveMatch.count} {language === 'hi' ? 'ग्रामीणों' : 'neighbors'}</strong> {language === 'hi' ? 'ने यह समस्या पहले ही दर्ज कराई है।' : 'already reported this issue nearby.'}
+                        </p>
+                        <div className="mt-2.5 flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              joinCluster(liveMatch.clusterId, fullInput);
+                              setSelectedIssueId(liveMatch.primaryIssueId);
+                              setCitizenTab('activity');
+                            }}
+                            className="px-3 py-1.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white text-[11px] font-bold rounded-lg cursor-pointer shadow-xs"
+                          >
+                            {language === 'hi' ? 'हाँ, यही समस्या है (+1 समर्थन)' : 'Endorse Existing (+1 Vote)'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </div>
@@ -651,6 +709,9 @@ export const CitizenReportIssue: React.FC = () => {
                 <option>Sanitation & Drainage</option>
                 <option>Irrigation Infrastructure</option>
                 <option>Public Health & Dispensary</option>
+                <option>Street Lighting</option>
+                <option>School & Anganwadi</option>
+                <option>Ration & Social Welfare</option>
               </select>
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
             </div>
@@ -730,7 +791,7 @@ export const CitizenReportIssue: React.FC = () => {
                 Detailed Description <span className="text-red-500">*</span>
               </label>
 
-              {/* Quick Dictate Voice Button matching user's screenshot */}
+              {/* Voice Dictation Quick Action */}
               <button
                 type="button"
                 onClick={() => toggleFieldDictation('description')}
@@ -784,6 +845,49 @@ export const CitizenReportIssue: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {/* Live AI Duplicate Detection Alert Card (Appears ONLY AFTER recording stops or when typing is done) */}
+            {(() => {
+              if (isRecording || activeDictatingField) return null;
+              if (mode === 'voice' && audioBlobUrl) return null; // Already displayed prominently in Voice Box
+              const fullInput = `${subject} ${description}`.trim();
+              const liveMatch = detectLiveVoiceMatch(fullInput);
+              if (!liveMatch) return null;
+              return (
+                <div className="mt-2.5 p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-950 flex items-start space-x-2.5 animate-in fade-in">
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider bg-amber-300 text-slate-950 px-1.5 py-0.5 rounded shadow-2xs">
+                        AI MATCH {liveMatch.score}%
+                      </span>
+                      <span className="text-xs font-bold text-amber-900">
+                        {language === 'hi' ? 'समान सामुदायिक समस्या पहचानी गई!' : 'Similar Community Issue Detected!'}
+                      </span>
+                    </div>
+                    <p className="text-xs font-extrabold text-[#0F2A4A] mt-1">
+                      {language === 'hi' ? liveMatch.titleHindi : liveMatch.title}
+                    </p>
+                    <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
+                      <strong>{liveMatch.count} {language === 'hi' ? 'ग्रामीणों' : 'neighbors'}</strong> {language === 'hi' ? 'ने यह समस्या दर्ज कराई है। अलग शिकायत दर्ज करने की बजाय इस याचिका का समर्थन करें।' : 'already reported this issue. Endorse this existing petition to increase repair urgency!'}
+                    </p>
+                    <div className="mt-2.5 flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          joinCluster(liveMatch.clusterId, fullInput);
+                          setSelectedIssueId(liveMatch.primaryIssueId);
+                          setCitizenTab('activity');
+                        }}
+                        className="px-3 py-1.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white text-[11px] font-bold rounded-lg cursor-pointer shadow-xs"
+                      >
+                        {t('joinCommunityPetition', 'Endorse & Upvote Community Issue')}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Real-time Location & Interactive Map Picker */}
@@ -1054,7 +1158,7 @@ export const CitizenReportIssue: React.FC = () => {
                 {matchedClusterTitle || (language === 'hi' ? 'ग्राम पंचायत हैंडपंप खराबी' : 'Village Handpump Not Working')}
               </p>
               <p className="text-xs text-slate-500 mt-0.5">
-                <strong className="text-slate-800">17 {language === 'hi' ? 'ग्रामीणों' : 'citizens'}</strong> {language === 'hi' ? 'ने यह समस्या पहले दर्ज कराई है' : 'reported this issue'}
+                <strong className="text-slate-800">{matchedClusterObj?.reportsCount || 17} {language === 'hi' ? 'ग्रामीणों' : 'citizens'}</strong> {language === 'hi' ? 'ने यह समस्या पहले दर्ज कराई है' : 'reported this issue'}
               </p>
             </div>
 
@@ -1062,9 +1166,9 @@ export const CitizenReportIssue: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  joinCluster('cluster-handpump-1', description);
+                  joinCluster(matchedClusterObj?.id || 'cluster-handpump-1', description || subject);
                   setShowMatchModal(false);
-                  setSelectedIssueId('#GS-1248');
+                  setSelectedIssueId(matchedClusterObj?.primaryIssueId || '#GS-1248');
                   setCitizenTab('activity');
                 }}
                 className="w-full py-2.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white text-xs font-bold rounded-lg shadow-sm cursor-pointer"

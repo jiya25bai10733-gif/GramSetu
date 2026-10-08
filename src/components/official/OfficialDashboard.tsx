@@ -141,11 +141,11 @@ export const OfficialDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Grid: Left 65% / Right 35% matching screen3.png */}
+      {/* Main Grid: Left 8 cols / Right 4 cols */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
-          {/* GIS Telemetry Map Card matching screen3.png */}
+          {/* GIS Telemetry Map Card */}
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
             <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center space-x-2">
@@ -280,7 +280,7 @@ export const OfficialDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* ACTIVE COMMUNITY ISSUES LIST matching screen3.png */}
+          {/* ACTIVE COMMUNITY ISSUES LIST */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -444,7 +444,7 @@ export const OfficialDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column (4 cols) matching screen3.png */}
+        {/* Right Column (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
           {/* SYSTEM METRICS (FY 2026-Q2) */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
@@ -510,7 +510,7 @@ export const OfficialDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* PANCHAYAT COMMAND matching screen3.png */}
+          {/* PANCHAYAT COMMAND CARD */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <div className="flex items-center space-x-2">

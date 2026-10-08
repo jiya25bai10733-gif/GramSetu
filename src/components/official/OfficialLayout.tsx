@@ -63,7 +63,7 @@ export const OfficialLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F6F8FB] text-slate-800 flex flex-col justify-between">
-      {/* Top Navigation Bar matching screen3.png & screen4.png */}
+      {/* Top Navigation Bar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-[2000] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-4">
@@ -309,7 +309,7 @@ export const OfficialLayout: React.FC = () => {
         )}
       </main>
 
-      {/* Footer matching screen3.png & 5.png */}
+      {/* Administrative Footer */}
       <footer className="bg-white border-t border-slate-200 py-3.5 px-4 sm:px-6 lg:px-8 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>GramSetu Municipal Grievance Redressal Network • Digital Administrative Command</span>

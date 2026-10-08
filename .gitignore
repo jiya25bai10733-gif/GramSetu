@@ -32,3 +32,9 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Local Dev / IDE Assistant Settings
+AGENTS.md
+*.pyc
+__pycache__/
+

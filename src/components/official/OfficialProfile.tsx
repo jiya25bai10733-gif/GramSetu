@@ -846,7 +846,7 @@ export const OfficialProfile: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column (4 cols) matching screen.png */}
+        {/* Officer Overview (4 cols) */}
         <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-6">
           {/* Avatar & Title */}
           <div className="text-center">
@@ -941,7 +941,7 @@ export const OfficialProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column (8 cols): Assigned Jurisdiction Issues matching screen.png */}
+        {/* Assigned Jurisdiction Issues (8 cols) */}
         <div className="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
             <div>
@@ -953,7 +953,7 @@ export const OfficialProfile: React.FC = () => {
               </p>
             </div>
 
-            {/* Filter Tabs matching screen.png */}
+            {/* Status Filter Tabs */}
             <div className="inline-flex border border-slate-300 rounded-lg text-xs font-bold divide-x divide-slate-300 overflow-hidden shrink-0">
               <button
                 type="button"

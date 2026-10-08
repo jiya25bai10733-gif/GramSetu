@@ -41,7 +41,7 @@ export const OfficialActivity: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Status Strip matching 5.png */}
+      {/* Live Status Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
         <div className="flex items-center space-x-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -63,7 +63,7 @@ export const OfficialActivity: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Header & Audit Stream #SHR-2026 matching 5.png */}
+      {/* Audit Stream Header */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
@@ -81,7 +81,7 @@ export const OfficialActivity: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter Buttons matching 5.png */}
+      {/* Action Category Filters */}
       <div className="flex gap-2 flex-wrap text-xs">
         <button
           onClick={() => setFilter('ALL')}
@@ -135,7 +135,7 @@ export const OfficialActivity: React.FC = () => {
         </button>
       </div>
 
-      {/* Metric 4-Tile Strip matching 5.png */}
+      {/* Key Operational Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-5 border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
@@ -166,7 +166,7 @@ export const OfficialActivity: React.FC = () => {
         </div>
       </div>
 
-      {/* Activity Log Feed Cards matching 5.png */}
+      {/* Activity Log Feed */}
       <div className="space-y-4">
         {filtered.map(item => {
           return (
@@ -216,7 +216,7 @@ export const OfficialActivity: React.FC = () => {
                   {item.description}
                 </p>
 
-                {/* Sub-strip with tags matching 5.png */}
+                {/* Metadata & Audit Trail Tags */}
                 <div className="pt-2 flex flex-wrap items-center gap-3 text-xs">
                   <span className={`px-2.5 py-0.5 text-[11px] font-mono font-bold ${
                     item.type === 'RESOLVED' ? 'bg-blue-100/70 text-[#0F2A4A]' :
@@ -318,7 +318,7 @@ export const OfficialActivity: React.FC = () => {
         })}
       </div>
 
-      {/* Immutable Blockchain Anchor Footer matching 5.png */}
+      {/* Immutable Audit Ledger Footer */}
       <div className="p-4 bg-slate-100 border border-slate-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between text-slate-600 gap-2">
         <div className="flex items-center space-x-2">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
