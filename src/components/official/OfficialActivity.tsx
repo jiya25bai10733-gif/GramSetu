@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export const OfficialActivity: React.FC = () => {
-  const { activities, setSelectedIssueId, setOfficialTab } = useApp();
+  const { activities, setSelectedIssueId, setOfficialTab, language, t } = useApp();
   const [filter, setFilter] = useState<'ALL' | 'NEW' | 'UPDATES' | 'ESCALATIONS' | 'RESOLVED'>('ALL');
   const [isPlayingSample, setIsPlayingSample] = useState(false);
 
@@ -67,10 +67,10 @@ export const OfficialActivity: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-            LIVE OFFICIAL ACTIVITY
+            {t('liveOfficialActivityTitle', 'LIVE OFFICIAL ACTIVITY')}
           </h1>
           <p className="text-xs md:text-sm text-slate-500 mt-1 max-w-2xl font-normal leading-relaxed">
-            A real-time, transparent log of all reported infrastructure problems, officer assignments, and administrative resolution updates across Sehore jurisdiction.
+            {t('liveActivityDesc', 'A real-time, transparent log of all reported infrastructure problems, officer assignments, and administrative resolution updates across Sehore jurisdiction.')}
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export const OfficialActivity: React.FC = () => {
               : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          ALL ACTIONS
+          {t('allActions', 'ALL ACTIONS')}
         </button>
         <button
           onClick={() => setFilter('NEW')}
@@ -101,7 +101,7 @@ export const OfficialActivity: React.FC = () => {
               : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          NEW REPORTS
+          {t('newReports', 'NEW REPORTS')}
         </button>
         <button
           onClick={() => setFilter('UPDATES')}
@@ -111,7 +111,7 @@ export const OfficialActivity: React.FC = () => {
               : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          UPDATES
+          {t('updates', 'UPDATES')}
         </button>
         <button
           onClick={() => setFilter('ESCALATIONS')}
@@ -121,7 +121,7 @@ export const OfficialActivity: React.FC = () => {
               : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          ESCALATIONS
+          {t('escalations', 'ESCALATIONS')}
         </button>
         <button
           onClick={() => setFilter('RESOLVED')}
@@ -131,7 +131,7 @@ export const OfficialActivity: React.FC = () => {
               : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          RESOLVED
+          {t('statusResolved', 'RESOLVED')}
         </button>
       </div>
 
@@ -139,28 +139,28 @@ export const OfficialActivity: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-5 border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-            RESOLVED TODAY
+            {t('resolvedToday', 'RESOLVED TODAY')}
           </span>
           <span className="text-4xl font-black text-slate-900 mt-1 block">38</span>
         </div>
 
         <div className="bg-white p-5 border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-            IN PROGRESS
+            {t('inProgressStat', 'IN PROGRESS')}
           </span>
           <span className="text-4xl font-black text-slate-900 mt-1 block">14</span>
         </div>
 
         <div className="bg-white p-5 border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-            VOICE LOGS MERGED
+            {t('voiceLogsMerged', 'VOICE LOGS MERGED')}
           </span>
           <span className="text-4xl font-black text-slate-900 mt-1 block">62</span>
         </div>
 
         <div className="bg-white p-5 border border-slate-200 shadow-2xs">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-            SLA BREACHES
+            {t('slaBreaches', 'SLA BREACHES')}
           </span>
           <span className="text-4xl font-black text-red-600 mt-1 block">01</span>
         </div>
@@ -243,13 +243,13 @@ export const OfficialActivity: React.FC = () => {
                       }}
                       className="text-slate-800 hover:underline font-medium cursor-pointer"
                     >
-                      • View Citizen Verification Photo
+                      {t('viewCitizenPhotoProof', '• View Citizen Verification Photo')}
                     </button>
                   )}
 
                   {item.estimatedResolution && (
                     <span className="text-slate-600 font-medium">
-                      Estimated Resolution: {item.estimatedResolution}
+                      {language === 'hi' ? `अनुमानित समय: ${item.estimatedResolution}` : `Estimated Resolution: ${item.estimatedResolution}`}
                     </span>
                   )}
 
@@ -262,13 +262,13 @@ export const OfficialActivity: React.FC = () => {
                       }}
                       className="text-slate-800 hover:underline font-medium cursor-pointer"
                     >
-                      • Dispatch Route Map
+                      {t('dispatchRouteMap', '• Dispatch Route Map')}
                     </button>
                   )}
 
                   {item.dialectEngine && (
                     <span className="text-slate-600 font-medium">
-                      Dialect: {item.dialectEngine}
+                      {language === 'hi' ? `बोली: ${item.dialectEngine}` : `Dialect: ${item.dialectEngine}`}
                     </span>
                   )}
 
@@ -278,7 +278,7 @@ export const OfficialActivity: React.FC = () => {
                       onClick={playVoiceSample}
                       className="text-slate-800 hover:underline font-medium cursor-pointer flex items-center space-x-1"
                     >
-                      <span>• Listen to Audio Sample</span>
+                      <span>{t('listenAudioSample', '• Listen to Audio Sample')}</span>
                       <Volume2 className="w-3 h-3 text-[#0F2A4A]" />
                     </button>
                   )}
@@ -295,7 +295,7 @@ export const OfficialActivity: React.FC = () => {
 
                   {item.channel && (
                     <span className="text-slate-600 font-medium">
-                      Channel: {item.channel}
+                      {language === 'hi' ? `माध्यम: ${item.channel}` : `Channel: ${item.channel}`}
                     </span>
                   )}
 
@@ -308,7 +308,7 @@ export const OfficialActivity: React.FC = () => {
                       }}
                       className="text-slate-800 hover:underline font-medium cursor-pointer"
                     >
-                      • Inspect Audio Transcript
+                      {t('inspectTranscript', '• Inspect Audio Transcript')}
                     </button>
                   )}
                 </div>
@@ -322,7 +322,7 @@ export const OfficialActivity: React.FC = () => {
       <div className="p-4 bg-slate-100 border border-slate-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between text-slate-600 gap-2">
         <div className="flex items-center space-x-2">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>Immutable blockchain-anchored ledger of Gram Panchayat public complaints.</span>
+          <span>{t('blockchainFooterNotice', 'Immutable blockchain-anchored ledger of Gram Panchayat public complaints.')}</span>
         </div>
         <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500">
           NODE SHR-04 • 100% UPTIME

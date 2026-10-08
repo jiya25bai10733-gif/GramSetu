@@ -16,7 +16,7 @@ import {
 import { IssueStatus, IssuePriority } from '../../types';
 
 export const OfficialIssues: React.FC = () => {
-  const { issues, setSelectedIssueId } = useApp();
+  const { issues, setSelectedIssueId, language, t } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
@@ -40,13 +40,15 @@ export const OfficialIssues: React.FC = () => {
       {/* Title Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">All Civic Grievances</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            {t('allCivicGrievancesTitle', 'All Civic Grievances')}
+          </h1>
           <p className="text-xs text-slate-500">
-            Administrative queue across 42 Panchayats of Sehore Jurisdiction
+            {t('adminQueueDesc', 'Administrative queue across 42 Panchayats of Sehore Jurisdiction')}
           </p>
         </div>
         <div className="text-xs text-slate-500 font-bold">
-          Showing <span className="text-[#0F2A4A]">{filteredIssues.length}</span> of {issues.length} records
+          {language === 'hi' ? 'प्रदर्शित' : 'Showing'} <span className="text-[#0F2A4A]">{filteredIssues.length}</span> {language === 'hi' ? `में से ${issues.length} मामले` : `of ${issues.length} records`}
         </div>
       </div>
 

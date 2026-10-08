@@ -13,20 +13,21 @@ import {
 } from 'lucide-react';
 
 export const OfficialAnalytics: React.FC = () => {
+  const { language, t } = useApp();
   const [timeRange, setTimeRange] = useState('Quarter 2 (FY 2026)');
 
   const categoryBreakdown = [
-    { name: 'Water Supply & Sanitation', count: 488, pct: 38, color: 'bg-blue-600' },
-    { name: 'Roads & Surface Transit', count: 346, pct: 27, color: 'bg-amber-500' },
-    { name: 'Electricity & Power Grid', count: 270, pct: 21, color: 'bg-indigo-600' },
-    { name: 'Sanitation & Drainage', count: 180, pct: 14, color: 'bg-emerald-600' }
+    { name: language === 'hi' ? 'जल आपूर्ति एवं पेयजल' : 'Water Supply & Sanitation', count: 488, pct: 38, color: 'bg-blue-600' },
+    { name: language === 'hi' ? 'सड़क एवं परिवहन' : 'Roads & Surface Transit', count: 346, pct: 27, color: 'bg-amber-500' },
+    { name: language === 'hi' ? 'विद्युत एवं पावर ग्रिड' : 'Electricity & Power Grid', count: 270, pct: 21, color: 'bg-indigo-600' },
+    { name: language === 'hi' ? 'नाली एवं स्वच्छता' : 'Sanitation & Drainage', count: 180, pct: 14, color: 'bg-emerald-600' }
   ];
 
   const villagePerformance = [
-    { village: 'Rampur Panchayat', filed: 340, resolved: 280, rate: 82.3, avgHours: 32 },
-    { village: 'Bilkisganj Substation', filed: 410, resolved: 310, rate: 75.6, avgHours: 44 },
-    { village: 'Shyampur Tehsil', filed: 290, resolved: 220, rate: 75.8, avgHours: 38 },
-    { village: 'Doraha Panchayat', filed: 244, resolved: 210, rate: 86.0, avgHours: 26 }
+    { village: language === 'hi' ? 'रामपुर पंचायत' : 'Rampur Panchayat', filed: 340, resolved: 280, rate: 82.3, avgHours: 32 },
+    { village: language === 'hi' ? 'बिलकिसगंज सबस्टेशन' : 'Bilkisganj Substation', filed: 410, resolved: 310, rate: 75.6, avgHours: 44 },
+    { village: language === 'hi' ? 'श्यामपुर तहसील' : 'Shyampur Tehsil', filed: 290, resolved: 220, rate: 75.8, avgHours: 38 },
+    { village: language === 'hi' ? 'दोराहा पंचायत' : 'Doraha Panchayat', filed: 244, resolved: 210, rate: 86.0, avgHours: 26 }
   ];
 
   return (
@@ -35,10 +36,10 @@ export const OfficialAnalytics: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            Grievance Analytics & Redressal Intelligence
+            {t('analyticsTitle', 'Grievance Analytics & Redressal Intelligence')}
           </h1>
           <p className="text-xs text-slate-500">
-            Administrative performance diagnostics and citizen sentiment clustering
+            {t('analyticsSubtitle', 'Administrative performance diagnostics and citizen sentiment clustering')}
           </p>
         </div>
 

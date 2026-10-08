@@ -651,6 +651,176 @@ export const TRANSLATIONS: Record<string, Record<'hi' | 'en' | 'malwi', string>>
     en: 'hrs ago',
     hi: 'घंटे पहले',
     malwi: 'घंटे पेली'
+  },
+
+  // Official Activity Stream
+  liveOfficialActivityTitle: {
+    en: 'LIVE OFFICIAL ACTIVITY',
+    hi: 'लाइव प्रशासनिक गतिविधि',
+    malwi: 'लाइव सरकारी काम-काज'
+  },
+  liveActivityDesc: {
+    en: 'A real-time, transparent log of all reported infrastructure problems, officer assignments, and administrative resolution updates across Sehore jurisdiction.',
+    hi: 'सीहोर ब्लॉक के अंतर्गत दर्ज समस्याओं, अधिकारी आवंटनों एवं प्रशासनिक समाधानों का वास्तविक समय का पारदर्शी रिकॉर्ड।',
+    malwi: 'सीहोर की समस्या, अधिकारी व समाधान को रिकॉर्ड।'
+  },
+  allActions: {
+    en: 'ALL ACTIONS',
+    hi: 'सभी कार्य',
+    malwi: 'सगळा काम'
+  },
+  newReports: {
+    en: 'NEW REPORTS',
+    hi: 'नई शिकायतें',
+    malwi: 'नवी फरियाद'
+  },
+  updates: {
+    en: 'UPDATES',
+    hi: 'प्रगति अपडेट',
+    malwi: 'अपडेट'
+  },
+  escalations: {
+    en: 'ESCALATIONS',
+    hi: 'अग्रेषित मामले',
+    malwi: 'बड़ा अधिकारी कन्ने'
+  },
+  resolvedToday: {
+    en: 'RESOLVED TODAY',
+    hi: 'आज निराकृत',
+    malwi: 'आज निपट गया'
+  },
+  inProgressStat: {
+    en: 'IN PROGRESS',
+    hi: 'कार्य प्रगति पर',
+    malwi: 'काम चाली रियो'
+  },
+  voiceLogsMerged: {
+    en: 'VOICE LOGS MERGED',
+    hi: 'विलय की गई आवाजें',
+    malwi: 'जोड़ी गई आवाजें'
+  },
+  slaBreaches: {
+    en: 'SLA BREACHES',
+    hi: 'समय-सीमा उल्लंघन',
+    malwi: 'समय सीमा उल्लंघन'
+  },
+  viewCitizenPhotoProof: {
+    en: '• View Citizen Verification Photo',
+    hi: '• नागरिक सत्यापन फोटो देखें',
+    malwi: '• नागरिक फोटो देखो'
+  },
+  dispatchRouteMap: {
+    en: '• Dispatch Route Map',
+    hi: '• फील्ड निरीक्षण रूट मैप',
+    malwi: '• रूट मैप देखो'
+  },
+  listenAudioSample: {
+    en: '• Listen to Audio Sample',
+    hi: '• आवाज रिकॉर्डिंग सुनें',
+    malwi: '• आवाज सुनो'
+  },
+  inspectTranscript: {
+    en: '• Inspect Audio Transcript',
+    hi: '• ऑडियो प्रतिलेख देखें',
+    malwi: '• प्रतिलेख देखो'
+  },
+  blockchainFooterNotice: {
+    en: 'Immutable blockchain-anchored ledger of Gram Panchayat public complaints.',
+    hi: 'ग्राम पंचायत जन शिकायतों का अपरिवर्तनीय डिजिटल एवं सुरक्षित खाता।',
+    malwi: 'ग्राम पंचायत जन शिकायतों को सुरक्षित खाता।'
+  },
+
+  // Official Escalations & SLA Center
+  escalationsTitle: {
+    en: 'Administrative Escalation & SLA Center',
+    hi: 'प्रशासनिक अग्रेषण एवं समय-सीमा केंद्र',
+    malwi: 'प्रशासनिक अग्रेषण केंद्र'
+  },
+  escalationsSubtitle: {
+    en: 'Four-tier governance hierarchy enforcing prompt public grievance resolution.',
+    hi: 'शीघ्र जन-समस्या निवारण सुनिश्चित करने वाली ४-स्तरीय प्रशासनिक व्यवस्था।',
+    malwi: 'समस्या निवारण खातिर ४-स्तरीय व्यवस्था।'
+  },
+  adminProgression: {
+    en: 'ADMINISTRATIVE JURISDICTION PROGRESSION',
+    hi: 'प्रशासनिक क्षेत्राधिकार सोपान',
+    malwi: 'प्रशासनिक सोपान'
+  },
+  urgentEscalationsHeader: {
+    en: 'URGENT ESCALATIONS & OVERDUE GRIEVANCES',
+    hi: 'अति-आवश्यक अग्रेषित मामले एवं विलंबित शिकायतें',
+    malwi: 'अति-आवश्यक मामले'
+  },
+  mattersEscalated: {
+    en: 'Matters Escalated',
+    hi: 'मामले अग्रेषित',
+    malwi: 'मामला अग्रेषित'
+  },
+  viewDossier: {
+    en: 'View Dossier',
+    hi: 'दस्तावेज़ देखें',
+    malwi: 'दस्तावेज़ देखो'
+  },
+  escalateFurther: {
+    en: 'Escalate Further',
+    hi: 'आगे अग्रेषित करें',
+    malwi: 'आगे भेजो'
+  },
+
+  // Community Issues & Similarity Engine
+  aiEngineBadge: {
+    en: 'AI SIMILARITY DETECTION ENGINE',
+    hi: 'एआई समानता एवं प्रतिरूप पहचान इंजन',
+    malwi: 'एआई समानता इंजन'
+  },
+  dialectNormalizationActive: {
+    en: 'Dialect Normalization Active',
+    hi: 'बोली सामान्यीकरण सक्रिय',
+    malwi: 'बोली सामान्यीकरण चालू'
+  },
+  communityClustersTitle: {
+    en: 'Community Grievance Clusters',
+    hi: 'सामुदायिक शिकायत समूह (क्लस्टर्स)',
+    malwi: 'सामुदायिक समूह'
+  },
+  communityClustersDesc: {
+    en: 'GramSetu amalgamates disparate regional voice logs, citizen vernacular messages, and geotagged photographs into singular actionable work orders.',
+    hi: 'ग्रामसेतु अलग-अलग ग्रामीण बोलियों के ऑडियो संदेशों और फोटो को एक ही ठोस कार्य आदेश में स्वतः जोड़ता है।',
+    malwi: 'अलग-अलग आवाज और फोटो को एक कार्य आदेश मा जोड़वा को काम।'
+  },
+  duplicateOrdersAvoided: {
+    en: 'Duplicate Work Orders Avoided',
+    hi: 'दोहरी कार्य प्रविष्टियां रोकी गईं',
+    malwi: 'दोहराव रोको गयो'
+  },
+
+  // All Civic Grievances (OfficialIssues)
+  allCivicGrievancesTitle: {
+    en: 'All Civic Grievances',
+    hi: 'समस्त जन शिकायतें',
+    malwi: 'सगळी जन फरियाद'
+  },
+  adminQueueDesc: {
+    en: 'Administrative queue across 42 Panchayats of Sehore Jurisdiction',
+    hi: 'सीहोर ब्लॉक की ४२ ग्राम पंचायतों की प्रशासनिक कार्य सूची',
+    malwi: 'सीहोर की ४२ पंचायतों की सूची'
+  },
+  showingRecords: {
+    en: 'Showing records',
+    hi: 'कुल दर्ज मामले',
+    malwi: 'कुल मामले'
+  },
+
+  // Analytics
+  analyticsTitle: {
+    en: 'Grievance Analytics & Redressal Intelligence',
+    hi: 'शिकायत विश्लेषण एवं निवारण रिपोर्ट',
+    malwi: 'शिकायत विश्लेषण रिपोर्ट'
+  },
+  analyticsSubtitle: {
+    en: 'Administrative performance diagnostics and citizen sentiment clustering',
+    hi: 'प्रशासनिक कार्यकुशलता मूल्यांकन एवं नागरिक संतुष्टि विश्लेषण',
+    malwi: 'सरकारी काम को मूल्यांकन'
   }
 };
 

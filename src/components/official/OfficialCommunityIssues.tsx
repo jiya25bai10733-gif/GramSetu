@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export const OfficialCommunityIssues: React.FC = () => {
-  const { clusters, setSelectedIssueId, setOfficialTab } = useApp();
+  const { clusters, setSelectedIssueId, setOfficialTab, language, t } = useApp();
   const [selectedCluster, setSelectedCluster] = useState(clusters[0]);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -38,22 +38,24 @@ export const OfficialCommunityIssues: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950">
-                AI SIMILARITY DETECTION ENGINE
+                {t('aiEngineBadge', 'AI SIMILARITY DETECTION ENGINE')}
               </span>
-              <span className="text-xs text-blue-200">Dialect Normalization Active</span>
+              <span className="text-xs text-blue-200">
+                {t('dialectNormalizationActive', 'Dialect Normalization Active')}
+              </span>
             </div>
             <h1 className="text-2xl font-black mt-2 tracking-tight">
-              Community Grievance Clusters
+              {t('communityClustersTitle', 'Community Grievance Clusters')}
             </h1>
             <p className="text-xs text-blue-100 max-w-2xl mt-1 leading-relaxed">
-              GramSetu amalgamates disparate regional voice logs, citizen vernacular messages, and geotagged photographs into singular actionable work orders.
+              {t('communityClustersDesc', 'GramSetu amalgamates disparate regional voice logs, citizen vernacular messages, and geotagged photographs into singular actionable work orders.')}
             </p>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 text-center shrink-0">
             <span className="text-3xl font-black block text-amber-300">38%</span>
             <span className="text-[11px] text-blue-100 uppercase tracking-wider font-bold">
-              Duplicate Work Orders Avoided
+              {t('duplicateOrdersAvoided', 'Duplicate Work Orders Avoided')}
             </span>
           </div>
         </div>
