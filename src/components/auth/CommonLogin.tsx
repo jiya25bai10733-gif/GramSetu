@@ -475,65 +475,7 @@ export const CommonLogin: React.FC = () => {
                       <span>Official OTP Login</span>
                     </button>
 
-                    {/* DEMO ACCOUNTS FOR ALL OFFICIAL TIERS */}
-                    <div className="pt-2">
-                      <div className="bg-amber-50/80 border border-amber-200/90 rounded-xl p-3">
-                        <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-amber-200/70">
-                          <div className="flex items-center space-x-1.5 text-amber-950 font-bold text-xs">
-                            <Users className="w-3.5 h-3.5 text-amber-700" />
-                            <span>Demo Accounts for All Officials</span>
-                          </div>
-                          <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200">
-                            6 Tiers & Specialists
-                          </span>
-                        </div>
 
-                        <p className="text-[10px] text-amber-800 mb-2 leading-tight">
-                          Click any administrative officer below to instantly test their jurisdiction & redressal view:
-                        </p>
-
-                        <div className="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">
-                          {DEMO_OFFICIAL_ACCOUNTS.map((acc) => (
-                            <div
-                              key={acc.id}
-                              className={`p-2 rounded-lg border transition-all text-left flex items-center justify-between ${
-                                officialId === acc.officialId
-                                  ? 'bg-white border-[#0F2A4A] ring-1 ring-[#0F2A4A] shadow-xs'
-                                  : 'bg-white/80 hover:bg-white border-amber-200/80 hover:border-amber-300'
-                              }`}
-                            >
-                              <div className="flex items-center space-x-2 min-w-0">
-                                <span className={`w-7 h-7 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 border ${acc.badgeColor}`}>
-                                  {acc.avatarText}
-                                </span>
-                                <div className="min-w-0">
-                                  <div className="flex items-center space-x-1.5">
-                                    <p className="text-xs font-bold text-slate-900 truncate leading-tight">
-                                      {acc.name}
-                                    </p>
-                                    <span className="text-[9px] font-bold px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200 shrink-0 font-mono">
-                                      {acc.officialId}
-                                    </span>
-                                  </div>
-                                  <p className="text-[10px] text-slate-500 truncate leading-tight mt-0.5">
-                                    {acc.role} • {acc.tier.split('•')[0].trim()}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <button
-                                type="button"
-                                onClick={() => handleSelectOfficialAccount(acc, true)}
-                                className="ml-2 px-2.5 py-1 bg-[#0F2A4A] hover:bg-[#1a4373] text-white font-bold text-[10px] rounded shadow-2xs cursor-pointer shrink-0 transition-all flex items-center space-x-0.5"
-                              >
-                                <span>Login</span>
-                                <ArrowRight className="w-2.5 h-2.5" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
                   </form>
                 </div>
               )}
