@@ -173,7 +173,7 @@ export const OfficialDashboard: React.FC = () => {
                       mapLayer === 'street' ? 'bg-[#0F2A4A] text-white' : 'text-slate-600'
                     }`}
                   >
-                    Street
+                    {t('layerStreet', 'Street')}
                   </button>
                   <button
                     type="button"
@@ -182,7 +182,7 @@ export const OfficialDashboard: React.FC = () => {
                       mapLayer === 'satellite' ? 'bg-[#0F2A4A] text-white' : 'text-slate-600'
                     }`}
                   >
-                    Satellite
+                    {t('layerSatellite', 'Satellite')}
                   </button>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export const OfficialDashboard: React.FC = () => {
                             }}
                             className="mt-1 w-full py-1 bg-[#0F2A4A] text-white text-[10px] font-bold rounded cursor-pointer"
                           >
-                            Open Dossier
+                            {language === 'hi' ? 'दस्तावेज़ खोलें' : 'Open Dossier'}
                           </button>
                         </div>
                       </Popup>
@@ -255,10 +255,10 @@ export const OfficialDashboard: React.FC = () => {
             <div className="p-3 bg-white border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                  REAL-TIME JURISDICTION MAP
+                  {t('realTimeMapTitle', 'REAL-TIME JURISDICTION MAP')}
                 </span>
                 <p className="text-xs text-slate-700 font-medium">
-                  {activeWard} • Live GPS telemetry active for civic redressal teams
+                  {activeWard} • {t('liveGpsTelemetrySubtitle', 'Live GPS telemetry active for civic redressal teams')}
                 </p>
               </div>
               <div className="flex items-center space-x-2">
@@ -267,14 +267,14 @@ export const OfficialDashboard: React.FC = () => {
                   onClick={() => setOfficialTab('map')}
                   className="px-3 py-1.5 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg cursor-pointer transition-all"
                 >
-                  FULL EXTENT
+                  {t('fullExtentBtn', 'FULL EXTENT')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setOfficialTab('issues')}
                   className="px-3 py-1.5 bg-[#0F2A4A] hover:bg-[#183d6a] text-white text-xs font-bold rounded-lg cursor-pointer transition-all"
                 >
-                  MANAGE ALL
+                  {t('manageAllBtn', 'MANAGE ALL')}
                 </button>
               </div>
             </div>
@@ -285,15 +285,15 @@ export const OfficialDashboard: React.FC = () => {
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-900">
-                  ACTIVE COMMUNITY ISSUES
+                  {t('activeCommunityIssues', 'ACTIVE COMMUNITY ISSUES')}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-[#0F2A4A]">
-                  12 Active
+                  12 {t('activeBadge', 'Active')}
                 </span>
               </div>
               <div className="flex items-center space-x-1.5 text-xs text-slate-500">
                 <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                <span>Sorted by Administrative Urgency</span>
+                <span>{t('sortedByUrgency', 'Sorted by Administrative Urgency')}</span>
               </div>
             </div>
 
@@ -307,24 +307,28 @@ export const OfficialDashboard: React.FC = () => {
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="text-sm font-bold text-slate-900">
-                        VILLAGE HANDPUMP NOT WORKING
+                        {language === 'hi' ? t('handpumpIssueTitle', 'ग्राम पंचायत हैंडपंप खराबी एवं पेयजल संकट') : 'VILLAGE HANDPUMP NOT WORKING'}
                       </h3>
-                      <span className="text-[10px] text-slate-400 font-medium">2 hrs ago</span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        {language === 'hi' ? '२ घंटे पहले' : '2 hrs ago'}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs text-slate-500 mt-0.5">
-                      <span className="font-semibold text-slate-700">Ward 3 • Rampur Gram Panchayat</span>
+                      <span className="font-semibold text-slate-700">
+                        {language === 'hi' ? 'वार्ड ३ • रामपुर ग्राम पंचायत' : 'Ward 3 • Rampur Gram Panchayat'}
+                      </span>
                       <span>•</span>
-                      <span>CATEGORY: WATER WORKS</span>
+                      <span>{t('categoryWaterWorks', 'CATEGORY: WATER WORKS')}</span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-xl">
-                      17 citizens reported contaminated muddy water and broken pump handle. Primary drinking source for 31 households in Harijan Basti. Urgent bore-well inspection required.
+                      {t('handpumpIssueDesc', '17 citizens reported contaminated muddy water and broken pump handle. Primary drinking source for 31 households in Harijan Basti. Urgent bore-well inspection required.')}
                     </p>
                     <div className="flex items-center space-x-3 mt-2.5">
                       <span className="text-xs font-mono font-bold text-slate-600">
-                        Report #1248
+                        {t('reportNum', 'Report')} #1248
                       </span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800 border border-red-200 uppercase">
-                        ESCALATED TO JE
+                        {t('escalatedToJe', 'ESCALATED TO JE')}
                       </span>
                     </div>
                   </div>
@@ -338,7 +342,7 @@ export const OfficialDashboard: React.FC = () => {
                   }}
                   className="px-4 py-1.5 border border-slate-300 hover:border-[#0F2A4A] hover:bg-blue-50 text-[#0F2A4A] text-xs font-bold rounded-lg cursor-pointer transition-all shrink-0"
                 >
-                  OPEN
+                  {t('openAction', 'OPEN')}
                 </button>
               </div>
 
@@ -351,24 +355,28 @@ export const OfficialDashboard: React.FC = () => {
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="text-sm font-bold text-slate-900">
-                        LARGE POTHOLE ON MAIN ROAD
+                        {language === 'hi' ? t('potholeIssueTitle', 'मुख्य मार्ग पर गहरा व खतरनाक गड्ढा') : 'LARGE POTHOLE ON MAIN ROAD'}
                       </h3>
-                      <span className="text-[10px] text-slate-400 font-medium">4 hrs ago</span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        {language === 'hi' ? '४ घंटे पहले' : '4 hrs ago'}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs text-slate-500 mt-0.5">
-                      <span className="font-semibold text-slate-700">Sector 15 Central Road</span>
+                      <span className="font-semibold text-slate-700">
+                        {language === 'hi' ? 'सेक्टर १५ मुख्य मार्ग' : 'Sector 15 Central Road'}
+                      </span>
                       <span>•</span>
-                      <span>CATEGORY: PWD ROADS</span>
+                      <span>{t('categoryPwdRoads', 'CATEGORY: PWD ROADS')}</span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-xl">
-                      Deep 2-foot pothole near Central Park gate causing serious traffic hazard for two-wheelers. Rainwater pooling has obscured edge markings.
+                      {t('potholeIssueDesc', 'Deep 2-foot pothole near Central Park gate causing serious traffic hazard for two-wheelers. Rainwater pooling has obscured edge markings.')}
                     </p>
                     <div className="flex items-center space-x-3 mt-2.5">
                       <span className="text-xs font-mono font-bold text-slate-600">
-                        Report #1245
+                        {t('reportNum', 'Report')} #1245
                       </span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200 uppercase">
-                        FIELD CREW NOTIFIED
+                        {t('fieldCrewNotified', 'FIELD CREW NOTIFIED')}
                       </span>
                     </div>
                   </div>
@@ -382,7 +390,7 @@ export const OfficialDashboard: React.FC = () => {
                   }}
                   className="px-4 py-1.5 border border-slate-300 hover:border-[#0F2A4A] hover:bg-blue-50 text-[#0F2A4A] text-xs font-bold rounded-lg cursor-pointer transition-all shrink-0"
                 >
-                  OPEN
+                  {t('openAction', 'OPEN')}
                 </button>
               </div>
 
@@ -395,24 +403,28 @@ export const OfficialDashboard: React.FC = () => {
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="text-sm font-bold text-slate-900">
-                        DISTRIBUTION TRANSFORMER OIL LEAK
+                        {language === 'hi' ? t('transformerIssueTitle', 'विद्युत वितरण ट्रांसफार्मर से तेल रिसाव व चिंगारी') : 'DISTRIBUTION TRANSFORMER OIL LEAK'}
                       </h3>
-                      <span className="text-[10px] text-slate-400 font-medium">6 hrs ago</span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        {language === 'hi' ? '६ घंटे पहले' : '6 hrs ago'}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs text-slate-500 mt-0.5">
-                      <span className="font-semibold text-slate-700">Shyampur Feeder • Pole #81</span>
+                      <span className="font-semibold text-slate-700">
+                        {language === 'hi' ? 'श्यामपुर फीडर • खंभा #८१' : 'Shyampur Feeder • Pole #81'}
+                      </span>
                       <span>•</span>
-                      <span>CATEGORY: ELECTRICITY BOARD</span>
+                      <span>{t('categoryElectricityBoard', 'CATEGORY: ELECTRICITY BOARD')}</span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-xl">
-                      Heavy sparks observed post 14:00 hrs. Low voltage surge impacting agricultural pumps across 14 neighboring farmlands.
+                      {t('transformerIssueDesc', 'Heavy sparks observed post 14:00 hrs. Low voltage surge impacting agricultural pumps across 14 neighboring farmlands.')}
                     </p>
                     <div className="flex items-center space-x-3 mt-2.5">
                       <span className="text-xs font-mono font-bold text-slate-600">
-                        Report #1250
+                        {t('reportNum', 'Report')} #1250
                       </span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 uppercase">
-                        UNDER INVESTIGATION
+                        {t('underInvestigation', 'UNDER INVESTIGATION')}
                       </span>
                     </div>
                   </div>
@@ -426,7 +438,7 @@ export const OfficialDashboard: React.FC = () => {
                   }}
                   className="px-4 py-1.5 border border-slate-300 hover:border-[#0F2A4A] hover:bg-blue-50 text-[#0F2A4A] text-xs font-bold rounded-lg cursor-pointer transition-all shrink-0"
                 >
-                  OPEN
+                  {t('openAction', 'OPEN')}
                 </button>
               </div>
             </div>
@@ -437,7 +449,7 @@ export const OfficialDashboard: React.FC = () => {
                 onClick={() => setOfficialTab('issues')}
                 className="text-xs font-bold text-[#0F2A4A] hover:underline inline-flex items-center space-x-1 cursor-pointer"
               >
-                <span>VIEW ALL ACTIVE REDRESSALS</span>
+                <span>{t('viewAllActiveRedressals', 'VIEW ALL ACTIVE REDRESSALS')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -516,40 +528,61 @@ export const OfficialDashboard: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Building2 className="w-4 h-4 text-[#0F2A4A]" />
                 <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                  PANCHAYAT COMMAND
+                  {t('panchayatCommandTitle', 'PANCHAYAT COMMAND')}
                 </h2>
               </div>
             </div>
 
             <p className="text-[11px] text-slate-500">
-              Field Officer deployments & status across the 4 key Gram Panchayats in Sehore Block.
+              {t('panchayatCommandDesc', 'Field Officer deployments & status across the 4 key Gram Panchayats in Sehore Block.')}
             </p>
 
             <div className="space-y-2.5">
-              {PANCHAYAT_METRICS.map((pm, idx) => (
-                <div key={idx} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900">{pm.name}</h3>
-                    <p className="text-[10px] text-slate-500">
-                      Officer: {pm.officer} ({pm.role})
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center justify-end space-x-1.5">
-                      <span className={`w-2 h-2 rounded-full ${pm.status === 'urgent' ? 'bg-red-500' : 'bg-emerald-500'}`}></span>
-                      <span className="text-xs font-bold text-slate-800">{pm.openIssues} Open</span>
+              {PANCHAYAT_METRICS.map((pm, idx) => {
+                const localizedName = language === 'hi' 
+                  ? (pm.name === 'Rampur Panchayat' ? 'रामपुर पंचायत' :
+                     pm.name === 'Bilkisganj Panchayat' ? 'बिलकिसगंज पंचायत' :
+                     pm.name === 'Shyampur Panchayat' ? 'श्यामपुर पंचायत' :
+                     pm.name === 'Doraha Panchayat' ? 'दोराहा पंचायत' : pm.name)
+                  : pm.name;
+
+                const localizedRole = language === 'hi'
+                  ? (pm.role === 'SDO' ? 'एसडीओ (जल निगम)' :
+                     pm.role === 'VDO' ? 'ग्राम विकास अधिकारी' :
+                     pm.role === 'JE' ? 'कनिष्ठ अभियंता' :
+                     pm.role === 'Panchayat Secy' ? 'पंचायत सचिव' : pm.role)
+                  : pm.role;
+
+                return (
+                  <div key={idx} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-900">{localizedName}</h3>
+                      <p className="text-[10px] text-slate-500">
+                        {t('officerPrefix', 'Officer')}: {pm.officer} ({localizedRole})
+                      </p>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono">{pm.attendanceRate}% Attendance</span>
+                    <div className="text-right">
+                      <div className="flex items-center justify-end space-x-1.5">
+                        <span className={`w-2 h-2 rounded-full ${pm.status === 'urgent' ? 'bg-red-500' : 'bg-emerald-500'}`}></span>
+                        <span className="text-xs font-bold text-slate-800">
+                          {pm.openIssues} {t('openCountLabel', 'Open')}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {pm.attendanceRate}% {t('attendanceLabel', 'Attendance')}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Monsoon Protocol Warning Alert */}
             <div className="p-3 bg-blue-50/80 border border-blue-200 rounded-xl flex items-start space-x-2.5 text-xs text-slate-700">
               <ShieldAlert className="w-4 h-4 text-[#0F2A4A] shrink-0 mt-0.5" />
               <div>
-                <strong className="text-slate-900">Monsoon Protocol:</strong> Heavy rainfall warning issued for Sehore Tehsil. PWD drains in Ward 3 require pre-emptive desilting log.
+                <strong className="text-slate-900">{t('monsoonProtocolTitle', 'Monsoon Protocol:')}</strong>{' '}
+                {t('monsoonProtocolNotice', 'Heavy rainfall warning issued for Sehore Tehsil. PWD drains in Ward 3 require pre-emptive desilting log.')}
               </div>
             </div>
           </div>

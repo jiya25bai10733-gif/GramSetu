@@ -454,6 +454,203 @@ export const TRANSLATIONS: Record<string, Record<'hi' | 'en' | 'malwi', string>>
     en: 'हिंदी में देखें',
     hi: 'Switch to English',
     malwi: 'Switch to English'
+  },
+
+  // Official Dashboard & Active Community Issues Translations
+  activeCommunityIssues: {
+    en: 'ACTIVE COMMUNITY ISSUES',
+    hi: 'सक्रिय सामुदायिक समस्याएं',
+    malwi: 'सक्रिय गाँव की समस्याएं'
+  },
+  activeBadge: {
+    en: 'Active',
+    hi: 'सक्रिय',
+    malwi: 'सक्रिय'
+  },
+  sortedByUrgency: {
+    en: 'Sorted by Administrative Urgency',
+    hi: 'प्रशासनिक प्राथमिकता अनुसार क्रमबद्ध',
+    malwi: 'प्राथमिकता अनुसार'
+  },
+  openAction: {
+    en: 'OPEN',
+    hi: 'खोलें',
+    malwi: 'खोलो'
+  },
+  viewAllActiveRedressals: {
+    en: 'VIEW ALL ACTIVE REDRESSALS',
+    hi: 'सभी सक्रिय निवारण देखें',
+    malwi: 'सगळी फरियाद देखो'
+  },
+  realGpsBtn: {
+    en: 'Real GPS',
+    hi: 'सटीक जीपीएस',
+    malwi: 'जीपीएस'
+  },
+  fixingGps: {
+    en: 'Fixing...',
+    hi: 'खोज रहे हैं...',
+    malwi: 'खोज रिया छाँ...'
+  },
+  layerStreet: {
+    en: 'Street',
+    hi: 'सड़क',
+    malwi: 'सड़क'
+  },
+  layerSatellite: {
+    en: 'Satellite',
+    hi: 'सैटेलाइट',
+    malwi: 'सैटेलाइट'
+  },
+  realTimeMapTitle: {
+    en: 'REAL-TIME JURISDICTION MAP',
+    hi: 'रीयल-टाइम क्षेत्राधिकार नक्शा',
+    malwi: 'रीयल-टाइम गाँव नक्शो'
+  },
+  liveGpsTelemetrySubtitle: {
+    en: 'Live GPS telemetry active for civic redressal teams',
+    hi: 'नागरिक निवारण दलों के लिए लाइव जीपीएस टेलीमेट्री सक्रिय',
+    malwi: 'निवारण टीम खातिर लाइव जीपीएस चालू छे'
+  },
+  fullExtentBtn: {
+    en: 'FULL EXTENT',
+    hi: 'पूरा नक्शा',
+    malwi: 'पूरो नक्शो'
+  },
+  manageAllBtn: {
+    en: 'MANAGE ALL',
+    hi: 'प्रबंधन करें',
+    malwi: 'सब संभालो'
+  },
+  panchayatCommandTitle: {
+    en: 'PANCHAYAT COMMAND',
+    hi: 'पंचायत कमान केंद्र',
+    malwi: 'पंचायत कमान'
+  },
+  panchayatCommandDesc: {
+    en: 'Field Officer deployments & status across the 4 key Gram Panchayats in Sehore Block.',
+    hi: 'सीहोर ब्लॉक की ४ मुख्य ग्राम पंचायतों में फील्ड अधिकारी तैनाती एवं स्थिति।',
+    malwi: 'सीहोर ब्लॉक की ४ मुख्य पंचायतों मा अधिकारी तैनाती व हालत।'
+  },
+  attendanceLabel: {
+    en: 'Attendance',
+    hi: 'उपस्थिति',
+    malwi: 'हाजिरी'
+  },
+  openCountLabel: {
+    en: 'Open',
+    hi: 'लंबित',
+    malwi: 'लंबित'
+  },
+  officerPrefix: {
+    en: 'Officer',
+    hi: 'अधिकारी',
+    malwi: 'अधिकारी'
+  },
+  monsoonProtocolTitle: {
+    en: 'Monsoon Protocol:',
+    hi: 'मानसून प्रोटोकॉल:',
+    malwi: 'बरसात प्रोटोकॉल:'
+  },
+  monsoonProtocolNotice: {
+    en: 'Heavy rainfall warning issued for Sehore Tehsil. PWD drains in Ward 3 require pre-emptive desilting log.',
+    hi: 'सीहोर तहसील के लिए भारी वर्षा की चेतावनी। वार्ड ३ में पीडब्ल्यूडी नालियों की अग्रिम सफाई अनिवार्य।',
+    malwi: 'सीहोर तहसील मा भारी बरसात की चेतावनी। वाड ३ की नालियों की सफाई जरूरी।'
+  },
+  urgentEscalations: {
+    en: 'URGENT ESCALATIONS',
+    hi: 'अति-आवश्यक मामले',
+    malwi: 'अति-आवश्यक मामले'
+  },
+  slaBreachSubtitle: {
+    en: 'SLA breach threshold exceeded > 48h',
+    hi: 'समय-सीमा समाप्त > ४८ घंटे',
+    malwi: 'समय सीमा खतम > ४८ घंटे'
+  },
+  overallResolutionRate: {
+    en: 'Overall Resolution Rate',
+    hi: 'कुल निवारण दर',
+    malwi: 'कुल निवारण दर'
+  },
+  targetDirective: {
+    en: 'Target: 75% per Directive',
+    hi: 'लक्ष्य: ७५% सरकारी निर्देशानुसार',
+    malwi: 'लक्ष्य: ७५% निर्देशानुसार'
+  },
+  thisWeekGrowth: {
+    en: '+4.2% this week',
+    hi: '+४.२% इस सप्ताह',
+    malwi: '+४.२% इण हफ्ते'
+  },
+  escalatedToJe: {
+    en: 'ESCALATED TO JE',
+    hi: 'जेई को अग्रेषित',
+    malwi: 'जेई कन्ने भेज्यो'
+  },
+  fieldCrewNotified: {
+    en: 'FIELD CREW NOTIFIED',
+    hi: 'फील्ड टीम को सूचित',
+    malwi: 'फील्ड टीम ने बतायो'
+  },
+  underInvestigation: {
+    en: 'UNDER INVESTIGATION',
+    hi: 'जांच जारी है',
+    malwi: 'जांच चाली री छे'
+  },
+  categoryWaterWorks: {
+    en: 'CATEGORY: WATER WORKS',
+    hi: 'श्रेणी: जल आपूर्ति एवं पेयजल',
+    malwi: 'श्रेणी: जल आपूर्ति'
+  },
+  categoryPwdRoads: {
+    en: 'CATEGORY: PWD ROADS',
+    hi: 'श्रेणी: लोक निर्माण (सड़क)',
+    malwi: 'श्रेणी: सड़क निर्माण'
+  },
+  categoryElectricityBoard: {
+    en: 'CATEGORY: ELECTRICITY BOARD',
+    hi: 'श्रेणी: विद्युत वितरण मंडल',
+    malwi: 'श्रेणी: बिजली बोर्ड'
+  },
+  handpumpIssueTitle: {
+    en: 'VILLAGE HANDPUMP NOT WORKING',
+    hi: 'ग्राम पंचायत हैंडपंप खराबी एवं पेयजल संकट',
+    malwi: 'गाँव को हैंडपंप बंद छे'
+  },
+  handpumpIssueDesc: {
+    en: '17 citizens reported contaminated muddy water and broken pump handle. Primary drinking source for 31 households in Harijan Basti. Urgent bore-well inspection required.',
+    hi: '१७ नागरिकों द्वारा गंदे मटमैले पानी और टूटे हैंडल की रिपोर्ट। हरिजन बस्ती के ३१ परिवारों का मुख्य पेयजल स्रोत। तत्काल बोरवेल निरीक्षण आवश्यक।',
+    malwi: '१७ लोगों ने गंदा पाणी और टूटो हैंडल बतायो। ३१ घराँ को प्यास बुझाबा को स्रोत। बोरवेल जांच जरूरी।'
+  },
+  potholeIssueTitle: {
+    en: 'LARGE POTHOLE ON MAIN ROAD',
+    hi: 'मुख्य मार्ग पर गहरा व खतरनाक गड्ढा',
+    malwi: 'मुख्य सड़क मा बड़ो खड्डो'
+  },
+  potholeIssueDesc: {
+    en: 'Deep 2-foot pothole near Central Park gate causing serious traffic hazard for two-wheelers. Rainwater pooling has obscured edge markings.',
+    hi: 'सेंट्रल पार्क गेट के समीप २-फीट गहरा गड्ढा दोपहिया वाहनों हेतु दुर्घटना का कारण बन रहा है। बारिश के जलभराव से सड़क किनारे छिप गए हैं।',
+    malwi: 'गेट के कन्ने २-फीट खड्डो गाड़ियाँ खातिर खतरनाक छे। बरसात को पाणी भर गयो छे।'
+  },
+  transformerIssueTitle: {
+    en: 'DISTRIBUTION TRANSFORMER OIL LEAK',
+    hi: 'विद्युत वितरण ट्रांसफार्मर से तेल रिसाव व चिंगारी',
+    malwi: 'ट्रांसफार्मर तेल रिसाव व चिंगारी'
+  },
+  transformerIssueDesc: {
+    en: 'Heavy sparks observed post 14:00 hrs. Low voltage surge impacting agricultural pumps across 14 neighboring farmlands.',
+    hi: 'दोपहर २ बजे के बाद भीषण चिंगारियां देखी गईं। लो-वोल्टेज से आस-पास के १४ खेतों के कृषि पंप ठप हो गए हैं।',
+    malwi: 'दोपहर सूं चिंगारी निकली री छे। वोल्टेज कम होबा सूं १४ खेताँ की मोटर बंद पड़ी छे।'
+  },
+  reportNum: {
+    en: 'Report',
+    hi: 'शिकायत संख्या',
+    malwi: 'शिकायत संख्या'
+  },
+  hrsAgo: {
+    en: 'hrs ago',
+    hi: 'घंटे पहले',
+    malwi: 'घंटे पेली'
   }
 };
 
