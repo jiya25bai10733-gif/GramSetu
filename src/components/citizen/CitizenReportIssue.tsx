@@ -59,8 +59,8 @@ export const CitizenReportIssue: React.FC = () => {
   const [category, setCategory] = useState('Water Supply & Sanitation');
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('Ward 04, Rampur Gram Panchayat (Block-B)');
-  const [coordinates, setCoordinates] = useState<[number, number]>([23.1793, 79.9498]);
+  const [location, setLocation] = useState('Ward 3 • Rampur Gram Panchayat');
+  const [coordinates, setCoordinates] = useState<[number, number]>([23.2045, 77.0812]);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [isLocatingGps, setIsLocatingGps] = useState(false);
   const [mapTileType, setMapTileType] = useState<'street' | 'satellite'>('street');
@@ -110,12 +110,12 @@ export const CitizenReportIssue: React.FC = () => {
   useEffect(() => {
     const fullInput = `${subject} ${description}`.trim();
     if (fullInput.length >= 4) {
-      const match = detectLiveVoiceMatch(fullInput);
+      const match = detectLiveVoiceMatch(fullInput, coordinates);
       if (match && match.category && (category === 'Water Supply & Sanitation' || !category)) {
         setCategory(match.category);
       }
     }
-  }, [subject, description]);
+  }, [subject, description, coordinates]);
 
   const formatSeconds = (sec: number) => {
     const mins = Math.floor(sec / 60);
@@ -448,38 +448,43 @@ export const CitizenReportIssue: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const titleFinal = subject.trim() || description.trim() || 'Reported Civic Grievance';
-    const summaryFinal = description.trim() || subject.trim() || 'Civic defect reported by citizen.';
-
-    const result = submitNewIssue({
-      title: titleFinal,
-      summary: summaryFinal,
-      category,
-      locationName: location,
-      panchayat: 'Rampur Panchayat',
-      coordinates: coordinates,
-      photos: photos.length > 0 ? photos : ['https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?auto=format&fit=crop&w=800&q=80'],
-      voiceReport: audioBlobUrl ? {
-        transcriptHindi: summaryFinal,
-        transcriptEnglish: summaryFinal,
-        dialect: 'Realtime Voice Engine',
-        duration: `00:${recordingSeconds < 10 ? '0' : ''}${recordingSeconds || 5}`,
-        audioUrl: audioBlobUrl
-      } : undefined
-    });
-
     try {
-      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-    } catch {}
+      const titleFinal = subject.trim() || description.trim() || 'Reported Civic Grievance';
+      const summaryFinal = description.trim() || subject.trim() || 'Civic defect reported by citizen.';
 
-    setSubmittedIssueId(result.issue.id);
+      const result = submitNewIssue({
+        title: titleFinal,
+        summary: summaryFinal,
+        category,
+        locationName: location,
+        panchayat: 'Rampur Panchayat',
+        coordinates: coordinates,
+        photos: photos.length > 0 ? photos : ['https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?auto=format&fit=crop&w=800&q=80'],
+        voiceReport: audioBlobUrl ? {
+          transcriptHindi: summaryFinal,
+          transcriptEnglish: summaryFinal,
+          dialect: 'Realtime Voice Engine',
+          duration: `00:${recordingSeconds < 10 ? '0' : ''}${recordingSeconds || 5}`,
+          audioUrl: audioBlobUrl
+        } : undefined
+      });
 
-    if (result.matchedCluster) {
-      setMatchedClusterTitle(result.matchedCluster.title);
-      setMatchedClusterObj(result.matchedCluster);
-      setShowMatchModal(true);
-    } else {
-      setSelectedIssueId(result.issue.id);
+      try {
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      } catch {}
+
+      setSubmittedIssueId(result.issue.id);
+
+      if (result.matchedCluster) {
+        setMatchedClusterTitle(result.matchedCluster.title);
+        setMatchedClusterObj(result.matchedCluster);
+        setShowMatchModal(true);
+      } else {
+        setSelectedIssueId(result.issue.id);
+        setCitizenTab('activity');
+      }
+    } catch (err) {
+      console.warn('Submission fallback executed safely:', err);
       setCitizenTab('activity');
     }
   };
@@ -645,15 +650,18 @@ export const CitizenReportIssue: React.FC = () => {
                 {/* AI Duplicate Detection Card — Appears ONLY AFTER voice recording stops */}
                 {(() => {
                   const fullInput = `${subject} ${description}`.trim();
-                  const liveMatch = detectLiveVoiceMatch(fullInput);
+                  const liveMatch = detectLiveVoiceMatch(fullInput, coordinates);
                   if (!liveMatch) return null;
                   return (
                     <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-950 flex items-start space-x-2.5 text-left animate-in fade-in">
                       <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                       <div className="flex-1">
-                        <div className="flex items-center space-x-1.5">
+                        <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
                           <span className="text-[10px] font-black uppercase tracking-wider bg-amber-300 text-slate-950 px-1.5 py-0.5 rounded shadow-2xs">
                             AI MATCH {liveMatch.score}%
+                          </span>
+                          <span className="text-[10px] font-bold bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded border border-blue-200">
+                            📍 {liveMatch.distanceLabel}
                           </span>
                           <span className="text-xs font-bold text-amber-900">
                             {language === 'hi' ? 'समान सामुदायिक समस्या पहचानी गई!' : 'Similar Community Issue Detected!'}
@@ -663,7 +671,10 @@ export const CitizenReportIssue: React.FC = () => {
                           {language === 'hi' ? liveMatch.titleHindi : liveMatch.title}
                         </p>
                         <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
-                          <strong>{liveMatch.count} {language === 'hi' ? 'ग्रामीणों' : 'neighbors'}</strong> {language === 'hi' ? 'ने यह समस्या पहले ही दर्ज कराई है।' : 'already reported this issue nearby.'}
+                          <strong>{liveMatch.count} {language === 'hi' ? 'ग्रामीणों' : 'neighbors'}</strong>{' '}
+                          {language === 'hi'
+                            ? `ने इस स्थान (${liveMatch.distanceLabel}) पर पहले ही यह समस्या दर्ज कराई है।`
+                            : `already reported this issue nearby (${liveMatch.distanceLabel}).`}
                         </p>
                         <div className="mt-2.5 flex items-center space-x-2">
                           <button
@@ -851,15 +862,18 @@ export const CitizenReportIssue: React.FC = () => {
               if (isRecording || activeDictatingField) return null;
               if (mode === 'voice' && audioBlobUrl) return null; // Already displayed prominently in Voice Box
               const fullInput = `${subject} ${description}`.trim();
-              const liveMatch = detectLiveVoiceMatch(fullInput);
+              const liveMatch = detectLiveVoiceMatch(fullInput, coordinates);
               if (!liveMatch) return null;
               return (
                 <div className="mt-2.5 p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-950 flex items-start space-x-2.5 animate-in fade-in">
                   <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
                       <span className="text-[10px] font-black uppercase tracking-wider bg-amber-300 text-slate-950 px-1.5 py-0.5 rounded shadow-2xs">
                         AI MATCH {liveMatch.score}%
+                      </span>
+                      <span className="text-[10px] font-bold bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded border border-blue-200">
+                        📍 {liveMatch.distanceLabel}
                       </span>
                       <span className="text-xs font-bold text-amber-900">
                         {language === 'hi' ? 'समान सामुदायिक समस्या पहचानी गई!' : 'Similar Community Issue Detected!'}
@@ -869,7 +883,10 @@ export const CitizenReportIssue: React.FC = () => {
                       {language === 'hi' ? liveMatch.titleHindi : liveMatch.title}
                     </p>
                     <p className="text-[11px] text-amber-800 mt-0.5 leading-snug">
-                      <strong>{liveMatch.count} {language === 'hi' ? 'ग्रामीणों' : 'neighbors'}</strong> {language === 'hi' ? 'ने यह समस्या दर्ज कराई है। अलग शिकायत दर्ज करने की बजाय इस याचिका का समर्थन करें।' : 'already reported this issue. Endorse this existing petition to increase repair urgency!'}
+                      <strong>{liveMatch.count} {language === 'hi' ? 'ग्रामीणों' : 'neighbors'}</strong>{' '}
+                      {language === 'hi'
+                        ? `ने इस स्थान (${liveMatch.distanceLabel}) पर यह समस्या दर्ज कराई है। अलग शिकायत दर्ज करने की बजाय इस याचिका का समर्थन करें।`
+                        : `already reported this issue nearby (${liveMatch.distanceLabel}). Endorse this existing petition to increase repair urgency!`}
                     </p>
                     <div className="mt-2.5 flex items-center space-x-2">
                       <button

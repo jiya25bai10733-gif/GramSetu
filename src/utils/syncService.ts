@@ -89,7 +89,7 @@ export const sanitizeIssueForSync = (issue?: Issue): Issue | undefined => {
   };
 };
 
-export const broadcastSyncEvent = async (payload: Omit<SyncPayload, 'originDeviceId' | 'timestamp'>) => {
+export const broadcastSyncEvent = async (payload: Omit<SyncPayload, 'originDeviceId' | 'timestamp'>): Promise<boolean> => {
   try {
     const fullPayload: SyncPayload = {
       ...payload,
@@ -98,28 +98,39 @@ export const broadcastSyncEvent = async (payload: Omit<SyncPayload, 'originDevic
       timestamp: Date.now()
     };
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
     const res = await fetch(SYNC_URL, {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(fullPayload)
     });
+    clearTimeout(timeoutId);
 
-    if (!res.ok) {
-      console.warn(`Sync broadcast HTTP status: ${res.status}`);
-    }
-  } catch (err) {
-    console.warn('Sync broadcast error (offline/fallback):', err);
+    return res ? res.ok : false;
+  } catch {
+    // Network is offline or cloud sync endpoint blocked — local state is primary, sync fails quietly
+    return false;
   }
 };
 
 export const fetchRemoteSyncHistory = async (): Promise<SyncPayload[]> => {
   try {
-    const res = await fetch(`${SYNC_URL}/json?poll=1`);
-    if (!res.ok) return [];
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+    const res = await fetch(`${SYNC_URL}/json?poll=1`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (!res || !res.ok) return [];
     const text = await res.text();
-    if (!text.trim()) return [];
+    if (!text || !text.trim()) return [];
 
     const lines = text.trim().split('\n');
     const events: SyncPayload[] = [];
@@ -130,9 +141,14 @@ export const fetchRemoteSyncHistory = async (): Promise<SyncPayload[]> => {
         if (item.event === 'message') {
           if (item.attachment && item.attachment.url) {
             try {
-              const attRes = await fetch(item.attachment.url);
-              const payload = (await attRes.json()) as SyncPayload;
-              if (payload && payload.type) events.push(payload);
+              const attController = new AbortController();
+              const attTimeoutId = setTimeout(() => attController.abort(), 1500);
+              const attRes = await fetch(item.attachment.url, { signal: attController.signal });
+              clearTimeout(attTimeoutId);
+              if (attRes.ok) {
+                const payload = (await attRes.json()) as SyncPayload;
+                if (payload && payload.type) events.push(payload);
+              }
             } catch {}
           } else if (item.message) {
             const payload = JSON.parse(item.message) as SyncPayload;
@@ -143,8 +159,8 @@ export const fetchRemoteSyncHistory = async (): Promise<SyncPayload[]> => {
     }
 
     return events;
-  } catch (err) {
-    console.warn('Error fetching remote sync history:', err);
+  } catch {
+    // Graceful offline fallback
     return [];
   }
 };

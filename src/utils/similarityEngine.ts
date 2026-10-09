@@ -555,13 +555,15 @@ export const computeHaversineDistanceMeters = (
 
 /**
  * Convert meter distance to spatial similarity score [0, 1]
+ * Heavily penalizes issues outside immediate neighborhood radius
  */
 export const computeSpatialScore = (distanceMeters: number): number => {
-  if (distanceMeters <= 150) return 1.0;
-  if (distanceMeters <= 500) return 0.95;
-  if (distanceMeters <= 1200) return 0.85;
-  if (distanceMeters <= 3000) return 0.70;
-  return 0.50;
+  if (distanceMeters <= 100) return 1.0;
+  if (distanceMeters <= 300) return 0.95;
+  if (distanceMeters <= 600) return 0.85;
+  if (distanceMeters <= 1000) return 0.70;
+  if (distanceMeters <= 2000) return 0.30;
+  return 0.05;
 };
 
 export interface DuplicateDetectionResult {
@@ -571,11 +573,13 @@ export interface DuplicateDetectionResult {
   matchedIssue: Issue | null;
   domainCategory: string;
   reason: string;
+  distanceMeters?: number;
 }
 
 /**
  * Master Hybrid Duplicate Detector
- * Evaluates reported text + GPS coordinates against all active clusters and issues
+ * Strictly evaluates reported text + GPS coordinates against all active clusters and issues.
+ * Geographic proximity (within 1000m municipal radius) is mandatory for duplicate classification.
  */
 export const detectDuplicateIssue = (
   report: {
@@ -598,23 +602,25 @@ export const detectDuplicateIssue = (
   let bestCluster: CommunityCluster | null = null;
   let bestIssue: Issue | null = null;
   let highestScore = 0;
-  let bestDistance = 500;
+  let bestDistance = Infinity;
 
-  // 2. Evaluate against existing Community Clusters
+  // 2. Evaluate against existing Community Clusters with strict geospatial proximity
   for (const cl of clusters) {
-    const clusterFullText = `${cl.title} ${cl.category} ${cl.locationName} ${cl.sampleReports.map(s => s.text).join(' ')}`;
-    const semScore = computeSemanticSimilarity(fullText, clusterFullText);
     const dist = computeHaversineDistanceMeters(reportCoords, cl.coordinates);
-    let spatScore = computeSpatialScore(dist);
-
-    if (semScore >= 0.75) {
-      spatScore = Math.max(spatScore, 0.85);
+    
+    // Hard boundary: Different ward/village (> 1000m) cannot be the same physical defect
+    if (dist > 1000) {
+      continue;
     }
 
-    let hybridScore = (semScore * 0.70) + (spatScore * 0.30);
+    const clusterFullText = `${cl.title} ${cl.category} ${cl.locationName} ${cl.sampleReports.map(s => s.text).join(' ')}`;
+    const semScore = computeSemanticSimilarity(fullText, clusterFullText);
+    const spatScore = computeSpatialScore(dist);
 
-    if (domainAnalysis.domain && domainAnalysis.domain.primaryClusterId === cl.id) {
-      hybridScore = Math.max(hybridScore, Math.max(0.92, domainAnalysis.matchScore));
+    let hybridScore = (semScore * 0.60) + (spatScore * 0.40);
+
+    if (domainAnalysis.domain && domainAnalysis.domain.primaryClusterId === cl.id && dist <= 800) {
+      hybridScore = Math.max(hybridScore, (domainAnalysis.matchScore * 0.55) + (spatScore * 0.45));
     }
 
     if (hybridScore > highestScore) {
@@ -624,18 +630,20 @@ export const detectDuplicateIssue = (
     }
   }
 
-  // 3. Evaluate against active Issues list
+  // 3. Evaluate against active Issues list within geographical radius
   for (const iss of issues) {
-    const issueFullText = `${iss.title} ${iss.summary} ${iss.category} ${iss.locationName} ${iss.voiceReport?.transcriptHindi || ''}`;
-    const semScore = computeSemanticSimilarity(fullText, issueFullText);
     const dist = computeHaversineDistanceMeters(reportCoords, iss.coordinates);
-    let spatScore = computeSpatialScore(dist);
-
-    if (semScore >= 0.75) {
-      spatScore = Math.max(spatScore, 0.85);
+    
+    // Hard boundary: More than 1000m away cannot be the same physical asset
+    if (dist > 1000) {
+      continue;
     }
 
-    let hybridScore = (semScore * 0.70) + (spatScore * 0.30);
+    const issueFullText = `${iss.title} ${iss.summary} ${iss.category} ${iss.locationName} ${iss.voiceReport?.transcriptHindi || ''}`;
+    const semScore = computeSemanticSimilarity(fullText, issueFullText);
+    const spatScore = computeSpatialScore(dist);
+
+    let hybridScore = (semScore * 0.60) + (spatScore * 0.40);
 
     if (hybridScore > highestScore) {
       highestScore = hybridScore;
@@ -647,19 +655,13 @@ export const detectDuplicateIssue = (
     }
   }
 
-  // 4. Fallback domain linkage if strong civic domain keywords were detected
-  if (domainAnalysis.domain && (!bestCluster || highestScore < 0.65)) {
-    const def = domainAnalysis.domain;
-    const fallbackCluster = clusters.find(c => c.id === def.primaryClusterId || c.category === def.category);
-    if (fallbackCluster) {
-      bestCluster = fallbackCluster;
-      highestScore = Math.max(highestScore, 0.93);
-    }
-  }
-
-  // Threshold: >= 0.60 triggers duplicate match
-  const isDuplicate = highestScore >= 0.60 && !!bestCluster;
+  // 4. Threshold: Requires score >= 0.60 AND verified location within <= 1000m
+  const isDuplicate = highestScore >= 0.60 && bestDistance <= 1000 && !!bestCluster;
   const roundedPercent = Math.min(97, Math.max(84, Math.round(highestScore * 100)));
+
+  const distanceText = bestDistance < Infinity
+    ? (bestDistance <= 50 ? 'Immediate vicinity (under 50m)' : `${bestDistance}m away`)
+    : 'Distance unverified';
 
   return {
     isDuplicate,
@@ -667,44 +669,67 @@ export const detectDuplicateIssue = (
     matchedCluster: isDuplicate ? bestCluster : null,
     matchedIssue: bestIssue,
     domainCategory: bestCluster?.category || report.category || 'General Civic Grievance',
+    distanceMeters: bestDistance < Infinity ? bestDistance : undefined,
     reason: isDuplicate
-      ? `AI Hybrid Match (${roundedPercent}%): Vernacular keyword alignment within municipal radius (${bestDistance <= 1000 ? `${bestDistance}m` : `${(bestDistance/1000).toFixed(1)}km`})`
-      : 'Unique grievance. No spatial or semantic duplicate detected.'
+      ? `AI Geotagged Match (${roundedPercent}%): Verified within ${distanceText} of active civic cluster.`
+      : 'Unique grievance. Location or semantic verification confirms no duplicate.'
   };
 };
 
+export interface LiveVoiceMatchResult {
+  isMatched: boolean;
+  category: string;
+  clusterId: string;
+  primaryIssueId: string;
+  title: string;
+  titleHindi: string;
+  count: number;
+  score: number;
+  distanceMeters: number;
+  distanceLabel: string;
+  locationName: string;
+}
+
 /**
- * Fast Real-time Assistant Matcher for Live Microphone Stream or Input Typing
- * Immediately triggers across ALL 10 Civic Domains as citizen is speaking or typing!
+ * Fast Real-time Assistant Matcher for Live Microphone Stream or Input Typing.
+ * Strictly verifies geographic location: A report is only flagged as a duplicate
+ * if it is within municipal radius (<= 800m) of the existing civic cluster.
  */
 export const detectLiveVoiceMatch = (
-  spokenText: string
-): { 
-  isMatched: boolean; 
-  category: string; 
-  clusterId: string; 
-  primaryIssueId: string;
-  title: string; 
-  titleHindi: string;
-  count: number; 
-  score: number;
-} | null => {
+  spokenText: string,
+  userCoords?: [number, number],
+  maxDistanceMeters: number = 800
+): LiveVoiceMatchResult | null => {
   if (!spokenText || spokenText.trim().length < 3) return null;
 
-  const cleanSpoken = spokenText.toLowerCase();
+  const inputCoords: [number, number] = userCoords || [23.2045, 77.0812];
   const { tokens: inputTokens, phrases: inputPhrases, cleanWords: inputWords } = extractKeywordsFromEntity([spokenText]);
 
   let bestDynamicMatch: IndexedCivicEntity | null = null;
-  let highestDynamicScore = 0;
+  let highestCombinedScore = 0;
+  let bestDistance = Infinity;
 
-  // 1. Evaluate against the DYNAMIC CORPUS (initial issues/clusters + dynamically added ones!)
+  // 1. Evaluate against the DYNAMIC CORPUS with strict geographical proximity filter
   DYNAMIC_CIVIC_CORPUS.forEach((entity) => {
-    let score = 0;
+    // Resolve entity coordinates
+    const entityCoords: [number, number] = entity.coordinates ||
+      INITIAL_CLUSTERS.find(c => c.id === entity.clusterId)?.coordinates ||
+      INITIAL_ISSUES.find(i => i.id === entity.primaryIssueId)?.coordinates ||
+      [23.2045, 77.0812];
+
+    const dist = computeHaversineDistanceMeters(inputCoords, entityCoords);
+
+    // Hard boundary: Discard any candidate further than maxDistanceMeters (default 800m)
+    if (dist > maxDistanceMeters) {
+      return;
+    }
+
+    let semanticScore = 0;
 
     // A. Phrase exact containment match
     for (const phrase of inputPhrases) {
       if (entity.rawCombinedText.toLowerCase().includes(phrase) || entity.phrases.includes(phrase)) {
-        score += 0.35;
+        semanticScore += 0.35;
       }
     }
 
@@ -726,31 +751,40 @@ export const detectLiveVoiceMatch = (
 
     if (inputTokens.size > 0) {
       const tokenRatio = matchedTokenCount / Math.min(inputTokens.size, 5);
-      score += Math.min(0.55, tokenRatio * 0.55);
+      semanticScore += Math.min(0.55, tokenRatio * 0.55);
     }
 
     // C. Substring matching of significant words
     for (const w of inputWords) {
       if (w.length >= 4 && entity.rawCombinedText.toLowerCase().includes(w)) {
-        score += 0.15;
+        semanticScore += 0.15;
       }
     }
 
     // D. Domain agreement boost
     const domain = detectDomainConcept(spokenText);
     if (domain.domainKey && domain.domain && domain.domain.category === entity.category) {
-      score += 0.25;
+      semanticScore += 0.25;
     }
 
-    if (score > highestDynamicScore) {
-      highestDynamicScore = score;
-      bestDynamicMatch = entity;
+    if (semanticScore >= 0.35) {
+      const spatScore = computeSpatialScore(dist);
+      const combined = (semanticScore * 0.60) + (spatScore * 0.40);
+
+      if (combined > highestCombinedScore) {
+        highestCombinedScore = combined;
+        bestDynamicMatch = entity;
+        bestDistance = dist;
+      }
     }
   });
 
-  // If dynamic corpus matched with high confidence (>= 0.55)
-  if (bestDynamicMatch && highestDynamicScore >= 0.55) {
-    const scorePercent = Math.min(97, Math.max(86, Math.round(highestDynamicScore * 100)));
+  // If dynamic corpus matched with high confidence within proximity
+  if (bestDynamicMatch && highestCombinedScore >= 0.45 && bestDistance <= maxDistanceMeters) {
+    const scorePercent = Math.min(97, Math.max(85, Math.round(highestCombinedScore * 100)));
+    const distanceLabel = bestDistance <= 50 ? 'Nearby (<50m)' : `${bestDistance}m away`;
+    const locName = INITIAL_CLUSTERS.find(c => c.id === bestDynamicMatch!.clusterId)?.locationName || 'Ward Area';
+
     return {
       isMatched: true,
       category: bestDynamicMatch.category,
@@ -759,44 +793,41 @@ export const detectLiveVoiceMatch = (
       title: bestDynamicMatch.title,
       titleHindi: bestDynamicMatch.titleHindi,
       count: bestDynamicMatch.count,
-      score: scorePercent
+      score: scorePercent,
+      distanceMeters: bestDistance,
+      distanceLabel,
+      locationName: locName
     };
   }
 
-  // 2. Fallback to Ontology concept detection across all 10 civic categories
+  // 2. Fallback to Ontology concept detection ONLY IF within proximity of the primary cluster
   const analysis = detectDomainConcept(spokenText);
   if (analysis.domainKey && analysis.domain) {
     const def = analysis.domain;
-    const scorePercent = Math.min(96, Math.max(88, Math.round(analysis.matchScore * 100)));
+    const targetCluster = INITIAL_CLUSTERS.find(c => c.id === def.primaryClusterId);
+    const clusterCoords = targetCluster?.coordinates || [23.2045, 77.0812];
+    const dist = computeHaversineDistanceMeters(inputCoords, clusterCoords);
 
-    return {
-      isMatched: true,
-      category: def.category,
-      clusterId: def.primaryClusterId,
-      primaryIssueId: def.primaryIssueId,
-      title: def.title,
-      titleHindi: def.titleHindi,
-      count: def.count,
-      score: scorePercent
-    };
-  }
+    // Only match if physically located within radius
+    if (dist <= maxDistanceMeters) {
+      const spatScore = computeSpatialScore(dist);
+      const combined = (analysis.matchScore * 0.60) + (spatScore * 0.40);
+      const scorePercent = Math.min(96, Math.max(86, Math.round(combined * 100)));
+      const distanceLabel = dist <= 50 ? 'Nearby (<50m)' : `${dist}m away`;
 
-  // 3. Robust direct keyword fallback
-  const lower = spokenText.toLowerCase();
-  for (const [key, def] of Object.entries(CIVIC_ONTOLOGY)) {
-    for (const kw of def.keywords) {
-      if (kw.length >= 3 && lower.includes(kw)) {
-        return {
-          isMatched: true,
-          category: def.category,
-          clusterId: def.primaryClusterId,
-          primaryIssueId: def.primaryIssueId,
-          title: def.title,
-          titleHindi: def.titleHindi,
-          count: def.count,
-          score: 92
-        };
-      }
+      return {
+        isMatched: true,
+        category: def.category,
+        clusterId: def.primaryClusterId,
+        primaryIssueId: def.primaryIssueId,
+        title: def.title,
+        titleHindi: def.titleHindi,
+        count: def.count,
+        score: scorePercent,
+        distanceMeters: dist,
+        distanceLabel,
+        locationName: targetCluster?.locationName || 'Ward Area'
+      };
     }
   }
 

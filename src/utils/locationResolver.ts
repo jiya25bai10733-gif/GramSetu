@@ -71,14 +71,23 @@ export function getFriendlyLocationName(coords?: [number, number] | { lat: numbe
 }
 
 /**
- * Reverse geocode coordinates to an address asynchronously using OpenStreetMap Nominatim
+ * Reverse geocode coordinates to an address asynchronously
+ * Fully resilient with timeout and instant fallback to local landmark ontology
  */
 export async function reverseGeocodeAsync(lat: number, lng: number): Promise<string> {
+  const friendly = getFriendlyLocationName([lat, lng]);
+
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
+
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`, {
+      signal: controller.signal,
       headers: { 'Accept': 'application/json' }
     });
-    if (res.ok) {
+    clearTimeout(timeoutId);
+
+    if (res && res.ok) {
       const data = await res.json();
       if (data && data.address) {
         const addr = data.address;
@@ -87,8 +96,9 @@ export async function reverseGeocodeAsync(lat: number, lng: number): Promise<str
         return `${main} • ${district}`;
       }
     }
-  } catch (err) {
-    // Ignore fetch failure and use fallback
+  } catch {
+    // Completely silent fallback — prevents noisy console fetch errors
   }
-  return getFriendlyLocationName([lat, lng]);
+
+  return friendly;
 }

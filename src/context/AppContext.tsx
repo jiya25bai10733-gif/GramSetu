@@ -387,12 +387,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setActivities(prev => [newActivity, ...prev]);
 
-    // Broadcast live across all devices and clones
+    // Broadcast live across all devices and clones safely in background
     broadcastSyncEvent({
       type: 'NEW_ISSUE',
       issue: newIssue,
       activity: newActivity
-    });
+    }).catch(() => {});
 
     return { issue: newIssue, matchedCluster };
   };
